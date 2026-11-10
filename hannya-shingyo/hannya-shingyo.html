@@ -87,6 +87,25 @@ body:not(.syncmode) .yt.compact{margin:0}
 .ytfloat .btn.sq{padding:.35em .65em}
 .ytfloat .fgroup{gap:4px}
 @media (max-width:720px){.ytfloat{right:16px;bottom:232px}}
+/* Téléphone : vidéo réduite et commandes côte à côte dans une seule bande de 200 px de haut
+   (au lieu d'empiler le menu au-dessus de la vignette). 200 × 200 px est le minimum imposé par YouTube. */
+@media (max-width:720px){
+  .yt.compact .ytbox.ytbox{right:8px;bottom:8px}
+  .yt.compact ~ .ytfloat{left:8px;right:216px;bottom:8px;height:200px;box-sizing:border-box;padding:6px;gap:4px;
+    display:grid;grid-template-columns:repeat(10,minmax(0,1fr));align-content:space-between;border-radius:10px}
+  .yt.compact ~ .ytfloat .fgroup{display:contents}
+  .yt.compact ~ .ytfloat .flabel,.yt.compact ~ .ytfloat .grow{display:none}
+  .yt.compact ~ .ytfloat .btn{min-width:0;min-height:32px;padding:.15em .1em;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;justify-content:center}
+  .yt.compact ~ .ytfloat #fPlay{grid-column:span 10}
+  .yt.compact ~ .ytfloat [data-rate],.yt.compact ~ .ytfloat #ytSize,.yt.compact ~ .ytfloat #ytClose{grid-column:span 2;order:1}
+  .yt.compact ~ .ytfloat #fLine,.yt.compact ~ .ytfloat #fBlock,.yt.compact ~ .ytfloat #fAll{grid-column:span 10;order:2;text-align:left;padding-left:.6em}
+  .yt.compact ~ .ytfloat #fLine::before,.yt.compact ~ .ytfloat #fBlock::before,.yt.compact ~ .ytfloat #fAll::before{content:"↺ "}
+  .yt.compact ~ .ytfloat .synconly{display:none}
+  body.ytopen.p-ecouter .wrap{padding-bottom:224px}
+  html:has(body.ytopen.p-ecouter){scroll-padding-bottom:216px}
+  /* vidéo agrandie : elle est dans la page, le menu reste en bas */
+  .yt:not(.compact) ~ .ytfloat{bottom:8px;left:8px;right:8px}
+}
 body.ytopen .wrap,body.pfl .wrap{padding-bottom:120px}
 /* barres flottantes de Réciter et d'Apprendre, comme celle de l'enregistrement */
 .micbar.pfloat{position:fixed;left:16px;right:16px;bottom:16px;z-index:21;max-width:868px;margin:0 auto;justify-content:center;gap:8px 16px;padding:10px 14px;background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:0 6px 20px rgba(0,0,0,.18)}
