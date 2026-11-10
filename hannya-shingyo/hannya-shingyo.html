@@ -358,6 +358,12 @@ footer .edition{margin:1.2em 0 0;padding-top:.8em;border-top:1px solid var(--lin
 .calo .cdots i.cur{border-color:var(--ink)}
 .calo .cdots i.ok{background:var(--ok);border-color:var(--ok)}
 .calo .cdots i.new{background:var(--warn);border-color:var(--warn)}
+/* Avant le tout premier calibrage : une explication, puis « On y va » */
+.cintro .cibody{flex:1;display:flex;flex-direction:column;justify-content:center;gap:1em;max-width:34em;margin:0 auto;font-size:clamp(17px,2.4vh,22px);line-height:1.5;overflow-y:auto}
+.cintro h2{font:700 clamp(24px,4vh,36px) var(--f-display);margin:0;text-align:center}
+.cintro p{margin:0}
+.cintro .ciN{color:var(--muted);text-align:center}
+.cintro .dfoot .btn{font-size:1.1em;padding:.6em 2em}
 .calo .cheard{margin:0;text-align:center;min-height:1.6em;color:var(--muted);font-size:clamp(16px,2.6vh,26px)}
 .dojo .dhint{margin:0;text-align:center;font-size:.8em;color:var(--muted)}
 /* Fond : Kannon aux mille bras en filigrane, fixe contre le bord droit ; le dessin sert de masque, la couleur suit le thème */
@@ -518,6 +524,19 @@ footer .edition{margin:1.2em 0 0;padding-top:.8em;border-top:1px solid var(--lin
 </div>
 
 <button class="fixbtn" id="fixBtn" hidden title="La reconnaissance s'est trompée sur ce kanji ? Refais son calibrage (5 enregistrements), puis la récitation reprend ici">Recalibrer ce kanji</button>
+<!-- avant le tout premier calibrage : ce qui va se passer -->
+<div class="dojo calo cintro" id="caloIntro" hidden role="dialog" aria-labelledby="ciTitle">
+  <div class="dhead"><span class="grow"></span><button class="btn ghost sq" id="ciClose" aria-label="Pas maintenant" title="Pas maintenant">✕</button></div>
+  <div class="cibody">
+    <h2 id="ciTitle">Calibrer ta voix</h2>
+    <p>Pour réciter au micro, la page doit d'abord apprendre ta voix : chaque voix est différente, et la reconnaissance se trompe moins quand elle connaît la tienne.</p>
+    <p>Un kanji s'affiche en grand. Tu entends l'exemple, puis tu le dis à ton tour, 5 fois. Les points en bas montrent où tu en es, puis le kanji suivant arrive tout seul.</p>
+    <p>Mets-toi au calme et parle d'une voix normale, comme au zendō. Si un kanji coince, « Passer ce kanji » le garde pour plus tard.</p>
+    <p>Tu peux t'arrêter quand tu veux avec ✕ : les kanji déjà faits sont gardés. L'empreinte de ta voix reste dans ce navigateur.</p>
+    <p class="ciN"><span>Kanji à calibrer :</span> <b id="ciN"></b></p>
+  </div>
+  <div class="dfoot"><button class="btn primary" id="ciGo">On y va</button></div>
+</div>
 <!-- calibrage : un kanji à la fois, en très grand, à dire 5 fois -->
 <div class="dojo calo" id="calo" hidden role="dialog" aria-label="Calibrer ma voix">
   <div class="dhead"><span id="caloWhere"></span><span class="grow"></span><button class="btn ghost sq" id="caloClose" aria-label="Arrêter le calibrage" title="Arrêter le calibrage">✕</button></div>
@@ -1942,6 +1961,7 @@ async function startCalib(auto, blocks){
     if (!confirm(tr(`Les ${all.length} kanji de cette partie sont déjà calibrés. Les refaire ?`))) return;
     calQ = all.map(q => ({ ...q, n: CALIB_REPS, keep: [] }));
   }
+  if (!Object.keys(PRINTS).length && !(await calIntro(calQ.length))) return;
   calI = 0; calib = true; listening = true; calAuto = !!auto; claimMic();
   $('calo').hidden = false; micUI();
   $('caloWhere').textContent = ''; $('caloAsk').textContent = '';
@@ -1953,6 +1973,14 @@ async function startCalib(auto, blocks){
   if (tok !== calTok){ closeVoiceMic(); return; }
   await Promise.all([loadSamples(), loadPrints()]);
   if (tok === calTok) calShow();
+}
+// Tout premier calibrage (aucune empreinte encore) : l'explication, puis « On y va » ou ✕
+function calIntro(n){
+  $('ciN').textContent = n; $('caloIntro').hidden = false; $('ciGo').focus();
+  return new Promise(res => {
+    const done = ok => { $('caloIntro').hidden = true; $('ciGo').onclick = $('ciClose').onclick = null; res(ok); };
+    $('ciGo').onclick = () => done(true); $('ciClose').onclick = () => done(false);
+  });
 }
 function calShow(){
   const { x, n, keep, weak } = calQ[calI];
