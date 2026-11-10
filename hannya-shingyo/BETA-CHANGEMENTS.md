@@ -13,6 +13,9 @@ Copie de travail préparée le 10/11/2026 à partir de `Zen Archive` (version 1.
 - **Version** : `1.26.0-bêta` (`version.js`).
 - `.nojekyll` pour GitHub Pages.
 
+## 1.26.3-bêta
+- Kanji du texte agrandis de 25 % (le mode dojo garde sa taille).
+
 ## 1.26.2-bêta
 - Téléphone : le menu du haut (Écouter / Apprendre / Réciter) se retire quand on descend dans le texte, et revient dès qu'on remonte.
 
