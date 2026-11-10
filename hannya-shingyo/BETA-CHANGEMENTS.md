@@ -13,6 +13,10 @@ Copie de travail préparée le 10/11/2026 à partir de `Zen Archive` (version 1.
 - **Version** : `1.26.0-bêta` (`version.js`).
 - `.nojekyll` pour GitHub Pages.
 
+## 1.26.6-bêta
+- Plein écran : masque aussi les barres flottantes du bas (la vignette YouTube reste visible).
+- En changeant de pratique (ex. Apprendre → Écouter), les marques de la précédente sur le texte sont effacées (kanji trouvés, ratés, dévoilés ; lignes réussies ou à revoir). La progression enregistrée n'est pas touchée.
+
 ## 1.26.5-bêta
 - Le menu du haut ne se retire plus tout seul (retour sur 1.26.2). À la place, un bouton « Plein écran » à côté de « Mode dojo » ne garde que le texte et les barres du bas ; le navigateur passe aussi en plein écran quand il le permet (pas sur iPhone). Un bouton rond en haut à droite permet d'en sortir.
 

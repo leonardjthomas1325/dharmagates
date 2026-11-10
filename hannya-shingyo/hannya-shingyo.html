@@ -148,6 +148,10 @@ body.fs header.top,body.fs .bar .practice,body.fs .bar .pdesc,body.fs .review,bo
 body.fs .bar{position:static;padding:0;margin:0;border:0}
 .fsout{position:fixed;top:max(8px,env(safe-area-inset-top,0px));right:8px;z-index:22;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--ink);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(0,0,0,.18);cursor:pointer}
 body:not(.fs) .fsout{display:none}
+/* plein écran : les barres du bas sont masquées aussi ; la vignette YouTube reste visible (règle YouTube : lecteur affiché pendant la lecture) */
+body.fs .ytfloat,body.fs .micbar.pfloat{display:none !important}
+body.fs .wrap{padding-bottom:24px}
+@media (max-width:720px){body.fs.ytopen.p-ecouter .wrap{padding-bottom:224px}}
 @media (max-width:720px){.go{flex-basis:110px}.dojogo{padding-inline:.8em}.fsgo{min-width:48px;padding-inline:.5em}}
 .go .goic{display:grid;place-items:center}
 .go .goic svg{width:1.1em;height:1.1em}
@@ -2508,8 +2512,16 @@ document.querySelector('.pseg').onclick = e => {
   const b = e.target.closest('button[data-p]'); if (!b || b.dataset.p === S.practice) return;
   if (listening) stopMic(); if (playing){ stopPlay(); setStatus(''); }
   if (typeof videoPlaying === 'function' && videoPlaying()) ytPlayer.pauseVideo();
+  clearMarks();
   practiceSet(b.dataset.p);
 };
+// En changeant de pratique, on efface les marques de la précédente sur le texte (kanji trouvés, ratés, dévoilés,
+// lignes réussies ou à revoir). La progression enregistrée (« Révisions du jour ») n'est pas touchée.
+function clearMarks(){
+  main.querySelectorAll('.syl.ok,.syl.miss,.syl.peek,.syl.cur').forEach(e => e.classList.remove('ok', 'miss', 'peek', 'cur'));
+  main.querySelectorAll('.line.done,.line.review,.line.target,.line.you').forEach(e => e.classList.remove('done', 'review', 'target', 'you'));
+  $('fixBtn').hidden = true; setStatus('');
+}
 $('go').onclick = () => $(PRACTICE[S.practice].btn).click();
 // la synchro (administrateur) se fait sur l'enregistrement : elle passe en Écouter, pour avoir ses commandes en bas
 $('syncBtn').addEventListener('click', () => practiceSet('ecouter', true), true);
