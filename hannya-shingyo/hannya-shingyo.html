@@ -49,6 +49,10 @@ header.top{position:relative}
 header.top p.lead{max-width:62ch;color:var(--muted);margin:.8em 0 0}
 
 .bar{position:sticky;top:0;z-index:5;background:var(--bg);padding-block:12px;margin-top:18px;border-bottom:1px solid var(--line)}
+/* Téléphone : le menu du haut se retire quand on descend dans le texte et revient dès qu'on remonte.
+   On décale « top » (pas de transform, qui casserait les barres fixes du bas contenues dans .bar). */
+@media (max-width:720px){.bar{transition:top .25s ease}.bar.tucked{top:calc(-1px - var(--barh,300px))}}
+@media (max-width:720px) and (prefers-reduced-motion:reduce){.bar{transition:none}}
 .row{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center}
 .row + .row{margin-top:10px}
 button,select,input{font:inherit;color:inherit}
@@ -3064,6 +3068,23 @@ $('syncSave').onclick = $('fSave').onclick = () => saveAllSync().then(ok => {
   a.download = 'synchro.json'; a.click();
   setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 });
+
+/* ---------- Menu du haut repliable sur téléphone ---------- */
+(() => {
+  const bar = document.querySelector('.bar'), mq = matchMedia('(max-width:720px)');
+  let lastY = scrollY;
+  const onScroll = () => {
+    const y = scrollY, d = y - lastY;
+    if (!mq.matches || y < 40){ bar.classList.remove('tucked'); lastY = y; return; }
+    if (Math.abs(d) < 8) return;
+    if (d > 0 && !bar.classList.contains('tucked')){ bar.style.setProperty('--barh', bar.offsetHeight + 'px'); bar.classList.add('tucked'); }
+    else if (d < 0) bar.classList.remove('tucked');
+    lastY = y;
+  };
+  addEventListener('scroll', onScroll, { passive: true });
+  mq.addEventListener('change', onScroll);
+  bar.addEventListener('focusin', () => bar.classList.remove('tucked'));
+})();
 </script>
 </body>
 </html>
