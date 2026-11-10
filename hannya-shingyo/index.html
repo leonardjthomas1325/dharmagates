@@ -98,7 +98,7 @@ h1{font:700 clamp(34px,6vw,62px)/1.08 var(--f-display);margin:12px 0 0;letter-sp
   <main>
     <a class="brand corner" href="./" aria-label="DharmaGate"><svg class="seal" viewBox="0 0 200 200" aria-hidden="true"><path d="M 16 12 L 40 8 L 46 14 L 70 7 L 104 12 L 132 6 L 150 10 L 176 8 L 192 16 L 190 40 L 195 64 L 188 98 L 194 128 L 190 150 L 196 172 L 186 193 L 160 188 L 138 194 L 110 189 L 84 195 L 58 188 L 34 194 L 10 190 L 13 164 L 6 138 L 12 110 L 7 82 L 14 56 L 8 32 Z"/><g class="wear"><circle cx="14" cy="40" r="5"/><circle cx="60" cy="196" r="6"/><circle cx="196" cy="88" r="5"/><circle cx="190" cy="180" r="4"/></g><text x="100" y="106" text-anchor="middle" dominant-baseline="central" font-weight="700" font-size="128">門</text></svg><span aria-hidden="true">DharmaGate</span></a>
     <label class="pagelang" for="pageLang"><span data-t="pageLang">Language</span>
-      <select id="pageLang"><option value="en">English</option><option value="fr">Français</option><option value="it">Italiano</option><option value="es">Español</option><option value="de">Deutsch</option></select>
+      <select id="pageLang"><option value="en">English</option><option value="fr">Français</option></select>
     </label>
     <h1>Maka Hannya Haramita Shingyō</h1>
     <p class="title-jp" lang="ja">摩訶般若波羅蜜多心経</p>
@@ -117,9 +117,11 @@ h1{font:700 clamp(34px,6vw,62px)/1.08 var(--f-display);margin:12px 0 0;letter-sp
     <nav class="langs" id="langs" data-t-label="langs" aria-label="Choose a language and enter">
       <a href="hannya-shingyo.html?lang=fr" data-lang="fr" lang="fr">Français<small>Entrer</small></a>
       <a href="hannya-shingyo.html?lang=en" data-lang="en" lang="en">English<small>Enter</small></a>
+      <!-- italien, espagnol, allemand désactivés pour le moment :
       <a href="hannya-shingyo.html?lang=it" data-lang="it" lang="it">Italiano<small>Entra</small></a>
       <a href="hannya-shingyo.html?lang=es" data-lang="es" lang="es">Español<small>Entrar</small></a>
       <a href="hannya-shingyo.html?lang=de" data-lang="de" lang="de">Deutsch<small>Eintreten</small></a>
+      -->
     </nav>
     <ul class="feats">
       <li><b data-t="f1">Listen</b><span data-t="f1d">The recording, with the text highlighted kanji by kanji.</span></li>
@@ -241,7 +243,7 @@ function applyLang(lang){
   showTagline(lang);
 }
 // L'accroche défile dans les 5 langues, à partir de celle de la page ; immobile si l'animation est réduite
-const ORDER = ['en', 'fr', 'it', 'es', 'de'];
+const ORDER = ['en', 'fr'];   // 'it', 'es', 'de' désactivés pour le moment
 let tagIdx = 0, tagTimer = 0;
 const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
 function setTagline(lang){ const e = document.getElementById('tagline'); e.textContent = T[lang].tagline; e.lang = lang; }
@@ -261,7 +263,7 @@ function nextTagline(){
   }, 700);
 }
 const q = new URLSearchParams(location.search).get('lang');
-applyLang(T[q] ? q : 'en');
+applyLang(ORDER.includes(q) ? q : 'en');
 document.getElementById('pageLang').onchange = e => {
   const lang = e.target.value;
   applyLang(lang);

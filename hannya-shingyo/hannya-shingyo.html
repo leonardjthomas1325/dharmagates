@@ -475,7 +475,7 @@ footer .edition{margin:1.2em 0 0;padding-top:.8em;border-top:1px solid var(--lin
           <button class="sitem" id="resetbeats" hidden><span>Revenir aux temps du dojo</span></button>
         </div></div>
         <div class="sgroup"><span class="sh">Général</span><div class="scard">
-          <label class="sitem" for="lang"><span>Langue</span><select id="lang"><option value="fr">Français</option><option value="en">English</option><option value="it">Italiano</option><option value="es">Español</option><option value="de">Deutsch</option></select></label>
+          <label class="sitem" for="lang"><span>Langue</span><select id="lang"><option value="fr">Français</option><option value="en">English</option></select></label>
           <button class="sitem" id="syncBtn" aria-pressed="false" title="Caler le texte sur l'enregistrement"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 0 1 14-5l2 2M20 12a8 8 0 0 1-14 5l-2-2M20 4v5h-5M4 20v-5h5"/></svg><span>Synchroniser</span><em>administrateur</em></button>
         </div></div>
       </div>
@@ -589,7 +589,8 @@ const LANG = (() => {
   const q = new URLSearchParams(location.search).get('lang');
   let l = q;
   try { if (q) localStorage.setItem('hannya:lang', JSON.stringify(q)); else l = JSON.parse(localStorage.getItem('hannya:lang') || '"fr"'); } catch { l = q || 'fr'; }
-  return window.I18N && I18N[l] ? l : 'fr';
+  // italien, espagnol, allemand désactivés pour le moment (traductions gardées dans traductions.js) : remettre leur code ici
+  return ['en'].includes(l) && window.I18N && I18N[l] ? l : 'fr';
 })();
 const TX = LANG === 'fr' ? null : I18N[LANG];
 document.documentElement.lang = LANG;
