@@ -13,6 +13,9 @@ Copie de travail préparée le 10/11/2026 à partir de `Zen Archive` (version 1.
 - **Version** : `1.26.0-bêta` (`version.js`).
 - `.nojekyll` pour GitHub Pages.
 
+## 1.26.10-bêta
+- Écouter : le gros bouton s'appelle « Commencer à écouter », comme pour Apprendre et Réciter (traduit en 4 langues).
+
 ## 1.26.9-bêta
 - « Kanji répétés » (coloration des kanji identiques) désactivé par défaut.
 - Téléphone : la vidéo est de nouveau intégrée en haut de la page ; sur écran plus large, elle reste en vignette flottante. En plein écran sur téléphone, le bouton de sortie passe en bas à droite pour ne pas recouvrir la vidéo.
