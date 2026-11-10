@@ -13,6 +13,9 @@ Copie de travail préparée le 10/11/2026 à partir de `Zen Archive` (version 1.
 - **Version** : `1.26.0-bêta` (`version.js`).
 - `.nojekyll` pour GitHub Pages.
 
+## 1.26.12-bêta
+- « Commencer à apprendre » sur le sutra entier sans calibrage complet : le calibrage se fait une section à la fois ; à la fin de chaque section, la page propose de calibrer la suivante ou de commencer à apprendre les sections déjà calibrées.
+
 ## 1.26.11-bêta
 - Italien, espagnol et allemand désactivés pour le moment (accueil et outil) ; seuls français et anglais sont proposés. Les traductions restent dans traductions.js ; une adresse ?lang=it|es|de ouvre la page en français (outil) ou en anglais (accueil).
 

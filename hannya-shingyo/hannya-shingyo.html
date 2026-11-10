@@ -385,6 +385,9 @@ footer .edition{margin:1.2em 0 0;padding-top:.8em;border-top:1px solid var(--lin
 .cintro p{margin:0}
 .cintro .ciN{color:var(--muted);text-align:center}
 .cintro .dfoot .btn{font-size:1.1em;padding:.6em 2em}
+.cintro .cnbtns{flex-wrap:wrap;gap:10px}
+.cintro .cnbtns .btn{padding:.6em 1.2em;white-space:normal;text-align:center}
+.cintro .cnbtns .btn:not(.primary){color:var(--ink)}
 .calo .cheard{margin:0;text-align:center;min-height:1.6em;color:var(--muted);font-size:clamp(16px,2.6vh,26px)}
 .dojo .dhint{margin:0;text-align:center;font-size:.8em;color:var(--muted)}
 /* Fond : Kannon aux mille bras en filigrane, fixe contre le bord droit ; le dessin sert de masque, la couleur suit le thème */
@@ -559,6 +562,16 @@ footer .edition{margin:1.2em 0 0;padding-top:.8em;border-top:1px solid var(--lin
     <p class="ciN"><span>Kanji à calibrer :</span> <b id="ciN"></b></p>
   </div>
   <div class="dfoot"><button class="btn primary" id="ciGo">On y va</button></div>
+</div>
+<!-- calibrage lancé par « Commencer à apprendre » sur le sutra entier : une section à la fois, puis le choix -->
+<div class="dojo calo cintro" id="caloNext" hidden role="dialog" aria-labelledby="cnTitle">
+  <div class="dhead"><span class="grow"></span><button class="btn ghost sq" id="cnClose" aria-label="Arrêter" title="Arrêter">✕</button></div>
+  <div class="cibody">
+    <h2 id="cnTitle">Section calibrée</h2>
+    <p class="ciN" id="cnDone"></p>
+    <p>Tu peux calibrer la section suivante maintenant, ou commencer à apprendre les sections déjà calibrées et revenir au calibrage plus tard.</p>
+  </div>
+  <div class="dfoot cnbtns"><button class="btn" id="cnMore"></button><button class="btn primary" id="cnLearn">Commencer à apprendre</button></div>
 </div>
 <!-- calibrage : un kanji à la fois, en très grand, à dire 5 fois -->
 <div class="dojo calo" id="calo" hidden role="dialog" aria-label="Calibrer ma voix">
@@ -1970,7 +1983,9 @@ function markWeak(x){
 }
 // auto : lancé par « Réciter au micro » faute d'empreintes ; la récitation suit le calibrage
 let calAuto = false;
+let calBlock = null;
 async function startCalib(auto, blocks){
+  calBlock = blocks && blocks.length === 1 ? blocks[0] : null;
   stopMic(); stopPlay();
   if (videoPlaying()) ytPlayer.pauseVideo();
   await loadPrints();
@@ -2056,6 +2071,23 @@ async function calSave(){
   calInfo();
   setTimeout(calNext, 800);
 }
+// Calibrage enchaîné par « Commencer à apprendre » : une section à la fois (sutra entier), puis on demande la suite
+let calChain = [];
+const blockMissing = B => B.lines.some(L => L.syl.some(x => calMissing(x)));
+function calAsk(doneB){
+  if (!doneB){ startMic(); return; }
+  calChain.push(doneB);
+  const next = viewBlocks().find(B => blockMissing(B) && !calChain.includes(B));
+  const ready = viewBlocks().filter(B => !blockMissing(B) || calChain.includes(B));
+  if (!next){ startMic(S.tab === 7 && ready.length < DATA.length ? ready.flatMap(B => B.lines) : undefined); return; }
+  $('cnDone').textContent = `${DATA.indexOf(doneB) + 1}. ${doneB.title}`;
+  $('cnMore').textContent = tr('Calibrer la section suivante') + ` · ${DATA.indexOf(next) + 1}. ${next.title}`;
+  $('caloNext').hidden = false; $('cnLearn').focus();
+  const close = () => { $('caloNext').hidden = true; };
+  $('cnMore').onclick = () => { close(); startCalib(true, [next]); };
+  $('cnLearn').onclick = () => { close(); startMic(ready.flatMap(B => B.lines)); };
+  $('cnClose').onclick = () => { close(); calChain = []; };
+}
 function calNext(){
   if (!calib) return;
   $('caloHeard').textContent = '';
@@ -2064,7 +2096,7 @@ function calNext(){
   const auto = calAuto;
   stopMic();
   S.engine = 'voix'; store.set('engine', 'voix'); $('engine').value = 'voix';
-  if (auto){ startMic(); return; }
+  if (auto){ calAsk(calBlock); return; }
   setStatus('<b>Calibrage fini.</b> Le moteur « ma voix » est choisi : récite au micro.');
 }
 function calInfo(){
@@ -2316,7 +2348,8 @@ $('mic').onclick = async () => {
   if (listening){ stopMic(); setStatus(''); return; }
   if (S.engine === 'voix'){
     const P = await loadPrints();
-    if (viewBlocks().some(B => B.lines.some(L => L.syl.some(x => calMissing(x))))){ startCalib(true); return; }
+    const todo = viewBlocks().filter(blockMissing);
+    if (todo.length){ calChain = []; startCalib(true, [todo[0]]); return; }
   }
   startMic();
 };
