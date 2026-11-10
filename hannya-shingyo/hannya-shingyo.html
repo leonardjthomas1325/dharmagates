@@ -97,7 +97,8 @@ body:not(.syncmode) .yt.compact{margin:0}
   .yt.compact ~ .ytfloat .flabel,.yt.compact ~ .ytfloat .grow{display:none}
   .yt.compact ~ .ytfloat .btn{min-width:0;min-height:32px;padding:.15em .1em;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;justify-content:center}
   .yt.compact ~ .ytfloat #fPlay{grid-column:span 10}
-  .yt.compact ~ .ytfloat [data-rate],.yt.compact ~ .ytfloat #ytSize,.yt.compact ~ .ytfloat #ytClose{grid-column:span 2;order:1}
+  .yt.compact ~ .ytfloat [data-rate]{grid-column:span 2;order:1}
+  .yt.compact ~ .ytfloat #ytClose{grid-column:span 4;order:1}
   .yt.compact ~ .ytfloat #fLine,.yt.compact ~ .ytfloat #fBlock,.yt.compact ~ .ytfloat #fAll{grid-column:span 10;order:2;text-align:left;padding-left:.6em}
   .yt.compact ~ .ytfloat #fLine::before,.yt.compact ~ .ytfloat #fBlock::before,.yt.compact ~ .ytfloat #fAll::before{content:"↺ "}
   .yt.compact ~ .ytfloat .synconly{display:none}
@@ -506,7 +507,7 @@ footer .edition{margin:1.2em 0 0;padding-top:.8em;border-top:1px solid var(--lin
     <span class="fgroup"><span class="flabel">Reprendre</span><button class="btn ghost" id="fLine">la ligne</button><button class="btn ghost" id="fBlock">la section</button><button class="btn ghost" id="fAll">le début</button></span>
     <span class="fgroup synconly"><button class="btn ghost" id="fSave" title="Sauve toutes les lignes et écrit la synchro dans synchro.json">Sauver toute la synchro</button><span class="flabel" id="fRecInfo"></span></span>
     <span class="grow"></span>
-    <button class="btn ghost sq" id="ytSize" title="Agrandir la vidéo" aria-label="Agrandir la vidéo">⤢</button>
+    <button class="btn ghost sq" id="ytSize" hidden title="Agrandir la vidéo" aria-label="Agrandir la vidéo">⤢</button>
     <button class="btn ghost sq" id="ytClose" title="Fermer l'enregistrement" aria-label="Fermer l'enregistrement">✕</button>
   </div>
 
@@ -3063,7 +3064,7 @@ const setYtSize = compact => {
   $('ytSize').title = $('ytSize').ariaLabel = compact ? 'Agrandir la vidéo' : 'Réduire la vidéo';
   store.set('ytcompact', compact);
 };
-setYtSize(store.get('ytcompact', true));
+setYtSize(true);   // le bouton ⤢ est retiré du menu du bas : la vidéo reste toujours en vignette
 $('ytSize').onclick = () => setYtSize(!$('ytPanel').classList.contains('compact'));
 $('ytClose').onclick = closeYT;
 $('ytMark').onclick = markLine;

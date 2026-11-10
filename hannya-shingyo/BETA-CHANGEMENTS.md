@@ -13,6 +13,9 @@ Copie de travail préparée le 10/11/2026 à partir de `Zen Archive` (version 1.
 - **Version** : `1.26.0-bêta` (`version.js`).
 - `.nojekyll` pour GitHub Pages.
 
+## 1.26.8-bêta
+- Bouton ⤢ « Agrandir la vidéo » retiré du menu du bas : la vidéo reste toujours en vignette.
+
 ## 1.26.7-bêta
 - Plein écran : la vignette vidéo (toujours 200 × 200 px) se glisse par une poignée et se range dans le coin le plus proche ; le coin est mémorisé.
 
