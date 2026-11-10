@@ -162,7 +162,7 @@ body.fs .yt.compact .ytbox.ytbox[data-c="tl"]{top:8px;left:8px;right:auto;bottom
 body.fs .yt.compact .ytbox.ytbox[data-c="tr"]{top:8px;right:8px;left:auto;bottom:auto}
 body.fs .yt.compact .ytbox.ytbox[data-c="bl"]{bottom:8px;left:8px;right:auto;top:auto}
 body.fs .yt.compact .ytbox.ytbox[data-c="br"]{bottom:8px;right:8px;left:auto;top:auto}
-body.fs:has(.ytbox[data-c="tr"]) .fsout{top:auto;bottom:max(8px,env(safe-area-inset-bottom,0px))}
+body.fs.ytopen:has(.yt:not(.compact)) .fsout,body.fs:has(.ytbox[data-c="tr"]) .fsout{top:auto;bottom:max(8px,env(safe-area-inset-bottom,0px))}
 body.fs .wrap{padding-top:0}
 body.fs.ytopen.p-ecouter .wrap{padding-bottom:244px}
 @media (max-width:720px){.go{flex-basis:110px}.dojogo{padding-inline:.8em}.fsgo{min-width:48px;padding-inline:.5em}}
@@ -450,7 +450,7 @@ footer .edition{margin:1.2em 0 0;padding-top:.8em;border-top:1px solid var(--lin
           <label class="sitem" for="meaning"><span>Sens</span><input class="sw" type="checkbox" id="meaning" checked></label>
           <label class="sitem" for="gloss"><span>Mot à mot</span><input class="sw" type="checkbox" id="gloss" checked></label>
           <label class="sitem" for="jp"><span>Kanji et kana</span><input class="sw" type="checkbox" id="jp" checked></label>
-          <label class="sitem" for="rep"><span>Kanji répétés</span><input class="sw" type="checkbox" id="rep" checked></label>
+          <label class="sitem" for="rep"><span>Kanji répétés</span><input class="sw" type="checkbox" id="rep"></label>
           <label class="sitem" for="skt"><span>Mots sanskrits</span><input class="sw" type="checkbox" id="skt" checked></label>
         </div></div>
         <div class="sgroup"><span class="sh">Mémoriser</span><div class="scard">
@@ -513,7 +513,7 @@ footer .edition{margin:1.2em 0 0;padding-top:.8em;border-top:1px solid var(--lin
 
   <section class="review" id="review" aria-label="Révisions du jour"></section>
   <nav class="tabs" id="tabs" role="tablist" aria-label="Blocs du sutra"></nav>
-  <main id="main"></main>
+  <main id="main" class="norep"></main>
 
   <footer>
     <div id="credits">
@@ -3064,7 +3064,8 @@ const setYtSize = compact => {
   $('ytSize').title = $('ytSize').ariaLabel = compact ? 'Agrandir la vidéo' : 'Réduire la vidéo';
   store.set('ytcompact', compact);
 };
-setYtSize(true);   // le bouton ⤢ est retiré du menu du bas : la vidéo reste toujours en vignette
+// Téléphone : la vidéo est intégrée en haut de la page ; écran plus large : vignette flottante (le bouton ⤢ est retiré)
+{ const mq = matchMedia('(max-width:720px)'); setYtSize(!mq.matches); mq.addEventListener('change', () => setYtSize(!mq.matches)); }
 $('ytSize').onclick = () => setYtSize(!$('ytPanel').classList.contains('compact'));
 $('ytClose').onclick = closeYT;
 $('ytMark').onclick = markLine;
