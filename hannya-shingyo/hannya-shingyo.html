@@ -151,7 +151,19 @@ body:not(.fs) .fsout{display:none}
 /* plein écran : les barres du bas sont masquées aussi ; la vignette YouTube reste visible (règle YouTube : lecteur affiché pendant la lecture) */
 body.fs .ytfloat,body.fs .micbar.pfloat{display:none !important}
 body.fs .wrap{padding-bottom:24px}
-@media (max-width:720px){body.fs.ytopen.p-ecouter .wrap{padding-bottom:224px}}
+/* plein écran : la vignette se glisse dans n'importe quel coin, par une poignée au-dessus du lecteur (qui garde ses 200 × 200 px, rien ne le recouvre) */
+.ytgrip{display:none}
+body.fs .yt.compact .ytbox{height:228px;background:var(--surface)}
+body.fs .yt.compact .ytbox iframe,body.fs .yt.compact #yt{top:28px;bottom:auto;height:200px}
+body.fs .yt.compact .ytgrip{display:flex;position:absolute;left:0;right:0;top:0;height:28px;align-items:center;justify-content:center;cursor:grab;touch-action:none;user-select:none;color:var(--muted);font-size:18px;letter-spacing:.1em;border-bottom:1px solid var(--line)}
+body.fs .yt.compact .ytbox.dragging .ytgrip{cursor:grabbing}
+body.fs .yt.compact .ytbox.ytbox[data-c="tl"]{top:8px;left:8px;right:auto;bottom:auto}
+body.fs .yt.compact .ytbox.ytbox[data-c="tr"]{top:8px;right:8px;left:auto;bottom:auto}
+body.fs .yt.compact .ytbox.ytbox[data-c="bl"]{bottom:8px;left:8px;right:auto;top:auto}
+body.fs .yt.compact .ytbox.ytbox[data-c="br"]{bottom:8px;right:8px;left:auto;top:auto}
+body.fs:has(.ytbox[data-c="tr"]) .fsout{top:auto;bottom:max(8px,env(safe-area-inset-bottom,0px))}
+body.fs .wrap{padding-top:0}
+body.fs.ytopen.p-ecouter .wrap{padding-bottom:244px}
 @media (max-width:720px){.go{flex-basis:110px}.dojogo{padding-inline:.8em}.fsgo{min-width:48px;padding-inline:.5em}}
 .go .goic{display:grid;place-items:center}
 .go .goic svg{width:1.1em;height:1.1em}
@@ -472,7 +484,7 @@ footer .edition{margin:1.2em 0 0;padding-top:.8em;border-top:1px solid var(--lin
   </div>
 
   <section class="yt compact" id="ytPanel" hidden aria-label="Synchroniser avec l'enregistrement">
-    <div class="ytbox"><div id="yt"></div></div>
+    <div class="ytbox"><div class="ytgrip" id="ytGrip" title="Glisser pour déplacer la vidéo" aria-hidden="true"><span>⠿</span></div><div id="yt"></div></div>
     <div class="ytside">
       <h2>Synchroniser</h2>
       <p class="ytinfo" id="ytInfo"></p>
@@ -3132,6 +3144,32 @@ $('syncSave').onclick = $('fSave').onclick = () => saveAllSync().then(ok => {
   $('fsBtn').onclick = fsOn; $('fsOut').onclick = fsOff;
   // Échap ou geste du navigateur : on quitte aussi le mode
   document.addEventListener('fullscreenchange', () => { if (fsReq && !document.fullscreenElement && !dojoOn){ fsReq = false; fsOff(); } });
+})();
+
+/* ---------- Vignette déplaçable en plein écran : glisser la poignée, elle se range dans le coin le plus proche ---------- */
+(() => {
+  const box = document.querySelector('.ytbox'), grip = $('ytGrip');
+  box.dataset.c = store.get('ytcorner', 'br');
+  let dx = 0, dy = 0, on = false;
+  grip.addEventListener('pointerdown', e => {
+    const r = box.getBoundingClientRect(); dx = e.clientX - r.left; dy = e.clientY - r.top; on = true;
+    grip.setPointerCapture(e.pointerId); box.classList.add('dragging');
+    Object.assign(box.style, { left: r.left + 'px', top: r.top + 'px', right: 'auto', bottom: 'auto' });
+    e.preventDefault();
+  });
+  grip.addEventListener('pointermove', e => {
+    if (!on) return;
+    const w = box.offsetWidth, h = box.offsetHeight;
+    box.style.left = Math.max(0, Math.min(innerWidth - w, e.clientX - dx)) + 'px';
+    box.style.top = Math.max(0, Math.min(innerHeight - h, e.clientY - dy)) + 'px';
+  });
+  const drop = () => {
+    if (!on) return; on = false; box.classList.remove('dragging');
+    const r = box.getBoundingClientRect(), c = (r.top + r.height / 2 < innerHeight / 2 ? 't' : 'b') + (r.left + r.width / 2 < innerWidth / 2 ? 'l' : 'r');
+    box.style.left = box.style.top = box.style.right = box.style.bottom = '';
+    box.dataset.c = c; store.set('ytcorner', c);
+  };
+  grip.addEventListener('pointerup', drop); grip.addEventListener('pointercancel', drop);
 })();
 </script>
 </body>

@@ -13,6 +13,9 @@ Copie de travail préparée le 10/11/2026 à partir de `Zen Archive` (version 1.
 - **Version** : `1.26.0-bêta` (`version.js`).
 - `.nojekyll` pour GitHub Pages.
 
+## 1.26.7-bêta
+- Plein écran : la vignette vidéo (toujours 200 × 200 px) se glisse par une poignée et se range dans le coin le plus proche ; le coin est mémorisé.
+
 ## 1.26.6-bêta
 - Plein écran : masque aussi les barres flottantes du bas (la vignette YouTube reste visible).
 - En changeant de pratique (ex. Apprendre → Écouter), les marques de la précédente sur le texte sont effacées (kanji trouvés, ratés, dévoilés ; lignes réussies ou à revoir). La progression enregistrée n'est pas touchée.
