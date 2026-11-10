@@ -13,6 +13,9 @@ Copie de travail préparée le 10/11/2026 à partir de `Zen Archive` (version 1.
 - **Version** : `1.26.0-bêta` (`version.js`).
 - `.nojekyll` pour GitHub Pages.
 
+## 1.26.5-bêta
+- Le menu du haut ne se retire plus tout seul (retour sur 1.26.2). À la place, un bouton « Plein écran » à côté de « Mode dojo » ne garde que le texte et les barres du bas ; le navigateur passe aussi en plein écran quand il le permet (pas sur iPhone). Un bouton rond en haut à droite permet d'en sortir.
+
 ## 1.26.4-bêta
 - Avant le tout premier calibrage de la voix : un écran d'explication avec un bouton « On y va » (traduit en 4 langues).
 
