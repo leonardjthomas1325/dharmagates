@@ -13,6 +13,9 @@ Copie de travail préparée le 10/11/2026 à partir de `Zen Archive` (version 1.
 - **Version** : `1.26.0-bêta` (`version.js`).
 - `.nojekyll` pour GitHub Pages.
 
+## 1.27.0-bêta
+- La bande-son `bande-son.mp3` (5 min 01 s), servie par le site, remplace le lecteur YouTube. Même synchro (synchro.json) ; constante `AUDIO_OFFSET` pour un éventuel décalage. Plus de vignette vidéo : la barre « Lecture / Vitesse / Reprendre » se place comme celles d'Apprendre et de Réciter. Mentions : plus d'appel à YouTube.
+
 ## 1.26.12-bêta
 - « Commencer à apprendre » sur le sutra entier sans calibrage complet : le calibrage se fait une section à la fois ; à la fin de chaque section, la page propose de calibrer la suivante ou de commencer à apprendre les sections déjà calibrées.
 

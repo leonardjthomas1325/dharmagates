@@ -118,6 +118,13 @@ body.ytopen .wrap,body.pfl .wrap{padding-bottom:120px}
 .kseg button:hover{border-color:var(--accent)}
 .kseg button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent);font-weight:700}
 body:not(.p-ecouter) .ytfloat{display:none !important}
+/* Bande-son à la place de la vidéo : pas d'image ; la barre du bas se place comme celles d'Apprendre et de Réciter */
+.ytbox{display:none !important}
+body:not(.syncmode) #ytPanel{display:none}
+.ytfloat.ytfloat.ytfloat{left:16px;right:16px;bottom:16px;max-width:868px;margin:0 auto;justify-content:center;height:auto;display:flex;padding:10px 14px;border-radius:14px}
+.ytfloat.ytfloat.ytfloat[hidden]{display:none}
+@media (max-width:720px){.ytfloat.ytfloat.ytfloat{left:8px;right:8px;bottom:8px;gap:6px 10px}.ytfloat .flabel{font-size:.85em}}
+body.ytopen.p-ecouter .wrap.wrap{padding-bottom:140px}
 /* Vidéo réduite : petite vignette fixe dans le coin (le lecteur YouTube doit rester visible, 200 × 200 px au moins) */
 .yt.compact{grid-template-columns:minmax(0,1fr)}
 .yt.compact .ytbox{position:fixed;right:16px;bottom:16px;width:200px;height:200px;aspect-ratio:auto;z-index:20;box-shadow:0 6px 20px rgba(0,0,0,.3)}
@@ -164,7 +171,7 @@ body.fs .yt.compact .ytbox.ytbox[data-c="bl"]{bottom:8px;left:8px;right:auto;top
 body.fs .yt.compact .ytbox.ytbox[data-c="br"]{bottom:8px;right:8px;left:auto;top:auto}
 body.fs.ytopen:has(.yt:not(.compact)) .fsout,body.fs:has(.ytbox[data-c="tr"]) .fsout{top:auto;bottom:max(8px,env(safe-area-inset-bottom,0px))}
 body.fs .wrap{padding-top:0}
-body.fs.ytopen.p-ecouter .wrap{padding-bottom:244px}
+body.fs.ytopen.p-ecouter .wrap{padding-bottom:24px}
 @media (max-width:720px){.go{flex-basis:110px}.dojogo{padding-inline:.8em}.fsgo{min-width:48px;padding-inline:.5em}}
 .go .goic{display:grid;place-items:center}
 .go .goic svg{width:1.1em;height:1.1em}
@@ -909,7 +916,7 @@ function render(){
         <button class="known ${S.known[bi] ? 'on' : ''}" data-known="${bi}">${S.known[bi] ? 'Su par cœur' : 'Je le connais'}</button></span></div>
       ${B.lines.map(L => `<div class="line" data-b="${bi}" data-l="${L.l}">
         <div class="lbtns"><button class="say" data-b="${bi}" data-l="${L.l}" aria-label="Écouter la ligne" title="Écouter cette ligne avec la voix de synthèse"><svg viewBox="0 0 10 10"><path d="M2 1l7 4-7 4z"/></svg></button>
-        <button class="ygo" data-b="${bi}" data-l="${L.l}" aria-label="Recommencer la ligne avec l'enregistrement" title="Recommencer cette ligne avec l'enregistrement (vidéo)"><svg viewBox="0 0 12 10"><path d="M5 1L1 5l4 4zM11 1L7 5l4 4z"/></svg></button>
+        <button class="ygo" data-b="${bi}" data-l="${L.l}" aria-label="Recommencer la ligne avec l'enregistrement" title="Recommencer cette ligne avec l'enregistrement"><svg viewBox="0 0 12 10"><path d="M5 1L1 5l4 4zM11 1L7 5l4 4z"/></svg></button>
         <button class="hintb" data-b="${bi}" data-l="${L.l}" aria-label="Ajouter un indice" title="Ajouter un indice : dévoile un kanji caché, au hasard">+</button></div>
         <div class="body"><div class="syls">${sylsHTML(bi, L)}<button class="again" data-b="${bi}" data-l="${L.l}" aria-label="Recommencer la ligne" title="Recommencer cette ligne au micro : ses kanji sont de nouveau cachés et la récitation reprend ici"><svg viewBox="0 0 16 16"><path d="M3 8a5 5 0 1 0 1.6-3.7"/><path d="M4.4 1.6v3h3"/></svg></button></div>
         <p class="m">${esc(L.m)}</p>
@@ -2840,28 +2847,49 @@ function ytInfo(){
   $('ytInfo').innerHTML = tr(k
     ? `<b>${k} repère${k > 1 ? 's' : ''}</b> posé${k > 1 ? 's' : ''}. `
     : 'Synchro estimée. ') +
-    tr('Pendant la vidéo, <b>clique sur chaque kanji au moment où il est chanté</b> (ou tape Espace) : le kanji attendu est entouré. Chaque ligne est sauvée à son dernier kanji, et synchro.json est mis à jour. Sous chaque ligne : réglage fin, et « Refaire la ligne » pour la recaler.');
+    tr('Pendant l\u0027enregistrement, <b>clique sur chaque kanji au moment où il est chanté</b> (ou tape Espace) : le kanji attendu est entouré. Chaque ligne est sauvée à son dernier kanji, et synchro.json est mis à jour. Sous chaque ligne : réglage fin, et « Refaire la ligne » pour la recaler.');
   $('ytSpeedShow').textContent = Math.round(ytSpeed * 100) + ' %';
 }
-function loadYT(){
-  if (window.YT && YT.Player) return Promise.resolve();
-  return new Promise(res => {
-    window.onYouTubeIframeAPIReady = res;
-    const s = document.createElement('script'); s.src = 'https://www.youtube.com/iframe_api'; document.head.appendChild(s);
-  });
+/* La bande-son (bande-son.mp3, à côté de la page) remplace le lecteur YouTube. Elle garde les mêmes
+   instants que la vidéo : synchro.json reste valable. Le petit objet ci-dessous offre au reste du code
+   les mêmes fonctions que le lecteur YouTube (getCurrentTime, seekTo, playVideo, pauseVideo…). */
+const AUDIO_SRC = 'bande-son.mp3';
+const AUDIO_OFFSET = 0;   // décalage (s) entre la bande-son et les instants de synchro.json, si besoin
+window.YT = { PlayerState: { UNSTARTED: -1, ENDED: 0, PLAYING: 1, PAUSED: 2, BUFFERING: 3, CUED: 5 } };
+function audioPlayer(src, ev){
+  const a = new Audio(src); a.preload = 'auto';
+  let state = YT.PlayerState.UNSTARTED;
+  const set = st => { if (st === state) return; state = st; ev.onStateChange?.({ data: st }); };
+  a.addEventListener('playing', () => set(YT.PlayerState.PLAYING));
+  a.addEventListener('waiting', () => { if (!a.paused) set(YT.PlayerState.BUFFERING); });
+  a.addEventListener('pause', () => { if (!a.ended) set(YT.PlayerState.PAUSED); });
+  a.addEventListener('ended', () => set(YT.PlayerState.ENDED));
+  a.addEventListener('ratechange', () => ev.onPlaybackRateChange?.({ data: a.playbackRate }));
+  const P = {
+    audio: a,
+    getCurrentTime: () => Math.max(0, a.currentTime - AUDIO_OFFSET),
+    seekTo: t => { a.currentTime = Math.max(0, t + AUDIO_OFFSET); },
+    playVideo: () => { a.play().catch(() => set(YT.PlayerState.PAUSED)); },
+    pauseVideo: () => a.pause(),
+    getPlayerState: () => state,
+    setPlaybackRate: r => { a.playbackRate = r; },
+    getPlaybackRate: () => a.playbackRate,
+    setVolume: v => { a.volume = Math.max(0, Math.min(1, v / 100)); },
+    getVolume: () => Math.round(a.volume * 100),
+  };
+  setTimeout(() => ev.onReady?.(), 0);
+  return P;
 }
+function loadYT(){ return Promise.resolve(); }
 async function openYT(){
   if (!listening) stopPlay();
   $('ytPanel').hidden = false; $('ytFloat').hidden = false; document.body.classList.add('ytopen');
   ytInfo(); tapFrom(null);
   await loadYT();
-  if (!ytPlayer) ytPlayer = new YT.Player('yt', {
-    videoId: YT_ID, playerVars: { playsinline: 1, rel: 0, disablekb: 1 },
-    events: { onReady: () => ytPlayer.setPlaybackRate(ytRate),
+  if (!ytPlayer) ytPlayer = audioPlayer(AUDIO_SRC, { onReady: () => ytPlayer.setPlaybackRate(ytRate),
               onPlaybackRateChange: e => { ytRate = e.data; store.set('ytrate', ytRate); showRate(); },
               onStateChange: e => { const on = e.data === YT.PlayerState.PLAYING; playLabel(on); if (on) startFollow(); else { stopFollow(); tapLast = null; tapShow(); }
-                                    if (e.data === YT.PlayerState.PAUSED || e.data === YT.PlayerState.ENDED) stopFade(); } }
-  });
+                                    if (e.data === YT.PlayerState.PAUSED || e.data === YT.PlayerState.ENDED) stopFade(); } });
 }
 function closeYT(){
   setSync(false); playLabel(false);
@@ -3099,7 +3127,7 @@ const setYtSize = compact => {
   store.set('ytcompact', compact);
 };
 // Téléphone : la vidéo est intégrée en haut de la page ; écran plus large : vignette flottante (le bouton ⤢ est retiré)
-{ const mq = matchMedia('(max-width:720px)'); setYtSize(!mq.matches); mq.addEventListener('change', () => setYtSize(!mq.matches)); }
+setYtSize(false);   // plus de vignette : la bande-son n'a pas d'image
 $('ytSize').onclick = () => setYtSize(!$('ytPanel').classList.contains('compact'));
 $('ytClose').onclick = closeYT;
 $('ytMark').onclick = markLine;
