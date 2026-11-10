@@ -1,0 +1,3050 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hannya Shingyō</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
+<style>
+/* Une colonne de récitation : barre d'outils collante, puis les lignes du sutra syllabe par syllabe */
+:root{
+  --bg:#eef0ec; --surface:#f8f9f6; --ink:#1d2128; --muted:#5d6560; --line:#d3d8d1;
+  --accent:#2c3f73; --accent-soft:#dfe4ef; --on-accent:#f8f9f6;
+  --you:#8a5a1c; --ok:#2f6b47; --ok-soft:#d9eadf; --warn:#a3482f; --skt:#7a4b8c; --skt-soft:#efe5f2; --kl:38%;
+  --f-display:"Shippori Mincho","Yu Mincho","Hiragino Mincho ProN",Georgia,serif;
+  --f-body:"Zen Kaku Gothic New","Yu Gothic","Segoe UI",system-ui,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#12151c; --surface:#1a1e27; --ink:#e6e4dc; --muted:#9aa09a; --line:#2d323d;
+    --accent:#c9a55a; --accent-soft:#29271f; --on-accent:#12151c;
+    --you:#8fa8e0; --ok:#7cc59a; --ok-soft:#1d3127; --warn:#e08a6e; --skt:#cfa8de; --skt-soft:#2b2332; --kl:74%;
+    color-scheme:dark;
+  }
+}
+*{box-sizing:border-box}
+[hidden]{display:none !important}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.55 var(--f-body)}
+.wrap{max-width:900px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 80px}
+header.top h1{font:700 clamp(28px,5vw,40px)/1.1 var(--f-display);margin:0;letter-spacing:.02em;text-wrap:balance}
+header.top .jp{font:500 18px var(--f-display);color:var(--muted);margin:.3em 0 0;letter-spacing:.15em}
+header.top{position:relative}
+/* ⚙ en haut à droite : ouvre les réglages */
+.gearbtn{position:absolute;top:0;right:0;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--ink);display:grid;place-items:center;cursor:pointer;padding:0}
+.gearbtn:hover,.gearbtn:focus-visible{border-color:var(--accent);color:var(--accent)}
+.si{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex:none}
+/* Logo DharmaGate : sceau de pierre usée portant 門 (la porte) ; les éclats prennent la couleur du fond */
+.brand{display:inline-flex;align-items:center;gap:10px;color:var(--ink);text-decoration:none}
+.brand .seal{width:40px;height:40px;flex:none}
+.brand .seal path{fill:#a3482f}
+.brand .seal .wear{fill:var(--bg)}
+.brand .seal text{fill:#f8f9f6;font-family:var(--f-display)}
+.brand span{font:700 20px/1 var(--f-display);letter-spacing:.01em}
+.brand:hover span,.brand:focus-visible span{color:var(--accent)}
+.brand.home{margin-bottom:12px}
+header.top p.lead{max-width:62ch;color:var(--muted);margin:.8em 0 0}
+
+.bar{position:sticky;top:0;z-index:5;background:var(--bg);padding-block:12px;margin-top:18px;border-bottom:1px solid var(--line)}
+.row{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center}
+.row + .row{margin-top:10px}
+button,select,input{font:inherit;color:inherit}
+.btn{display:inline-flex;align-items:center;gap:.5em;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:.45em 1em;cursor:pointer}
+.btn:hover{border-color:var(--accent)}
+.btn.ghost{background:transparent}
+.btn.ghost[aria-pressed="true"],.btn.ghost[aria-expanded="true"]{background:var(--accent-soft);border-color:var(--accent);font-weight:700}
+.btn.sq{padding:.35em .65em;min-width:2.2em;justify-content:center}
+.grow{flex:1}
+.btn.primary{background:var(--accent);color:var(--on-accent);border-color:var(--accent);font-weight:700}
+.btn.live{background:var(--warn);color:var(--on-accent);border-color:var(--warn)}
+.btn svg{width:1em;height:1em;fill:currentColor}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;background:var(--surface)}
+.seg button{border:0;background:transparent;padding:.4em .8em;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--accent-soft);color:var(--ink);font-weight:700}
+label.ctl{display:inline-flex;align-items:center;gap:.4em;color:var(--muted);font-size:.92em}
+label.ctl select{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:.25em .4em}
+.bpm{font-variant-numeric:tabular-nums;min-width:4.5ch;color:var(--ink)}
+.beat{width:12px;height:12px;border-radius:50%;background:var(--line);transition:background .25s}
+.beat.on{background:var(--accent);transition:none}
+
+.yt{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:16px 20px;margin-top:18px;align-items:start}
+@media (max-width:720px){.yt{grid-template-columns:minmax(0,1fr)}}
+.ytbox{position:relative;aspect-ratio:16/9;max-width:100%;background:var(--surface);border-radius:8px;overflow:hidden}
+.ytbox iframe,#yt{position:absolute;inset:0;width:100%;height:100%;border:0}
+.ytside{min-width:0}
+body:not(.syncmode) .ytside,body:not(.syncmode) .synconly{display:none}
+body:not(.syncmode) .yt:not(.compact){grid-template-columns:minmax(0,1fr);max-width:640px}
+body:not(.syncmode) .yt.compact{margin:0}
+/* Menu flottant de l'enregistrement : en bas à gauche, la vignette vidéo étant en bas à droite */
+.ytfloat{position:fixed;left:16px;bottom:16px;right:236px;z-index:21;display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;padding:10px 12px;background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:0 6px 20px rgba(0,0,0,.18)}
+.ytfloat .fgroup{display:inline-flex;align-items:center;gap:6px}
+.ytfloat .flabel{color:var(--muted);font-size:.9em}
+.ytfloat .btn{padding:.35em .8em}
+.ytfloat .btn.sq{padding:.35em .65em}
+.ytfloat .fgroup{gap:4px}
+@media (max-width:720px){.ytfloat{right:16px;bottom:232px}}
+body.ytopen .wrap,body.pfl .wrap{padding-bottom:120px}
+/* barres flottantes de Réciter et d'Apprendre, comme celle de l'enregistrement */
+.micbar.pfloat{position:fixed;left:16px;right:16px;bottom:16px;z-index:21;max-width:868px;margin:0 auto;justify-content:center;gap:8px 16px;padding:10px 14px;background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:0 6px 20px rgba(0,0,0,.18)}
+.pfloat label.ctl{color:var(--ink);font-size:1em;gap:.6em}
+.pfloat input[type=range]{width:min(320px,48vw)}
+.kseg{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:4px}
+.kseg .flabel{color:var(--muted);font-size:.9em;margin-right:4px}
+.kseg button{border:1px solid var(--line);border-radius:999px;background:none;color:var(--ink);font:inherit;font-size:.9em;padding:.35em .85em;min-height:36px;cursor:pointer}
+.kseg button:hover{border-color:var(--accent)}
+.kseg button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent);font-weight:700}
+body:not(.p-ecouter) .ytfloat{display:none !important}
+/* Vidéo réduite : petite vignette fixe dans le coin (le lecteur YouTube doit rester visible, 200 × 200 px au moins) */
+.yt.compact{grid-template-columns:minmax(0,1fr)}
+.yt.compact .ytbox{position:fixed;right:16px;bottom:16px;width:200px;height:200px;aspect-ratio:auto;z-index:20;box-shadow:0 6px 20px rgba(0,0,0,.3)}
+.ytside h2{font:700 19px var(--f-display);margin:0 0 .4em}
+.ytinfo{margin:0 0 .8em;color:var(--muted);max-width:60ch}
+.ytnote{margin:.8em 0 0;color:var(--muted);font-size:.88em;max-width:60ch}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin-top:18px}
+.tabs button{border:1px solid var(--line);background:transparent;border-radius:6px;padding:.35em .7em;cursor:pointer;font-size:.92em}
+.tabs button[aria-selected="true"]{background:var(--surface);border-color:var(--accent);font-weight:700}
+.tabs button .dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--ok);margin-left:.4em;vertical-align:middle}
+
+.status{margin-top:8px;font-size:.9em;color:var(--muted)}
+.status:empty{display:none}
+/* Pratique : trois choix, puis un seul gros bouton qui lance celle qui est choisie */
+.practice{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:stretch}
+.pseg{flex:2 1 320px;display:flex;gap:4px;padding:4px;background:var(--surface);border:1px solid var(--line);border-radius:14px}
+.pseg button{flex:1;border:0;border-radius:10px;background:none;color:var(--ink);font:inherit;font-size:.92em;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:8px 4px;min-height:58px;cursor:pointer}
+.pseg button svg{width:17px;height:17px;fill:currentColor}
+.pseg button:hover{background:var(--accent-soft)}
+.pseg button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent);font-weight:700}
+.go{flex:1 1 180px;justify-content:center;min-height:66px;border-radius:14px;font-size:1.08em}
+/* Mode dojo : à côté du gros bouton, avec une loupe */
+.dojogo{flex:0 0 auto;justify-content:center;min-height:66px;border-radius:14px;padding:.45em 1.1em;font-size:1em}
+.btn.dojogo .si{width:20px;height:20px;fill:none;color:var(--accent)}
+.go .goic{display:grid;place-items:center}
+.go .goic svg{width:1.1em;height:1.1em}
+.pdesc{margin:8px 2px 0;color:var(--muted);font-size:.9em}
+/* Réglages : page plein écran, listes groupées (comme une appli de téléphone) */
+.settings{position:fixed;inset:0;z-index:15;background:var(--bg);overflow-y:auto;overscroll-behavior:contain}
+.settings .shead{position:sticky;top:0;z-index:1;background:var(--bg);display:flex;align-items:center;gap:6px;padding:10px max(12px,env(safe-area-inset-left,0px));border-bottom:1px solid var(--line)}
+.settings .shead b{font:700 1.25em var(--f-body)}
+.sback{width:44px;height:44px;border-radius:50%;border:0;background:transparent;color:var(--ink);display:grid;place-items:center;cursor:pointer;padding:0}
+.sback:hover,.sback:focus-visible{color:var(--accent)}
+.sbody{max-width:640px;margin:0 auto;padding:4px 16px 48px}
+.sgroup{margin-top:20px}
+.sgroup .sh{display:block;padding:0 14px 6px;font:700 .75em var(--f-body);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.scard{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.sitem{display:flex;align-items:center;gap:12px;width:100%;min-height:52px;padding:8px 14px;border:0;border-top:1px solid var(--line);background:none;color:var(--ink);font:inherit;text-align:left;cursor:pointer}
+.scard > .sitem:first-child{border-top:0}
+.sitem > span{flex:1}
+.sitem > em{font-style:normal;color:var(--muted);font-size:.9em;text-align:right}
+button.sitem:hover{background:var(--accent-soft)}
+.sitem .si{color:var(--accent)}
+.sitem select{max-width:58%;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:.35em .5em;font:inherit;font-size:.92em}
+input.sw{appearance:none;-webkit-appearance:none;width:46px;height:28px;border-radius:14px;background:var(--line);position:relative;flex:none;cursor:pointer;margin:0;transition:background .15s}
+input.sw::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:var(--surface);box-shadow:0 1px 2px rgba(0,0,0,.25);transition:left .15s}
+input.sw:checked{background:var(--accent)}
+input.sw:checked::after{left:21px;background:var(--on-accent)}
+input.sw:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+body.setopen{overflow:hidden}
+.status b{color:var(--ink)}
+.heard{font-family:var(--f-display);color:var(--ink);letter-spacing:.05em}
+.notice{margin-top:12px;padding:.6em .9em;border-left:3px solid var(--warn);background:var(--surface);font-size:.9em;color:var(--muted)}
+.micbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;margin-top:10px}
+.micbar[hidden]{display:none}
+.srlog{margin-top:10px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--surface);font-size:.85em}
+.srlog[hidden]{display:none}
+.srhead{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px}
+.srdict,.calinfo{color:var(--muted)}
+#srlist{margin:8px 0 0;padding-left:1.8em;max-height:16em;overflow:auto;display:grid;gap:5px;color:var(--muted)}
+#srlist .empty{list-style:none;margin-left:-1.8em}
+#srlist .alt{font-family:var(--f-display);color:var(--ink);letter-spacing:.04em}
+#srlist .alt.best{font-weight:700;text-decoration:underline;text-underline-offset:3px}
+#srlist .adv{color:var(--ok);font-weight:700}
+#srlist .none{color:var(--warn)}
+.meter{width:120px;height:8px;border-radius:4px;background:var(--line);overflow:hidden}
+.meter i{display:block;height:100%;width:0;background:var(--ok);transition:width .08s linear}
+
+section.block{margin-top:28px}
+.bhead{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:8px;border-bottom:1px solid var(--line);padding-bottom:6px}
+.bhead h2{font:700 21px var(--f-display);margin:0}
+.bhead h2 .num{color:var(--accent);margin-right:.35em}
+.bbtns{display:flex;flex-wrap:wrap;gap:6px}
+.known{border:1px solid var(--line);background:transparent;border-radius:999px;padding:.2em .8em;font-size:.85em;cursor:pointer;color:var(--muted)}
+.known.on{border-color:var(--ok);color:var(--ok);font-weight:700}
+
+.line{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 10px;padding:10px 8px;border-radius:8px;margin-top:4px}
+.line.target{background:var(--accent-soft)}
+/* les boutons de gauche sont centrés sur la rangée de kanji (le sens et la synchro passent dessous) */
+.line .body{display:contents}
+.line .body > *{grid-column:2;min-width:0}
+.line .syls{grid-row:1}
+.line .lbtns{grid-column:1;grid-row:1;align-self:center;position:relative;margin-top:14px}   /* 14 px : la place des mots sanskrits au-dessus des kanji (.syls, 16 px en haut, 2 en bas) */
+.line .lbtns .hintb{position:absolute;top:100%;margin-top:4px}
+.say{width:32px;height:32px;border-radius:50%;border:1px solid var(--line);background:var(--surface);cursor:pointer;display:grid;place-items:center}
+.say svg{width:12px;height:12px;fill:currentColor}
+.line.done .say{border-color:var(--ok);color:var(--ok)}
+.line.review .say{border-color:var(--warn);color:var(--warn)}
+.lbtns{display:flex;flex-direction:column;align-items:center;gap:4px}
+.ygo{border:0;background:transparent;border-radius:6px;cursor:pointer;display:grid;place-items:center;width:26px;height:20px;padding:0;color:var(--muted);opacity:.45}
+.line:hover .ygo,.ygo:focus-visible{opacity:1}
+.ygo svg{width:12px;height:10px;fill:currentColor}
+.ygo:hover{color:var(--accent);opacity:1}
+.hintb{border:1px solid var(--line);background:var(--surface);border-radius:50%;cursor:pointer;width:22px;height:22px;padding:0;display:grid;place-items:center;font:700 14px/1 var(--f-body);color:var(--muted)}
+.hintb:hover,.hintb:focus-visible{border-color:var(--accent);color:var(--accent)}
+.line:not(:has(.syl.masked:not(.peek):not(.ok))) .hintb{visibility:hidden}
+
+.syls{display:flex;flex-wrap:wrap;gap:18px 4px;padding:16px 2px 2px;border-radius:8px}
+/* page (hors dojo) : kanji, kana, rōmaji et mot à mot 25 % plus grands */
+.line .syls{font-size:1.25em}
+/* fin de ligne : « Recommencer », juste après le dernier kanji */
+.again{flex:none;align-self:center;margin-left:4px;border:1px solid var(--line);background:var(--surface);border-radius:50%;cursor:pointer;width:26px;height:26px;padding:0;
+  display:grid;place-items:center;color:var(--muted);opacity:.45}
+.again svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.line:hover .again,.line.target .again,.line.done .again,.line.review .again,.again:focus-visible{opacity:1}
+.again:hover{border-color:var(--accent);color:var(--accent)}
+/* Boutons de ligne selon le mode (page et dojo) :
+   Écouter = vidéo ouverte sans récitation : seulement « revenir au début de la ligne » (.ygo) ;
+   Réciter (micro, cloches, ou rien d'ouvert) : écouter la ligne (.say), indice (.hintb), Recommencer (.again) */
+body.p-ecouter :is(.say,.hintb,.again){display:none}
+body:not(.p-ecouter) .ygo{display:none}
+.dojo .drow{flex:1;min-height:0;display:flex;align-items:center;gap:2vw;position:relative}
+.dojo .drow .dline{align-self:stretch}
+/* à gauche de la ligne : écouter (Réciter) ou revenir au début (Écouter) ; à droite : Recommencer */
+.dojo .dside{flex:none;width:52px;display:flex;flex-direction:column;align-items:center;gap:10px}
+.dojo .dside .say,.dojo .dside .again{width:44px;height:44px;margin:0;opacity:1}
+.dojo .dside .say svg{width:16px;height:16px}
+.dojo .dside .again svg{width:20px;height:20px}
+.dojo .dside .ygo{opacity:1;width:44px;height:36px}
+.dojo .dside .ygo svg{width:20px;height:16px}
+/* « + » : sous le prochain kanji encore caché */
+.dojo .dplus{position:absolute;z-index:1;transform:translateX(-50%);width:30px;height:30px}
+.line.you .syls{outline:2px dashed var(--you);outline-offset:2px}
+.line.you .syls::after{content:"à toi";align-self:center;font-size:.8em;color:var(--you);margin-left:6px;font-weight:700}
+.syl{position:relative;display:inline-flex;flex-direction:column;align-items:center;min-width:2.7em;padding:.3em .45em;border:1px solid transparent;border-radius:6px;background:transparent;cursor:pointer;line-height:1.25}
+.syl:hover{border-color:var(--line)}
+.syl .c{font:500 1em var(--f-display);color:var(--ink)}
+.syl .k{font:500 .72em var(--f-display);color:var(--muted)}
+.syl .r{font:700 1.2em var(--f-display);color:var(--ink)}
+.syl .g{font-size:.72em;color:var(--accent);line-height:1.15;max-width:7em;text-align:center;margin-bottom:.15em}
+.syl .g.cont{color:var(--muted)}
+.syl.now .g{color:var(--on-accent)}
+.nojp .syl .c,.nojp .syl .k{display:none}
+.nogloss .syl .g{display:none}
+.syl.masked:not(.peek):not(.ok){border:1px dashed var(--line)}
+.syl.masked:not(.peek):not(.ok) > span{visibility:hidden}
+.syl.masked:not(.peek):not(.ok)::after{content:"";position:absolute;left:50%;top:50%;width:6px;height:6px;border-radius:50%;background:var(--muted);transform:translate(-50%,-50%)}
+/* Mot sanskrit : un cadre en pointillés qui court sur tous ses kanji */
+.syl.skt{border-style:dotted;border-color:var(--skt);border-width:1.5px 0;border-radius:0}
+.syl.skt:not(.skt-e){margin-right:-4px}
+.syl.skt-s{border-left-width:1.5px;border-top-left-radius:6px;border-bottom-left-radius:6px}
+.syl.skt-e{border-right-width:1.5px;border-top-right-radius:6px;border-bottom-right-radius:6px}
+.syl .skt-l{position:absolute;top:-16px;left:3px;font:italic 500 11px var(--f-body);color:var(--skt);white-space:nowrap}
+.noskt .syl.skt{border-color:transparent}
+.noskt .syl .skt-l{display:none}
+/* Kanji qui reviennent : une teinte par kanji ; survol = toutes ses occurrences */
+.syl[data-rep] .c,.syl[data-rep] .k,.syl[data-rep] .r{color:hsl(var(--h) 62% var(--kl))}
+.syl[data-rep] .c{font-weight:700}
+.syl.same{outline:2px solid hsl(var(--h) 62% var(--kl));outline-offset:1px}
+.norep .syl[data-rep] .c,.norep .syl[data-rep] .r{color:var(--ink)}
+.norep .syl[data-rep] .k{color:var(--muted)}
+.norep .syl[data-rep] .c{font-weight:500}
+.norep .syl.same{outline:0}
+.ytline{display:none}
+body.syncmode .ytline{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:6px;font-size:.85em}
+.ytline .ytt{font-variant-numeric:tabular-nums;color:var(--muted);min-width:7ch}
+.ytline .ytt.set{color:var(--you);font-weight:700}
+.ytn{border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:.15em .55em;cursor:pointer;font:inherit;color:inherit}
+.ytn:hover{border-color:var(--accent)}
+.ytn.ytsave.saved{background:var(--you);border-color:var(--you);color:var(--bg);font-weight:700}
+.line.locked .ytt::after{content:' 🔒'}
+body.syncmode .syl.anchor{box-shadow:inset 0 -3px 0 var(--you)}
+body.syncmode .syl.tapnext{outline:2px dashed var(--accent);outline-offset:2px}
+#fRecInfo.hit{animation:taphit .25s ease-out}
+@keyframes taphit{from{color:var(--accent);transform:scale(1.08)}to{transform:none}}
+#fRecInfo{display:inline-block;font-variant-numeric:tabular-nums}
+.syl.ok{background:var(--ok-soft);border-color:var(--ok)}
+.syl.miss{border-color:var(--warn)}
+.syl.cur{outline:2px solid var(--accent);outline-offset:2px}
+/* sous le kanji que « ma voix » vient de juger : le recalibrer si la reconnaissance s'est trompée */
+.fixbtn{position:absolute;z-index:30;transform:translateX(-50%);margin-top:4px;padding:.25em .7em;font:inherit;font-size:.8rem;white-space:nowrap;
+  color:var(--accent);background:var(--surface);border:1px solid var(--accent);border-radius:999px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.fixbtn:hover{background:var(--accent);color:var(--surface)}
+.syl.now{background:var(--accent);border-color:var(--accent)}
+.syl.now > span{color:var(--on-accent)}
+.grp{display:inline-flex;gap:4px;align-items:stretch}
+.grp.multi{box-shadow:inset 0 -3px 0 var(--accent);border-radius:0 0 6px 6px;padding-bottom:3px}
+.join{display:none}
+.editbeats .join{display:inline-grid;place-items:center;align-self:center;width:20px;height:20px;padding:0;border:1px solid var(--line);border-radius:50%;background:var(--surface);color:var(--muted);cursor:pointer;font-size:13px;line-height:1}
+.editbeats .join::before{content:"+"}
+.editbeats .join.on{border-color:var(--accent);color:var(--accent)}
+.editbeats .join.on::before{content:"×"}
+.cue{align-self:center;font:500 .9em var(--f-display);color:var(--warn);letter-spacing:.1em;padding:0 4px}
+.cue.fermata{display:inline-grid;place-items:center;padding:0 6px;cursor:help}
+.cue.fermata svg{width:2.9em;height:1.95em}
+.cue.fermata path{fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round}
+.cue.fermata circle{fill:currentColor}
+.syl.bell::before,.syl.ring::before{position:absolute;top:1px;left:3px;font-size:10px;line-height:1;color:var(--warn)}
+.syl.bell::before{content:"●"}
+.syl.ring::before{content:"○"}
+.link{align-self:flex-end;font-size:20px;line-height:1;color:var(--accent);padding:0 2px 4px;cursor:default;user-select:none}
+.editbeats .link{display:none}
+.m{margin:.35em 0 0 2px;color:var(--muted);font-size:.93em;max-width:65ch}
+.nomeaning .m{display:none}
+footer{margin-top:40px;color:var(--muted);font-size:.85em;text-align:center}
+footer .edition{margin:1.2em 0 0;padding-top:.8em;border-top:1px solid var(--line)}
+@media (prefers-reduced-motion:reduce){.beat{transition:none}}
+/* Révisions du jour : compteurs, bouton, progression par partie ; petite barre de progression sous chaque onglet */
+.review{margin-top:16px;padding:10px 14px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+.rvrow{display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px}
+.rvh{font:700 1em var(--f-display)}
+.rvs{color:var(--muted);font-size:.92em}
+.rvs b{color:var(--ink);font-variant-numeric:tabular-nums}
+.rvs.due b{color:var(--warn)}
+.rvnote{color:var(--muted);font-size:.9em}
+.rvprog{display:grid;grid-template-columns:minmax(0,max-content) minmax(80px,1fr) auto;gap:6px 12px;align-items:center;margin-top:10px;font-size:.9em}
+.pbar{height:8px;border-radius:4px;background:linear-gradient(to right,var(--ok) 0 var(--pa),var(--you) var(--pa) var(--pb),var(--line) var(--pb))}
+.rvprog .pn{color:var(--muted);font-variant-numeric:tabular-nums}
+.tabs button .tprog{display:block;height:3px;margin-top:4px;border-radius:2px;background:linear-gradient(to right,var(--ok) 0 var(--pa),var(--you) var(--pa) var(--pb),var(--line) var(--pb))}
+/* Mode dojo : une ligne en très grand, plein écran ; sous la vignette vidéo (20) pour qu'elle reste visible */
+.dojo{position:fixed;inset:0;z-index:19;background:var(--bg);display:flex;flex-direction:column;gap:12px;padding:20px max(16px,4vw)}
+.dojo .dhead,.dojo .dfoot{display:flex;align-items:center;gap:12px;color:var(--muted)}
+.dojo .dfoot{justify-content:center}
+.dojo .dline{flex:1;display:flex;flex-wrap:wrap;align-content:center;justify-content:center;gap:3vh .8vw;font-size:clamp(30px,7vw,112px);cursor:pointer;min-height:0}
+.dojo .grp{gap:.5vw}
+.dojo .syl{pointer-events:none;min-width:1.3em;padding:.08em .14em;border-width:2px}
+.dojo .syl .c{font-size:1em}
+.dojo .syl .k{font-size:.26em}
+.dojo .syl .r{font-size:.4em}
+.dojo .syl .g,.dojo .skt-l,.dojo .join,.dojo .link{display:none}
+.dojo .cue{font-size:.3em;align-self:center;color:var(--muted)}
+.dojo .syl.masked:not(.peek):not(.ok)::after{width:.14em;height:.14em}
+.dojo .dmean{margin:0;text-align:center;font-size:clamp(18px,2.6vw,32px);color:var(--ink);opacity:.85}
+/* Traduction (bouton du dojo) : le sens de la ligne et le mot à mot sous chaque kanji */
+.dojo.tr .syl .g{display:block;font-size:.2em;margin-bottom:.25em;max-width:none;white-space:nowrap}
+.dojo:not(.tr) .dmean{display:none}
+
+.calo .cbig{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1vh;min-height:0}
+.calo .cc{font-family:var(--f-display);font-size:clamp(110px,34vh,380px);line-height:1;color:var(--ink)}
+.calo .cr{font-size:clamp(30px,7vh,76px);font-weight:700;letter-spacing:.06em;color:var(--ink)}
+.calo .ck{font-size:clamp(22px,4.5vh,48px);color:var(--muted)}
+.calo .cask{margin:0;text-align:center;font-size:clamp(18px,3.2vh,32px);color:var(--ink)}
+.calo .cdots{display:flex;justify-content:center;gap:14px}
+.calo .cdots i{width:20px;height:20px;border-radius:50%;border:2px solid var(--line)}
+.calo .cdots i.cur{border-color:var(--ink)}
+.calo .cdots i.ok{background:var(--ok);border-color:var(--ok)}
+.calo .cdots i.new{background:var(--warn);border-color:var(--warn)}
+.calo .cheard{margin:0;text-align:center;min-height:1.6em;color:var(--muted);font-size:clamp(16px,2.6vh,26px)}
+.dojo .dhint{margin:0;text-align:center;font-size:.8em;color:var(--muted)}
+/* Fond : Kannon aux mille bras en filigrane, fixe contre le bord droit ; le dessin sert de masque, la couleur suit le thème */
+.kbg{position:fixed;inset:0;z-index:0;pointer-events:none;background:var(--ink);opacity:.07;
+  -webkit-mask:url(kannon.webp) right 24px center/auto 94vh no-repeat;mask:url(kannon.webp) right 24px center/auto 94vh no-repeat}
+.wrap{position:relative;z-index:1}
+</style>
+</head>
+<body>
+<div class="kbg" aria-hidden="true"></div>
+<div class="wrap">
+  <header class="top">
+    <a class="brand home" href="./" title="Revenir à la page d'accueil" aria-label="DharmaGate, accueil"><svg class="seal" viewBox="0 0 200 200" aria-hidden="true"><path d="M 16 12 L 40 8 L 46 14 L 70 7 L 104 12 L 132 6 L 150 10 L 176 8 L 192 16 L 190 40 L 195 64 L 188 98 L 194 128 L 190 150 L 196 172 L 186 193 L 160 188 L 138 194 L 110 189 L 84 195 L 58 188 L 34 194 L 10 190 L 13 164 L 6 138 L 12 110 L 7 82 L 14 56 L 8 32 Z"/><g class="wear"><circle cx="14" cy="40" r="5"/><circle cx="60" cy="196" r="6"/><circle cx="196" cy="88" r="5"/><circle cx="190" cy="180" r="4"/></g><text x="100" y="106" text-anchor="middle" dominant-baseline="central" font-weight="700" font-size="128">門</text></svg><span aria-hidden="true">DharmaGate</span></a>
+    <button class="gearbtn" id="setBtn" aria-expanded="false" aria-controls="settings" aria-label="Réglages" title="Réglages"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
+    <h1>Maka Hannya Haramita Shingyō</h1>
+    <p class="jp">摩訶般若波羅蜜多心経</p>
+    <p class="lead">Le Sutra du cœur, lecture Sōtō. Écoute l'enregistrement en suivant le texte, apprends-le kanji par kanji au micro, puis récite-le au rythme du mokugyo et des cloches.</p>
+  </header>
+
+  <div class="bar">
+    <!-- la pratique choisie, puis un seul bouton pour la lancer ; les boutons d'origine (cachés) gardent leur code -->
+    <div class="practice">
+      <div class="pseg" role="group" aria-label="Pratique">
+        <button data-p="ecouter" aria-pressed="true"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M2 1l7 4-7 4z"/></svg><span>Écouter</span></button>
+        <button data-p="micro" aria-pressed="false" title="Au micro : la page t'écoute, kanji par kanji"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M5 0a1.6 1.6 0 0 1 1.6 1.6v3a1.6 1.6 0 0 1-3.2 0v-3A1.6 1.6 0 0 1 5 0zM2 4.4h.8a2.2 2.2 0 0 0 4.4 0H8a3 3 0 0 1-2.6 3V9h-.8V7.4A3 3 0 0 1 2 4.4z"/></svg><span>Apprendre</span></button>
+        <button data-p="cloches" aria-pressed="false"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M5 .6a.6.6 0 0 1 .6.6v.5a3 3 0 0 1 2.4 2.9v2.2l.9 1.1v.5H1.1v-.5L2 6.8V4.6a3 3 0 0 1 2.4-2.9v-.5A.6.6 0 0 1 5 .6zM3.9 9h2.2a1.1 1.1 0 0 1-2.2 0z"/></svg><span>Réciter</span></button>
+      </div>
+      <button class="btn primary go" id="go"><span class="goic"></span><span id="goTxt">Écouter</span></button>
+      <button class="btn dojogo" id="dojoBtn" title="Une ligne à la fois, en très grand, lisible de loin"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4.2-4.2"/></svg><span>Mode dojo</span></button>
+    </div>
+    <p class="pdesc" id="pdesc"></p>
+    <div hidden><button class="btn primary" id="play" title="Écouter l'enregistrement (Espace)"><svg viewBox="0 0 10 10"><path d="M2 1l7 4-7 4z"/></svg><span>Écouter</span></button><button class="btn" id="mic"><svg viewBox="0 0 10 10"><path d="M5 0a1.6 1.6 0 0 1 1.6 1.6v3a1.6 1.6 0 0 1-3.2 0v-3A1.6 1.6 0 0 1 5 0zM2 4.4h.8a2.2 2.2 0 0 0 4.4 0H8a3 3 0 0 1-2.6 3V9h-.8V7.4A3 3 0 0 1 2 4.4z"/></svg><span>Réciter au micro</span></button><button class="btn" id="recite" title="Réciter à voix haute, sans micro, au rythme du mokugyo et des cloches"><svg viewBox="0 0 10 10"><path d="M5 .6a.6.6 0 0 1 .6.6v.5a3 3 0 0 1 2.4 2.9v2.2l.9 1.1v.5H1.1v-.5L2 6.8V4.6a3 3 0 0 1 2.4-2.9v-.5A.6.6 0 0 1 5 .6zM3.9 9h2.2a1.1 1.1 0 0 1-2.2 0z"/></svg><span>Réciter avec les cloches</span></button></div>
+    <!-- récitation sans micro : ouverture au keisu, mokugyo à chaque temps, cloches aux endroits prévus -->
+    <!-- barres flottantes du bas : celle de la pratique choisie (Réciter : le tempo ; Apprendre : les aides du micro) -->
+    <div class="micbar pfloat" id="recbar" hidden role="toolbar" aria-label="Réciter">
+      <label class="ctl" for="tempo">Tempo <input type="range" id="tempo" min="50" max="160" value="104"> <span class="bpm" id="bpm">104</span></label>
+      <span class="beat" id="beat" aria-hidden="true"></span>
+      <div class="kseg" role="group" aria-label="Kanji affichés"><span class="flabel">Kanji</span><button data-lv="0">Tous visibles</button><button data-lv="1">1 sur 2</button><button data-lv="2">Le début</button><button data-lv="3">Tous cachés</button><button data-lv="4" title="Un quart des kanji cachés, tirés au sort à chaque clic">Hasard facile</button><button data-lv="5" title="La moitié des kanji cachés, tirés au sort à chaque clic">Hasard moyen</button><button data-lv="6" title="Trois quarts des kanji cachés, tirés au sort à chaque clic">Hasard difficile</button></div>
+    </div>
+    <div class="micbar pfloat" id="micbar" hidden role="toolbar" aria-label="Apprendre">
+      <button class="btn ghost" id="hint" title="Dévoile un kanji de plus">Indice</button>
+      <button class="btn ghost" id="skip">Passer la ligne</button>
+      <button class="btn ghost" id="offline" hidden>Installer la reconnaissance hors ligne</button>
+      <button class="btn ghost" id="logBtn" aria-expanded="false" title="Montre ce que la reconnaissance entend, à chaque essai">Journal</button>
+    </div>
+    <!-- journal : les propositions de la reconnaissance, leur lecture en kana, celle retenue et l'avance du curseur -->
+    <div class="srlog" id="srlog" hidden>
+      <div class="srhead"><b>Journal de la reconnaissance</b> <span class="srdict" id="srdict"></span><span class="grow"></span>
+        <button class="btn ghost" id="logCopy">Copier le journal</button> <button class="btn ghost" id="logClear">Vider</button></div>
+      <ol id="srlist"></ol>
+    </div>
+    <div class="settings" id="settings" hidden role="dialog" aria-modal="true" aria-labelledby="setTitle">
+      <div class="shead"><button class="sback" id="setClose" aria-label="Fermer les réglages"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button><b id="setTitle">Réglages</b></div>
+      <div class="sbody">
+        <div class="sgroup"><span class="sh">Ma voix</span><div class="scard">
+          <button class="sitem" id="calib" title="Un kanji à la fois, en grand : l'exemple, puis toi, 5 fois. La page garde l'empreinte de ta voix."><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h2M7 8v8M11 5v14M15 8v8M19 11v2"/></svg><span>Calibrer ma voix</span><em class="calinfo" id="calInfo"></em></button>
+          <label class="sitem" for="engine"><span>Reconnaissance</span><select id="engine"><option value="voix">ma voix (empreintes)</option><option value="vosk">hors ligne</option><option value="google">en ligne</option></select></label>
+          <button class="sitem" id="calClear" hidden><span>Effacer le calibrage</span></button>
+        </div></div>
+        <div class="sgroup"><span class="sh">Afficher</span><div class="scard">
+          <label class="sitem" for="meaning"><span>Sens</span><input class="sw" type="checkbox" id="meaning" checked></label>
+          <label class="sitem" for="gloss"><span>Mot à mot</span><input class="sw" type="checkbox" id="gloss" checked></label>
+          <label class="sitem" for="jp"><span>Kanji et kana</span><input class="sw" type="checkbox" id="jp" checked></label>
+          <label class="sitem" for="rep"><span>Kanji répétés</span><input class="sw" type="checkbox" id="rep" checked></label>
+          <label class="sitem" for="skt"><span>Mots sanskrits</span><input class="sw" type="checkbox" id="skt" checked></label>
+        </div></div>
+        <div class="sgroup"><span class="sh">Mémoriser</span><div class="scard">
+          <label class="sitem" for="level"><span>Cacher</span><select id="level">
+            <option value="0">rien</option>
+            <option value="1">une syllabe sur deux</option>
+            <option value="2">tout sauf le début</option>
+            <option value="3">tout</option>
+            <option value="4">au hasard, facile</option>
+            <option value="5">au hasard, moyen</option>
+            <option value="6">au hasard, difficile</option>
+          </select></label>
+          <button class="sitem" id="reroll" hidden><span>Nouveau tirage</span></button>
+        </div></div>
+        <div class="sgroup"><span class="sh">Réciter</span><div class="scard">
+          <label class="sitem" for="voix" title="La voix qui dit les syllabes et les lignes (écoute, écho, avec la voix, exemples du calibrage)"><span>Voix des récitations</span><select id="voix"><option value="m">masculine (Keita)</option><option value="f">féminine (Nanami)</option></select></label>
+          <label class="sitem" for="lire" title="Au micro : la voix lit chaque ligne avant que tu la récites ; à la fin, elle la relit, dit « Répète », te laisse le temps de la répéter, puis passe à la ligne suivante"><span>Voix sur chaque ligne</span><select id="lire"><option value="both">avant et après</option><option value="before">avant seulement</option><option value="after">après seulement</option><option value="none">non</option></select></label>
+          <label class="sitem" for="exig" title="Souple : la reconnaissance tolère l'accent (sons proches acceptés). Précise : chaque syllabe doit être bien reconnue."><span>Exigence</span><select id="exig"><option value="souple">souple (tolère l'accent)</option><option value="precis">précise</option></select></label>
+          <label class="sitem" for="span"><span>Temps réunis</span><select id="span"><option value="aere">aérés (1,75 temps)</option><option value="serre">serrés (1 temps)</option></select></label>
+          <label class="sitem" for="voice" id="voiceWrap" hidden><span>Voix</span><select id="voice"></select></label>
+          <label class="sitem" for="editbeats"><span>Régler les temps</span><input class="sw" type="checkbox" id="editbeats"></label>
+          <button class="sitem" id="resetbeats" hidden><span>Revenir aux temps du dojo</span></button>
+        </div></div>
+        <div class="sgroup"><span class="sh">Général</span><div class="scard">
+          <label class="sitem" for="lang"><span>Langue</span><select id="lang"><option value="fr">Français</option><option value="en">English</option><option value="it">Italiano</option><option value="es">Español</option><option value="de">Deutsch</option></select></label>
+          <button class="sitem" id="syncBtn" aria-pressed="false" title="Caler le texte sur l'enregistrement"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 0 1 14-5l2 2M20 12a8 8 0 0 1-14 5l-2-2M20 4v5h-5M4 20v-5h5"/></svg><span>Synchroniser</span><em>administrateur</em></button>
+        </div></div>
+      </div>
+    </div>
+    <div class="status" id="status"></div>
+    <div id="notices"></div>
+  </div>
+
+  <section class="yt compact" id="ytPanel" hidden aria-label="Synchroniser avec l'enregistrement">
+    <div class="ytbox"><div id="yt"></div></div>
+    <div class="ytside">
+      <h2>Synchroniser</h2>
+      <p class="ytinfo" id="ytInfo"></p>
+      <div class="row">
+        <button class="btn ghost" id="syncSave" title="Sauve toutes les lignes et écrit synchro.json à côté de la page (il est aussi mis à jour à chaque fin de ligne)">Sauver la synchro dans un fichier</button>
+        <button class="btn ghost" id="ytClear">Effacer tous les repères</button>
+        <span class="ctl" title="Ne sert que pour les lignes pas encore synchronisées (≈)">Débit du texte estimé</span>
+        <button class="btn ghost" id="ytSlower" title="Le surlignage avance trop vite">−</button>
+        <span class="bpm" id="ytSpeedShow">100 %</span>
+        <button class="btn ghost" id="ytFaster" title="Le surlignage avance trop lentement">+</button>
+      </div>
+      <button class="btn" id="ytMark" hidden>Ligne suivante</button>
+    </div>
+  </section>
+
+  <div class="ytfloat" id="ytFloat" hidden role="toolbar" aria-label="Commandes de l'enregistrement">
+    <button class="btn primary" id="fPlay">Lecture</button>
+    <span class="fgroup" title="Vitesse de l'enregistrement ; le défilement des kanji suit"><span class="flabel">Vitesse</span><button class="btn ghost sq" data-rate="-0.05" aria-label="Plus lent">−</button><button class="btn ghost ratev" data-rate="reset" title="Revenir à la vitesse normale">×1</button><button class="btn ghost sq" data-rate="0.05" aria-label="Plus vite">+</button></span>
+    <span class="fgroup"><span class="flabel">Reprendre</span><button class="btn ghost" id="fLine">la ligne</button><button class="btn ghost" id="fBlock">la section</button><button class="btn ghost" id="fAll">le début</button></span>
+    <span class="fgroup synconly"><button class="btn ghost" id="fSave" title="Sauve toutes les lignes et écrit la synchro dans synchro.json">Sauver toute la synchro</button><span class="flabel" id="fRecInfo"></span></span>
+    <span class="grow"></span>
+    <button class="btn ghost sq" id="ytSize" title="Agrandir la vidéo" aria-label="Agrandir la vidéo">⤢</button>
+    <button class="btn ghost sq" id="ytClose" title="Fermer l'enregistrement" aria-label="Fermer l'enregistrement">✕</button>
+  </div>
+
+  <section class="review" id="review" aria-label="Révisions du jour"></section>
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Blocs du sutra"></nav>
+  <main id="main"></main>
+
+  <footer>
+    <div id="credits">
+    La reconnaissance vocale fonctionne hors ligne par défaut (Vosk) : l'audio ne quitte pas l'ordinateur. En mode « en ligne », il est envoyé au service du navigateur (Microsoft pour Edge, Google pour Chrome).
+    Ta progression (« Je le connais ») reste dans ce navigateur.
+    Son du mokugyo : « Mokugyo drum sounds » de <a href="https://freesound.org/people/George_Papargyris/sounds/837177/">George Papargyris</a>, via Freesound, sous licence <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> (un coup extrait, rendu plus grave et plus fort).
+    Sons des cloches : démonstrations des cloches zen Daitokuji <a href="https://tierrazen.com/fr-en/products/campana-zen-daitokuji-39-cm">39 cm</a> (keisu) et <a href="https://tierrazen.com/fr-en/products/campana-zen-daitokuji-12-cm">12 cm</a> (shokei) de Tierra Zen.
+    Image de Kannon générée par IA d'après le <i>Bodhisattva Kannon aux mille bras</i> (XIVᵉ siècle), Musée national de Tokyo, C-306. Créée à partir de <a href="https://colbase.nich.go.jp/collection_items/tnm/C-306">ColBase</a> ; image modifiée, le musée n'en est pas l'auteur.
+    Traductions anglaise, italienne, espagnole et allemande : écrites pour cette page à partir du sens français, avec le vocabulaire des traductions Sōtō de référence (<a href="https://www.sotozen.com/eng/practice/sutra/scriptures.html">Sōtōshū et Soto Zen Text Project</a>, <a href="https://meditation-zen.org/sites/default/files/inline-files/hannya_shingyo.pdf">version allemande de la Sōtō-shū</a>, <a href="https://abzen.eu/wp-content/uploads/2024/02/ABZE-traduction-sutras-IT.pdf">ABZE en italien</a> et <a href="https://abzen.eu/wp-content/uploads/2024/02/ABZE-traduction-sutras-ES.pdf">en espagnol</a>), sans les recopier.
+    </div>
+    <p class="edition">© 2026 Thomas Léonard. <span>Tous droits réservés.</span> · <span>Éditeur :</span> DharmaGate · <span>Version</span> <span id="version"></span> · <a href="mentions.html">Mentions légales et vie privée</a>.</p>
+  </footer>
+</div>
+
+<div class="dojo" id="dojo" hidden role="dialog" aria-label="Mode dojo">
+  <div class="dhead"><span id="dojoWhere"></span><span class="grow"></span><button class="btn ghost sq" id="dojoClose" aria-label="Fermer le mode dojo" title="Fermer le mode dojo">✕</button></div>
+  <div class="drow" id="dojoRow">
+    <div class="dside" id="dojoLeft"></div>
+    <div class="dline" id="dojoLine"></div>
+    <div class="dside" id="dojoRight"></div>
+    <button class="hintb dplus" id="dojoPlus" aria-label="Ajouter un indice" title="Ajouter un indice : dévoile ce kanji">+</button>
+  </div>
+  <p class="dmean" id="dojoMean"></p>
+  <div class="dfoot">
+    <button class="btn ghost sq" id="dojoPrev" aria-label="Ligne précédente" title="Ligne précédente">←</button>
+    <button class="btn" id="dojoRecite">Réciter</button>
+    <button class="btn ghost" id="dojoTr" aria-pressed="true" title="Afficher ou cacher la traduction : le sens de la ligne et le mot à mot sous chaque kanji (touche T)">Traduction</button>
+    <button class="btn ghost sq" id="dojoNext" aria-label="Ligne suivante" title="Ligne suivante">→</button>
+  </div>
+  <p class="dhint">← → ou Espace : changer de ligne · T : traduction · Échap : fermer</p>
+</div>
+
+<button class="fixbtn" id="fixBtn" hidden title="La reconnaissance s'est trompée sur ce kanji ? Refais son calibrage (5 enregistrements), puis la récitation reprend ici">Recalibrer ce kanji</button>
+<!-- calibrage : un kanji à la fois, en très grand, à dire 5 fois -->
+<div class="dojo calo" id="calo" hidden role="dialog" aria-label="Calibrer ma voix">
+  <div class="dhead"><span id="caloWhere"></span><span class="grow"></span><button class="btn ghost sq" id="caloClose" aria-label="Arrêter le calibrage" title="Arrêter le calibrage">✕</button></div>
+  <div class="cbig"><span class="cc" id="caloKanji"></span><span class="cr" id="caloRoma"></span><span class="ck" id="caloKana"></span></div>
+  <p class="cask" id="caloAsk"></p>
+  <div class="cdots" id="caloDots" aria-hidden="true"></div>
+  <p class="cheard" id="caloHeard"></p>
+  <div class="dfoot"><span class="meter" title="Niveau du micro"><i id="caloMeter"></i></span><button class="btn ghost" id="caloSkip">Passer ce kanji</button></div>
+  <p class="dhint">Écoute l'exemple, puis dis le kanji · 5 fois · Échap : arrêter</p>
+</div>
+
+<script src="vosk.js"></script>
+<!-- voix des récitations : Keita (masculine) ou Nanami (féminine, fichiers en -f) ; seule la voix choisie est chargée -->
+<script>(() => { let f = false; try { f = JSON.parse(localStorage.getItem('hannya:voix')) === 'f'; } catch {}
+  const x = f ? '-f' : ''; document.write(`<script src="syllabes${x}.js"><\/script><script src="lignes${x}.js"><\/script>`); })();</script>
+<script src="traductions.js"></script>
+<script src="version.js"></script>
+<script>
+// Numéro de version, affiché en bas de page : il est défini dans version.js, commun avec la page d'accueil
+const VERSION = window.HANNYA_VERSION || '';
+document.getElementById('version').textContent = VERSION;
+
+/* ---------- Langue ----------
+   Le français est la langue d'origine de la page. ?lang=en|it|es|de dans l'adresse, sinon le dernier choix.
+   Les textes de l'interface sont traduits au vol (par leur texte français exact), ceux du sutra à la construction de DATA. */
+const LANG = (() => {
+  const q = new URLSearchParams(location.search).get('lang');
+  let l = q;
+  try { if (q) localStorage.setItem('hannya:lang', JSON.stringify(q)); else l = JSON.parse(localStorage.getItem('hannya:lang') || '"fr"'); } catch { l = q || 'fr'; }
+  return window.I18N && I18N[l] ? l : 'fr';
+})();
+const TX = LANG === 'fr' ? null : I18N[LANG];
+document.documentElement.lang = LANG;
+function tr(s){
+  if (!TX || typeof s !== 'string') return s;
+  const k = s.trim(); if (!k) return s;
+  if (TX.ui[k] != null) return s.replace(k, TX.ui[k]);
+  const i = I18N.patterns.findIndex(re => re.test(k));
+  return i < 0 ? s : s.replace(k, k.replace(I18N.patterns[i], TX.pat[i]));
+}
+// Tout texte ou infobulle qui apparaît dans la page passe par tr()
+function localize(node){
+  if (node.nodeType === 3){ const t = tr(node.data); if (t !== node.data) node.data = t; return; }
+  if (node.nodeType !== 1) return;
+  for (const a of ['title', 'aria-label']){ const v = node.getAttribute(a); if (v){ const t = tr(v); if (t !== v) node.setAttribute(a, t); } }
+  node.childNodes.forEach(localize);
+}
+if (TX){
+  localize(document.body);
+  new MutationObserver(ms => ms.forEach(m => {
+    if (m.type === 'childList') m.addedNodes.forEach(localize);
+    else localize(m.type === 'characterData' ? m.target : m.target);
+  })).observe(document.body, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ['title', 'aria-label'] });
+  if (TX.footer) document.getElementById('credits').innerHTML = TX.footer;
+}
+
+// [romaji, kana, kanji, sens] ; un kanji = une syllabe
+// [romaji, kana, kanji, sens, options]
+// Romaji : « + » réunit deux syllabes sur un même temps (en fin de ligne : avec le début de la ligne suivante),
+// « ● » = coup de keisu sur cette syllabe, « ○ » = coup ken de shokei ; « ▼ » après une ligne = dernier coup, gatsu de keisu, un temps après
+const RAW = [
+ {t:"Kanjizai voit le vide", lines:[
+  ["ma ka han nya ha ra mit ta shin gyō","ま か はん にゃ は ら みっ た しん ぎょう","摩訶般若波羅蜜多心経","Titre : Sutra du cœur de la grande sagesse parfaite.",{hold:2}],
+  ["●kan ji zai bo satsu+","かん じ ざい ぼ さつ","観自在菩薩","Le bodhisattva Avalokiteśvara (Kanjizai, « celui qui regarde librement »),"],
+  ["gyō jin han nya ha ra mit ta ji","ぎょう じん はん にゃ は ら みっ た じ","行深般若波羅蜜多時","pratiquant profondément la sagesse parfaite,"],
+  ["shō ken ●go on kai kū","しょう けん ご おん かい くう","照見五蘊皆空","vit clairement que les cinq agrégats sont tous vides,"],
+  ["dō is sai ku yaku+","どう いっ さい く やく","度一切苦厄","et fut libéré de toute souffrance."]]},
+ {t:"Forme et vide", lines:[
+  ["sha ri shi","しゃ り し","舎利子","Ô Shariputra,"],
+  ["shiki+fu i kū","しき ふ い くう","色不異空","la forme n'est pas différente du vide,"],
+  ["kū fu i shiki+","くう ふ い しき","空不異色","le vide n'est pas différent de la forme."],
+  ["shiki soku+ze kū","しき そく ぜ くう","色即是空","La forme, c'est le vide ;"],
+  ["kū soku+ze shiki+","くう そく ぜ しき","空即是色","le vide, c'est la forme."],
+  ["jyu sō gyō shiki","じゅ そう ぎょう しき","受想行識","Sensation, perception, formations mentales, conscience :"],
+  ["yaku+bu nyo ze","やく ぶ にょ ぜ","亦復如是","il en est exactement de même."]]},
+ {t:"Ni naître ni mourir", lines:[
+  ["sha ri shi","しゃ り し","舎利子","Ô Shariputra,"],
+  ["ze sho hō kū sō","ぜ しょ ほう くう そう","是諸法空相","tous les phénomènes ont la marque du vide :"],
+  ["fu shō fu metsu+fu ku fu jyo","ふ しょう ふ めつ ふ く ふ じょ","不生不滅不垢不浄","ils ne naissent ni ne meurent, ne sont ni souillés ni purs,"],
+  ["fu zō fu gen","ふ ぞう ふ げん","不増不減","n'augmentent ni ne diminuent."]]},
+ {t:"La litanie des mu", lines:[
+  ["ze ko kū chū","ぜ こ くう ちゅう","是故空中","C'est pourquoi, dans le vide,"],
+  ["mu shiki+mu jyu sō gyō shiki+","む しき む じゅ そう ぎょう しき","無色無受想行識","pas de forme, pas de sensation, perception, formations, conscience,"],
+  ["mu gen ni bi ze shin ni","む げん に び ぜ しん に","無眼耳鼻舌身意","pas d'œil, d'oreille, de nez, de langue, de corps, d'esprit,"],
+  ["mu shiki+sho kō mi soku+hō","む しき しょ こう み そく ほう","無色声香味触法","pas de forme, son, odeur, saveur, toucher, objet mental,"],
+  ["mu gen kai nai shi mu i shiki+kai","む げん かい ない し む い しき かい","無眼界乃至無意識界","pas de monde de la vue, et ainsi jusqu'à : pas de monde de la conscience."],
+  ["mu mu myō yaku+mu mu myō jin","む む みょう やく む む みょう じん","無無明亦無無明尽","Pas d'ignorance, ni fin de l'ignorance,"],
+  ["nai shi mu rō shi","ない し む ろう し","乃至無老死","et ainsi jusqu'à : pas de vieillesse ni de mort,"],
+  ["yaku+mu rō shi jin","やく む ろう し じん","亦無老死尽","ni fin de la vieillesse et de la mort."],
+  ["mu ku shū metsu+dō","む く しゅう めつ どう","無苦集滅道","Pas de souffrance, d'origine, de cessation, de chemin,"],
+  ["mu chi yaku+mu toku+","む ち やく む とく","無智亦無得","pas de sagesse, pas d'obtention,"],
+  ["i mu sho tok ko","い む しょ とっ こ","以無所得故","car il n'y a rien à obtenir."]]},
+ {t:"Sans obstacle, sans peur", lines:[
+  ["bo dai sat ta","ぼ だい さっ た","菩提薩埵","Le bodhisattva,"],
+  ["e han nya ha ra mit ta ●ko","え はん にゃ は ら みっ た こ","依般若波羅蜜多故","s'appuyant sur la sagesse parfaite,"],
+  ["shin mu ke ge mu ke ge ko","しん む け げ む け げ こ","心無罣礙無罣礙故","a l'esprit sans obstacle. Sans obstacle,"],
+  ["mu u ku fu","む う く ふ","無有恐怖","il est sans peur."],
+  ["on ri is sai ten dō mu sō","おん り いっ さい てん どう む そう","遠離一切顛倒夢想","Loin de toutes les vues inversées et des illusions,"],
+  ["ku kyō ne han","く きょう ね はん","究竟涅槃","il atteint le nirvana ultime."],
+  ["san ze sho butsu+","さん ぜ しょ ぶつ","三世諸仏","Les bouddhas des trois temps,"],
+  ["e han nya ha ra mit ta ●ko","え はん にゃ は ら みっ た こ","依般若波羅蜜多故","s'appuyant sur la sagesse parfaite,"],
+  ["toku+a noku+ta ra san myaku+san bo dai","とく あ のく た ら さん みゃく さん ぼ だい","得阿耨多羅三藐三菩提","obtiennent l'éveil suprême et parfait."]]},
+ {t:"Le grand mantra", lines:[
+  ["ko chi han nya ha ra mit ta","こ ち はん にゃ は ら みっ た","故知般若波羅蜜多","Sache donc que la sagesse parfaite"],
+  ["ze dai jin shu","ぜ だい じん しゅ","是大神呪","est le grand mantra divin,"],
+  ["ze dai myō shu","ぜ だい みょう しゅ","是大明呪","le grand mantra de lumière,"],
+  ["ze mu jō shu","ぜ む じょう しゅ","是無上呪","le mantra insurpassable,"],
+  ["ze mu tō dō shu","ぜ む とう どう しゅ","是無等等呪","le mantra sans égal."],
+  ["nō jyo is sai ku","のう じょ いっ さい く","能除一切苦","Il supprime toute souffrance."],
+  ["shin jitsu+fu ko","しん じつ ふ こ","真実不虚","C'est la vérité, non un mensonge."],
+  ["ko setsu han nya ha ra mit ta shu","こ せつ はん にゃ は ら みっ た しゅ","故説般若波羅蜜多呪","Voici donc le mantra de la sagesse parfaite,"],
+  ["soku setsu+shu watsu","そく せつ しゅ わつ","即説呪曰","le mantra qui dit :"]]},
+ {t:"Gyatei", lines:[
+  ["gya tei gya tei","ぎゃ てい ぎゃ てい","羯諦羯諦","Allé, allé (gate gate),"],
+  ["○ha ra gya tei","は ら ぎゃ てい","波羅羯諦","allé au-delà (pāragate),"],
+  ["ha ra sō gya tei","は ら そう ぎゃ てい","波羅僧羯諦","allé tout à fait au-delà (pārasaṃgate),"],
+  ["○bo dai so+wa+ka","ぼ だい そ わ か","菩提薩婆訶","éveil, ainsi soit-il (bodhi svāhā) !",{post:"▼"}],
+  ["han nya shin gyō","はん にゃ しん ぎょう","般若心経","Sutra du cœur de la sagesse.",{hold:1}]]}
+];
+
+// Mot à mot, un sens par kanji. « … » : suite d'un mot sanskrit transcrit sur plusieurs kanji
+const GLOSS = {
+  "摩訶般若波羅蜜多心経": "grand|…|sagesse|…|perfection|…|…|…|cœur|sutra",
+  "観自在菩薩": "regarder|soi|libre|bodhisattva|…",
+  "行深般若波羅蜜多時": "pratiquer|profond|sagesse|…|perfection|…|…|…|moment",
+  "照見五蘊皆空": "éclairer|voir|cinq|agrégat|tous|vide",
+  "度一切苦厄": "traverser|un|tout|souffrance|malheur",
+  "舎利子": "Śāri|…|fils",
+  "色不異空": "forme|ne pas|différer|vide",
+  "空不異色": "vide|ne pas|différer|forme",
+  "色即是空": "forme|aussitôt|être|vide",
+  "空即是色": "vide|aussitôt|être|forme",
+  "受想行識": "sensation|perception|formation|conscience",
+  "亦復如是": "aussi|encore|comme|ceci",
+  "是諸法空相": "ces|tous|phénomène|vide|aspect",
+  "不生不滅": "ne pas|naître|ne pas|s'éteindre",
+  "不垢不浄": "ne pas|souillé|ne pas|pur",
+  "不増不減": "ne pas|croître|ne pas|décroître",
+  "是故空中": "ceci|raison|vide|dans",
+  "無色": "sans|forme",
+  "無受想行識": "sans|sensation|perception|formation|conscience",
+  "無眼耳鼻舌身意": "sans|œil|oreille|nez|langue|corps|esprit",
+  "無色声香味触法": "sans|forme|son|odeur|saveur|toucher|objet mental",
+  "無眼界": "sans|œil|monde",
+  "乃至無意識界": "ainsi|jusqu'à|sans|esprit|conscience|monde",
+  "無無明": "sans|sans|clarté",
+  "亦無無明尽": "aussi|sans|sans|clarté|épuisement",
+  "乃至無老死": "ainsi|jusqu'à|sans|vieillesse|mort",
+  "亦無老死尽": "aussi|sans|vieillesse|mort|épuisement",
+  "無苦集滅道": "sans|souffrance|origine|extinction|voie",
+  "無智亦無得": "sans|sagesse|aussi|sans|obtenir",
+  "以無所得故": "par|sans|ce que|obtenir|raison",
+  "菩提薩埵": "éveil|…|être|…",
+  "依般若波羅蜜多故": "s'appuyer|sagesse|…|perfection|…|…|…|raison",
+  "心無罣礙": "esprit|sans|entrave|obstacle",
+  "無罣礙故": "sans|entrave|obstacle|raison",
+  "無有恐怖": "sans|avoir|crainte|peur",
+  "遠離一切顛倒夢想": "loin|séparé|un|tout|renversé|inversé|rêve|pensée",
+  "究竟涅槃": "extrême|fin|nirvana|…",
+  "三世諸仏": "trois|époque|tous|bouddha",
+  "得阿耨多羅三藐三菩提": "obtenir|insurpassable|…|…|…|parfait|…|éveil complet|…|…",
+  "故知般若波羅蜜多": "donc|savoir|sagesse|…|perfection|…|…|…",
+  "是大神呪": "être|grand|divin|mantra",
+  "是大明呪": "être|grand|lumineux|mantra",
+  "是無上呪": "être|sans|au-dessus|mantra",
+  "是無等等呪": "être|sans|égal|égaler|mantra",
+  "能除一切苦": "pouvoir|ôter|un|tout|souffrance",
+  "真実不虚": "vrai|réel|ne pas|vain",
+  "故説般若波羅蜜多呪": "donc|dire|sagesse|…|perfection|…|…|…|mantra",
+  "即説呪曰": "aussitôt|dire|mantra|disant",
+  "羯諦羯諦": "allé|…|allé|…",
+  "波羅羯諦": "au-delà|…|allé|…",
+  "波羅僧羯諦": "au-delà|…|ensemble|allé|…",
+  "菩提薩婆訶": "éveil|…|svāhā|…|…",
+  "不生不滅不垢不浄": "ne pas|naître|ne pas|s'éteindre|ne pas|souillé|ne pas|pur",
+  "無色無受想行識": "sans|forme|sans|sensation|perception|formation|conscience",
+  "無眼界乃至無意識界": "sans|œil|monde|ainsi|jusqu'à|sans|esprit|conscience|monde",
+  "無無明亦無無明尽": "sans|sans|clarté|aussi|sans|sans|clarté|épuisement",
+  "心無罣礙無罣礙故": "esprit|sans|entrave|obstacle|sans|entrave|obstacle|raison",
+  "般若心経": "sagesse|…|cœur|sutra"
+};
+
+// Mots sanskrits transcrits phonétiquement : ces kanji notent un son, pas un sens
+const SANSKRIT = [
+  ["阿耨多羅三藐三菩提", "anuttarā-samyak-saṃbodhi", "éveil suprême et parfait"],
+  ["菩提薩埵", "bodhisattva", "être d'éveil"],
+  ["波羅蜜多", "pāramitā", "perfection, « passé sur l'autre rive »"],
+  ["波羅僧羯諦", "pārasaṃgate", "allé tout à fait au-delà"],
+  ["波羅羯諦", "pāragate", "allé au-delà"],
+  ["薩婆訶", "svāhā", "ainsi soit-il, salut !"],
+  ["舎利子", "Śāriputra", "nom du disciple ; 子 traduit putra, « fils »"],
+  ["摩訶", "mahā", "grand"],
+  ["般若", "prajñā", "sagesse"],
+  ["菩薩", "bodhisattva", "être d'éveil (forme abrégée)"],
+  ["涅槃", "nirvāṇa", "extinction, apaisement"],
+  ["羯諦", "gate", "allé"],
+  ["菩提", "bodhi", "éveil"],
+  ["仏", "buddha", "l'éveillé"]
+];
+function markSanskrit(L){
+  const text = L.syl.map(s => s.c).join("");
+  for (let i = 0; i < text.length;){
+    const w = SANSKRIT.find(([k]) => text.startsWith(k, i));
+    if (!w){ i++; continue; }
+    for (let j = 0; j < w[0].length; j++) L.syl[i + j].skt = { t: w[1], m: TX?.skt?.[w[0]] ?? w[2], start: j === 0, end: j === w[0].length - 1 };
+    i += w[0].length;
+  }
+}
+const toHira = s => s.replace(/[ァ-ヶ]/g, c => String.fromCharCode(c.charCodeAt(0) - 0x60));
+const toKata = s => s.replace(/[ぁ-ゖ]/g, c => String.fromCharCode(c.charCodeAt(0) + 0x60));
+
+// Formes acceptées pour une syllabe : le kanji, le kana, et les variantes de lecture courantes
+// Forme souple : sans sonorisation (が→か, ば→は…), sans consonne doublée ni voyelle longue,
+// petits kana comme les grands (みゃ = みや)
+const SMALL = { 'ゃ': 'や', 'ゅ': 'ゆ', 'ょ': 'よ', 'ぁ': 'あ', 'ぃ': 'い', 'ぅ': 'う', 'ぇ': 'え', 'ぉ': 'お' };
+const loosen = s => s.normalize('NFD').replace(/[゙゚]/g, '').normalize('NFC').replace(/[っー]/g, '').replace(/[ゃゅょぁぃぅぇぉ]/g, c => SMALL[c]);
+// Formes apprises au calibrage (clé : kanji|lecture), lues avant que store existe
+const VOICE = (() => { try { return JSON.parse(localStorage.getItem('hannya:voice')) || {}; } catch { return {}; } })();
+function variants(s){
+  const k = s.k, v = new Set([s.c, k, k.replace(/う$/, ''), ...(VOICE[s.c + '|' + k] || [])]);
+  if (/っ$/.test(k)) ['つ','ち','く','ぷ',''].forEach(x => v.add(k.replace(/っ$/, x)));
+  if (/てい$/.test(k)) v.add('て');
+  [...v].forEach(x => v.add(loosen(x)));
+  v.add(loosen(k.match(/^.[ゃゅょぁぃぅぇぉ]?/)[0]));   // le début de la syllabe suffit (shi pour shiki)
+  return [...v].filter(Boolean).sort((a, b) => b.length - a.length);
+}
+
+const PRESET = {};
+const DATA = RAW.map((b, bi) => ({
+  title: TX?.titles?.[bi] ?? b.t,
+  lines: b.lines.map(([r, k, c, m, o = {}], li) => {
+    m = TX?.mean?.[c] ?? m;
+    const R = [], flags = [];
+    r.trim().split(/\s+/).forEach(tok => {
+      const bell = tok.startsWith('●'), ring = tok.startsWith('○');
+      const parts = tok.replace(/^[●○]/, '').split('+');
+      parts.forEach((p, pi) => {
+        if (!p) return;
+        if (pi < parts.length - 1) PRESET[bi + '-' + li + '-' + R.length] = true;
+        flags.push({ bell: bell && pi === 0, ring: ring && pi === 0 });
+        R.push(p);
+      });
+    });
+    const K = k.split(' '), C = [...c], G = (TX?.gloss?.[c] ?? GLOSS[c] ?? '').split('|');
+    if (R.length !== K.length || R.length !== C.length || R.length !== G.length) console.warn('Désalignement', bi, li, c);
+    const syl = R.map((x, i) => ({ r: x, k: K[i], c: C[i], g: G[i] || '', ...flags[i] }));
+    syl.forEach(s => s.vars = variants(s));
+    const line = { b: bi, l: li, m, syl, hold: o.hold || 0, pre: o.pre || '', post: o.post || '' };
+    markSanskrit(line);
+    return line;
+  })
+}));
+
+// Kanji présents plusieurs fois : teintes espacées par l'angle d'or, les plus fréquents d'abord
+const COUNT = {};
+DATA.forEach(B => B.lines.forEach(L => L.syl.forEach(s => { COUNT[s.c] = (COUNT[s.c] || 0) + 1; })));
+const REP = {};
+Object.keys(COUNT).filter(k => COUNT[k] > 1).sort((a, b) => COUNT[b] - COUNT[a]).forEach((k, i) => { REP[k] = Math.round(i * 137.508) % 360; });
+const store = {
+  get(k, d){ try { const v = localStorage.getItem('hannya:' + k); return v == null ? d : JSON.parse(v); } catch { return d; } },
+  set(k, v){ try { localStorage.setItem('hannya:' + k, JSON.stringify(v)); } catch {} }
+};
+
+// moteur par défaut : « ma voix » (empreintes) ; les réglages enregistrés avant la 1.10 y passent une fois
+if (!store.get('engineV2')){ store.set('engine', 'voix'); store.set('engineV2', true); }
+const S = { span: store.get('span', 'aere'), engine: store.get('engine', 'voix'), lire: store.get('lire', 'both'), exig: store.get('exig', 'souple'), tab: store.get('tab', 0), level: 0, mode: 'seul', bpm: store.get('bpm', 104), known: store.get('known', {}) };
+const $ = id => document.getElementById(id);
+const main = $('main'), statusEl = $('status');
+
+function viewBlocks(){ return S.tab === 7 ? DATA : [DATA[S.tab]]; }
+// Au hasard : dans chaque ligne, la part choisie des kanji (S.rand : 25, 50 ou 75 %), tirés au sort
+const RANDS = [0.25, 0.5, 0.75];
+let randomMask = {};
+function drawRandomMask(){
+  randomMask = {};
+  DATA.forEach(B => B.lines.forEach(L => {
+    const idx = L.syl.map((_, i) => i);
+    for (let i = idx.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [idx[i], idx[j]] = [idx[j], idx[i]]; }
+    idx.slice(0, Math.round(L.syl.length * (S.rand || 0.5))).forEach(i => { randomMask[L.b + "-" + L.l + "-" + i] = true; });
+  }));
+}
+function isMasked(i, L){
+  if (S.level === 4) return !!randomMask[L.b + "-" + L.l + "-" + i];
+  return S.level === 1 ? i % 2 === 1 : S.level === 2 ? i > 0 : S.level === 3;
+}
+function chipEl(b, l, s){ return main.querySelector(`.syl[data-b="${b}"][data-l="${l}"][data-s="${s}"]`); }
+function lineEl(b, l){ return main.querySelector(`.line[data-b="${b}"][data-l="${l}"]`); }
+function setStatus(html){ statusEl.innerHTML = tr(html); if (!$('calo').hidden && html) $('caloHeard').innerHTML = tr(html); }
+const esc = s => s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function renderTabs(){
+  const names = DATA.map((B, i) => `${i + 1}. ${B.title}`).concat(['Sutra entier']);
+  $('tabs').innerHTML = names.map((n, i) =>
+    `<button role="tab" data-tab="${i}" aria-selected="${S.tab === i}">${esc(n)}${S.known[i] ? '<span class="dot" title="Su par cœur"></span>' : ''}<i class="tprog" style="${progress(i < DATA.length ? DATA[i].lines : FLAT).style}"></i></button>`).join('');
+}
+
+// Temps : syllabes « réunies » sur un seul coup de mokugyo. Par défaut, ceux du tableau du dojo
+let joins = store.get('joins3', null) || { ...PRESET };
+const jkey = (L, i) => L.b + '-' + L.l + '-' + i;
+function groups(L){
+  const out = []; let cur = [];
+  L.syl.forEach((_, i) => { cur.push(i); if (i === L.syl.length - 1 || !joins[jkey(L, i)]){ out.push(cur); cur = []; } });
+  return out;
+}
+function chipHTML(bi, L, i){ const s = L.syl[i]; return `<button class="syl${isMasked(i, L) ? ' masked' : ''}${s.bell ? ' bell' : ''}${s.ring ? ' ring' : ''}${s.skt ? ' skt' + (s.skt.start ? ' skt-s' : '') + (s.skt.end ? ' skt-e' : '') : ''}"${s.skt ? ` title="${esc(s.skt.t + ' : ' + s.skt.m)} (sanskrit transcrit)"` : ''} data-b="${bi}" data-l="${L.l}" data-s="${i}" data-k="${s.c}"${REP[s.c] != null ? ` data-rep style="--h:${REP[s.c]}"` : ''}${!s.skt && COUNT[s.c] > 1 ? ` title="${s.c} revient ${COUNT[s.c]} fois"` : ''} aria-label="${esc(s.r)}">${s.skt && s.skt.start ? `<span class="skt-l">${esc(s.skt.t)}</span>` : ''}<span class="c">${s.c}</span><span class="g${s.g === '…' ? ' cont' : ''}">${esc(s.g)}</span><span class="k">${s.k}</span><span class="r">${esc(s.r)}</span></button>`; }
+function joinHTML(L, i, on, tail){
+  const what = tail ? 'avec le début de la ligne suivante' : 'ces syllabes';
+  return `<button class="join${on ? ' on' : ''}${tail ? ' tail' : ''}" data-j="${jkey(L, i)}" title="${on ? 'Séparer' : 'Réunir sur un temps'} ${what}" aria-label="${on ? 'Séparer' : 'Réunir sur un temps'} ${what}"></button>`;
+}
+const FLAT = DATA.flatMap(B => B.lines);
+const prevLine = L => FLAT[FLAT.indexOf(L) - 1];
+const linkedOut = L => !!joins[jkey(L, L.syl.length - 1)] && FLAT.indexOf(L) < FLAT.length - 1;
+const linkedIn = L => { const p = prevLine(L); return !!p && linkedOut(p); };
+function sylsHTML(bi, L){
+  const G = groups(L), n = L.syl.length, lin = linkedIn(L), lout = linkedOut(L);
+  return (lin ? '<span class="link" title="Même temps que la fin de la ligne précédente">⌒</span>' : '') +
+    G.map((g, gi) =>
+      `<span class="grp${g.length > 1 || (lin && gi === 0) || (lout && gi === G.length - 1) ? ' multi' : ''}">${g.map((i, k) => chipHTML(bi, L, i) + (k < g.length - 1 ? joinHTML(L, i, true) : '')).join('')}</span>` +
+      (gi < G.length - 1 ? joinHTML(L, g[g.length - 1], false) : '')).join('') +
+    joinHTML(L, n - 1, !!joins[jkey(L, n - 1)], true) +
+    (lout ? '<span class="link" title="Même temps que le début de la ligne suivante">⌒</span>' : '') +
+    // point d'orgue (𝄐) : tenir longtemps le dernier son
+    (L.hold ? `<span class="cue fermata" role="img" title="Point d'orgue : tenir longtemps le dernier son" aria-label="Point d'orgue : tenir longtemps le dernier son"><svg viewBox="0 0 24 16" aria-hidden="true"><path d="M2.5 14a9.5 9.5 0 0 1 19 0"/><circle cx="12" cy="12.2" r="2.3"/></svg></span>` : '') +
+    (L.post ? `<span class="cue">${L.post}</span>` : '');
+}
+
+function render(){
+  main.innerHTML = viewBlocks().map(B => {
+    const bi = DATA.indexOf(B);
+    return `<section class="block">
+      <div class="bhead"><h2><span class="num">${bi + 1}</span>${esc(B.title)}</h2>
+        <span class="bbtns"><button class="known calb" data-calib="${bi}" title="Calibrer ma voix sur les kanji de cette partie qui n'ont pas encore d'empreinte">Calibrer</button>
+        <button class="known ${S.known[bi] ? 'on' : ''}" data-known="${bi}">${S.known[bi] ? 'Su par cœur' : 'Je le connais'}</button></span></div>
+      ${B.lines.map(L => `<div class="line" data-b="${bi}" data-l="${L.l}">
+        <div class="lbtns"><button class="say" data-b="${bi}" data-l="${L.l}" aria-label="Écouter la ligne" title="Écouter cette ligne avec la voix de synthèse"><svg viewBox="0 0 10 10"><path d="M2 1l7 4-7 4z"/></svg></button>
+        <button class="ygo" data-b="${bi}" data-l="${L.l}" aria-label="Recommencer la ligne avec l'enregistrement" title="Recommencer cette ligne avec l'enregistrement (vidéo)"><svg viewBox="0 0 12 10"><path d="M5 1L1 5l4 4zM11 1L7 5l4 4z"/></svg></button>
+        <button class="hintb" data-b="${bi}" data-l="${L.l}" aria-label="Ajouter un indice" title="Ajouter un indice : dévoile un kanji caché, au hasard">+</button></div>
+        <div class="body"><div class="syls">${sylsHTML(bi, L)}<button class="again" data-b="${bi}" data-l="${L.l}" aria-label="Recommencer la ligne" title="Recommencer cette ligne au micro : ses kanji sont de nouveau cachés et la récitation reprend ici"><svg viewBox="0 0 16 16"><path d="M3 8a5 5 0 1 0 1.6-3.7"/><path d="M4.4 1.6v3h3"/></svg></button></div>
+        <p class="m">${esc(L.m)}</p>
+        <div class="ytline" data-b="${bi}" data-l="${L.l}"><span class="ytt">—</span><button class="ytn" data-d="-0.1" title="Début de la ligne 0,1 s plus tôt">−0,1 s</button><button class="ytn" data-d="0.1" title="Début de la ligne 0,1 s plus tard">+0,1 s</button><button class="ytn" data-d="play" title="La vidéo reprend au début de cette ligne">▶ Recommencer ici</button><button class="ytn" data-d="clear" title="Retire les repères posés sur cette ligne">Effacer le repère</button><button class="ytn ytsave" data-d="save" title="Fige la synchro de cette ligne : les prochains Espace et clics ne la modifieront plus">Sauver la synchro</button><button class="ytn" data-d="redo" title="Efface la synchro de la ligne ; la vidéo repart juste avant : clique sur chaque kanji au moment où il est chanté (ou tape Espace).">Refaire la ligne</button></div></div></div>`).join('')}
+    </section>`;
+  }).join('');
+  renderTabs(); renderReview();
+  try { calLabels(); } catch {}                    // empreintes pas encore chargées au premier affichage
+  if (typeof paintAnchors === 'function') { paintAnchors(); tapShow(); }
+}
+
+/* ---------- Sons ---------- */
+let ac, master;
+function audio(){
+  if (!ac){ ac = new (window.AudioContext || window.webkitAudioContext)(); master = ac.createGain(); master.gain.value = 0.8; master.connect(ac.destination); }
+  if (ac.state === 'suspended') ac.resume();
+  return ac;
+}
+// Mokugyo : un vrai coup enregistré (George Papargyris, Freesound, CC BY 4.0), isolé, rendu un peu plus grave et plus fort.
+// Tant qu'il n'est pas chargé, un coup de bois recréé le remplace.
+const MOKU_FILE = 'mokugyo-papargyris.mp3', MOKU_CUT = [0.5, 0.9], MOKU_PITCH = 0.84, MOKU_GAIN = 1.45;   // le 1er des 7 coups du fichier
+let mokuBuf = null;
+// Décode le fichier, isole le coup (début net, fin en fondu) et égalise son volume
+function loadMoku(){
+  if (!mokuBuf) mokuBuf = fetch(MOKU_FILE).then(r => r.arrayBuffer()).then(b => audio().decodeAudioData(b)).then(src => {
+    const a = audio(), sr = src.sampleRate, A = Math.floor(MOKU_CUT[0] * sr), Z = Math.min(src.length, Math.floor(MOKU_CUT[1] * sr)) - A;
+    const mono = new Float32Array(Z);
+    for (let c = 0; c < src.numberOfChannels; c++){ const d = src.getChannelData(c); for (let i = 0; i < Z; i++) mono[i] += d[A + i] / src.numberOfChannels; }
+    let peak = 0; for (const v of mono) peak = Math.max(peak, Math.abs(v));
+    const on = Math.max(0, mono.findIndex(v => Math.abs(v) > peak * 0.05) - Math.round(sr * 0.002)), len = Z - on;
+    const out = a.createBuffer(1, len, sr), o = out.getChannelData(0), fade = Math.round(sr * 0.04);
+    for (let i = 0; i < len; i++) o[i] = mono[on + i] / peak * 0.7 * (i > len - fade ? (len - i) / fade : 1);
+    return out;
+  }).catch(() => null);
+  mokuBuf.then(b => mokuBuf.done = b);
+  return mokuBuf;
+}
+function mokugyo(when, out = master){
+  const a = audio(), t = when ?? a.currentTime, buf = loadMoku().done;
+  if (buf){
+    const s = a.createBufferSource(), g = a.createGain();
+    s.buffer = buf; s.playbackRate.value = MOKU_PITCH; g.gain.value = MOKU_GAIN;
+    s.connect(g).connect(out); s.start(t);
+    return;
+  }
+  const o = a.createOscillator(), g = a.createGain();
+  o.type = 'sine'; o.frequency.setValueAtTime(420, t); o.frequency.exponentialRampToValueAtTime(300, t + 0.06);
+  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.8, t + 0.004); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.2);
+  o.connect(g).connect(out); o.start(t); o.stop(t + 0.25);
+}
+// Cloches : coups de démonstration des cloches Daitokuji (Tierra Zen), gardés avec toute leur résonance et un fondu final.
+// keisu = 39 cm (les ● du sutra, et le dernier coup ▼ en gatsu) ; shokei = 12 cm (les ○ du gyatei, en ken).
+// Ken = coup plein qui résonne librement ; gatsu = coup étouffé, la résonance est arrêtée peu après la frappe. Tant qu'un son n'est pas chargé, une cloche recréée le remplace.
+const BELLS = {
+  keisu: { file: 'keisu-39cm.mp3', len: 29, gain: 0.9 },
+  shokei: { file: 'shokei-12cm.mp3', len: 16.5, gain: 0.9 },
+};
+const bellBufs = {};
+function loadBell(name){
+  const B = BELLS[name];
+  if (!bellBufs[name]){
+    bellBufs[name] = fetch(B.file).then(r => r.arrayBuffer()).then(b => audio().decodeAudioData(b)).then(src => {
+      const a = audio(), sr = src.sampleRate, Z = Math.min(src.length, Math.floor(B.len * sr));
+      const mono = new Float32Array(Z);
+      for (let c = 0; c < src.numberOfChannels; c++){ const d = src.getChannelData(c); for (let i = 0; i < Z; i++) mono[i] += d[i] / src.numberOfChannels; }
+      let peak = 0; for (const v of mono) peak = Math.max(peak, Math.abs(v));
+      const on = Math.max(0, mono.findIndex(v => Math.abs(v) > peak * 0.05) - Math.round(sr * 0.002)), len = Z - on;
+      const out = a.createBuffer(1, len, sr), o = out.getChannelData(0), fade = Math.round(sr * 6);
+      for (let i = 0; i < len; i++){ const k = i > len - fade ? (len - i) / fade : 1; o[i] = mono[on + i] / peak * 0.7 * k * k; }   // fondu sur les dernières secondes
+      return out;
+    }).catch(() => null);
+    bellBufs[name].then(b => bellBufs[name].done = b);
+  }
+  return bellBufs[name];
+}
+const loadKeisu = () => loadBell('keisu');
+// Joue une cloche enregistrée ; « damp » (en s) étouffe la résonance après la frappe. Renvoie false si elle n'est pas chargée.
+const GATSU_HOLD = 0.5, GATSU_STOP = 0.5;
+const ringing = { keisu: [], shokei: [] };   // coups qui résonnent encore, par cloche
+function playBell(name, vol, t, out, damp){
+  const buf = loadBell(name).done;
+  if (!buf) return false;
+  const a = audio(), s = a.createBufferSource(), g = a.createGain(), v = vol * BELLS[name].gain;
+  s.buffer = buf; g.gain.setValueAtTime(v, t);
+  s.connect(g).connect(out); s.start(t);
+  if (damp){
+    // la main qui étouffe arrête toute la cloche : ce coup et la résonance des précédents
+    const end = t + damp + GATSU_STOP;
+    ringing[name].forEach(r => { r.g.gain.cancelScheduledValues(t + damp); r.g.gain.setTargetAtTime(0, t + damp, GATSU_STOP / 5); try { r.s.stop(end + 0.05); } catch {} });
+    ringing[name] = [];
+    g.gain.setValueAtTime(v, t + damp); g.gain.exponentialRampToValueAtTime(0.0005, end); s.stop(end + 0.05);
+  } else {
+    const r = { s, g }; ringing[name].push(r);
+    s.onended = () => { ringing[name] = ringing[name].filter(x => x !== r); };
+  }
+  return true;
+}
+// (la sortie par défaut est lue après audio(), qui crée master au premier son)
+function shokei(vol = 1, when, out){ const a = audio(); playBell('shokei', vol, when ?? a.currentTime, out || master); }
+// Gatsu : coup de keisu étouffé (dernier coup)
+function gatsu(vol = 1, when, out){ const a = audio(), t = when ?? a.currentTime; out = out || master; if (!playBell('keisu', vol, t, out, GATSU_HOLD)) bell(vol, t, out); }
+function bell(vol = 1, when, out){
+  const a = audio(), t = when ?? a.currentTime; out = out || master;
+  if (playBell('keisu', vol, t, out)) return;
+  [[1, .5, 5], [2.01, .18, 3.5], [2.76, .22, 3], [4.07, .1, 2], [5.43, .06, 1.4]].forEach(([r, amp, dec]) => {
+    const o = a.createOscillator(), g = a.createGain();
+    o.frequency.value = 392 * r;
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(amp * vol, t + 0.005); g.gain.exponentialRampToValueAtTime(0.0001, t + dec);
+    o.connect(g).connect(out); o.start(t); o.stop(t + dec + 0.1);
+  });
+}
+// Syllabes enregistrées (syllabes.js) : décodées une fois, puis jouées pile sur le temps
+let SAMPLE = null, samplesPromise = null;
+// Coupe les silences autour de la syllabe, renforce un souffle initial trop faible (ふ), égalise le volume.
+// ONSET_BOOST : niveau visé pour le souffle avant la voyelle (médiane, en part du maximum). Le « f » de ふ est très
+// faible dans les deux voix (2 à 7 % chez Nanami, contre 15 à 40 % pour le « sh » de し) : la voyelle arrive d'un coup
+// et ふ sonne comme « gu ». Le gain est calculé pour chaque voix (5 au plus), et le souffle n'est plus coupé au début.
+const ONSET_BOOST = { 'ふ': 0.2 };
+function prepareSample(buf, kana){
+  const a = audio(), d = buf.getChannelData(0), rate = buf.sampleRate, win = Math.round(rate * 0.01), en = [];
+  for (let j = 0; j < d.length; j += win){ let e = 0; const end = Math.min(d.length, j + win); for (let q = j; q < end; q++) e += d[q] * d[q]; en.push(Math.sqrt(e / win)); }
+  const mx = Math.max(...en), th = mx * 0.02;
+  const want = ONSET_BOOST[kana];
+  const s = Math.max(0, en.findIndex(e => e > (want ? mx * 0.004 : th))); let z = en.length - 1; while (z > s && en[z] < th) z--;
+  const A = Math.max(0, s * win - Math.round(rate * 0.02)), Z = Math.min(d.length, (z + 1) * win + Math.round(rate * 0.06));
+  let boost = 1, vo = 0;
+  if (want){
+    const v = en.findIndex(e => e > mx * 0.35), pre = en.slice(s, v).sort((x, y) => x - y), med = pre[pre.length >> 1] || 0;
+    if (med > 0) boost = Math.min(5, Math.max(1, want * mx / med));
+    vo = v * win;
+  }
+  const ramp = Math.round(rate * 0.02);
+  const res = a.createBuffer(1, Z - A, rate), o = res.getChannelData(0);
+  let peak = 0;
+  for (let j = 0; j < o.length; j++){
+    const i = A + j; let v = d[i];
+    if (i < vo) v *= i < vo - ramp ? boost : 1 + (boost - 1) * (vo - i) / ramp;
+    o[j] = v; peak = Math.max(peak, Math.abs(v));
+  }
+  const g = 0.8 / (peak || 1), fi = Math.round(rate * 0.005), fo = Math.round(rate * 0.05), n = o.length;
+  for (let j = 0; j < n; j++){ let v = o[j] * g; if (j < fi) v *= j / fi; if (j > n - fo) v *= (n - j) / fo; o[j] = v; }
+  return res;
+}
+function loadSamples(){
+  if (samplesPromise || !window.SYLLABES) return samplesPromise;
+  const a = audio(), out = {};
+  samplesPromise = Promise.all(Object.entries(window.SYLLABES).map(([k, b64]) => {
+    const bin = atob(b64), u = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i);
+    return a.decodeAudioData(u.buffer).then(buf => { out[k] = prepareSample(buf, k); });
+  })).then(() => { SAMPLE = out; }).catch(() => {});
+  return samplesPromise;
+}
+// Joue une syllabe telle quelle (sans accélérer, donc sans changer la hauteur) ; sa voyelle tenue
+// dure jusqu'à la syllabe suivante et s'efface en fondu enchaîné sur son début : pas de silence entre les deux
+function playSample(kana, when, slot, out = master){
+  const buf = SAMPLE && SAMPLE[kana]; if (!buf) return;
+  const a = audio(), src = a.createBufferSource(), g = a.createGain();
+  src.buffer = buf;
+  const dur = Math.min(buf.duration, slot + 0.08);
+  g.gain.setValueAtTime(1, when);
+  g.gain.setValueAtTime(1, when + Math.max(0, dur - 0.1));
+  g.gain.linearRampToValueAtTime(0.0001, when + dur);
+  src.connect(g).connect(out); src.start(when); src.stop(when + dur + 0.02);
+}
+// Les syllabes d'un même temps se partagent le temps
+// Durée d'un groupe de temps : un temps réuni « aéré » dure 1,75 temps (2,5 temps pour trois syllabes)
+function groupSpan(n){ return beatMs() / 1000 * (S.span === 'aere' && n > 1 ? 1 + 0.75 * (n - 1) : 1); }
+function sing(members, when, out = master){
+  if (!SAMPLE) return;
+  const a = audio(), live = members.filter(m => !m.hold), t = when ?? a.currentTime + 0.01, span = groupSpan(live.length);
+  live.forEach((m, k) => playSample(sylSpeech(m.L.syl[m.i]), t + k * span / live.length, span / live.length, out));
+}
+// Lignes entières (lignes.js) : décodées une fois ; l'instant de chaque syllabe vient des repères de mots
+let LINES = null, linesPromise = null;
+const lineText = L => L.syl.map(s => s.c).join('');
+function syllableTimes(info){
+  let pos = 0;
+  const words = info.w.map(([o, d, t]) => { const r = { o, d, a: pos, b: pos + t.length }; pos += t.length; return r; });
+  return info.c.map(ci => {
+    const w = words.find(x => ci >= x.a && ci < x.b) || words[words.length - 1];
+    return w.o + w.d * (ci - w.a) / Math.max(1, w.b - w.a) - info.s;
+  });
+}
+function loadLines(){
+  if (linesPromise || !window.LIGNES) return linesPromise;
+  const a = audio(), out = {};
+  linesPromise = Promise.all(Object.entries(window.LIGNES).map(([k, info]) => {
+    const bin = atob(info.a), u = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i);
+    return a.decodeAudioData(u.buffer).then(buf => { out[k] = { buf, s: info.s, e: info.e, times: syllableTimes(info) }; });
+  })).then(() => { LINES = out; }).catch(() => {});
+  return linesPromise;
+}
+// Joue une ligne entière à l'instant « when », à la vitesse « rate », pendant « len » secondes au plus
+function playLine(info, when, rate, len, out = master){
+  const a = audio(), src = a.createBufferSource(), g = a.createGain();
+  src.buffer = info.buf; src.playbackRate.value = rate;
+  g.gain.setValueAtTime(1, when);
+  g.gain.setValueAtTime(1, when + Math.max(0, len - 0.15));
+  g.gain.linearRampToValueAtTime(0.0001, when + len);
+  src.connect(g).connect(out);
+  src.start(when, Math.max(0, info.s - 0.03), len * rate + 0.1);
+}
+function sayOne(kana){
+  const p = loadSamples();
+  if (!p) return speak(kana);
+  p.then(() => SAMPLE ? playSample(kana, audio().currentTime + 0.02, beatMs() / 1000) : speak(kana));
+}
+function sayLine(L){
+  const lp = loadLines();
+  if (lp){
+    lp.then(() => {
+      const info = LINES && LINES[lineText(L)];
+      if (info) playLine(info, audio().currentTime + 0.05, 1, info.e - info.s + 0.3);
+      else sayLineSyllables(L);
+    });
+    return;
+  }
+  sayLineSyllables(L);
+}
+function sayLineSyllables(L){
+  const p = loadSamples();
+  if (!p) return speak(L.syl.map(sylSpeech).join(''), 0.85);
+  p.then(() => {
+    if (!SAMPLE) return speak(L.syl.map(sylSpeech).join(''), 0.85);
+    let t = audio().currentTime + 0.05;
+    groups(L).forEach(g => { const span = groupSpan(g.length); g.forEach((i, k) => playSample(sylSpeech(L.syl[i]), t + k * span / g.length, span / g.length)); t += span; });
+  });
+}
+function pulse(){ const b = $('beat'); b.classList.add('on'); setTimeout(() => b.classList.remove('on'), 90); }
+
+/* ---------- Voix japonaise ---------- */
+const hasTTS = 'speechSynthesis' in window;
+let jaVoice = null;
+function pickVoice(){
+  if (!hasTTS || window.SYLLABES) return;
+  const vs = speechSynthesis.getVoices().filter(v => /^ja/i.test(v.lang));
+  const saved = store.get('voice', '');
+  jaVoice = vs.find(v => v.voiceURI === saved) || vs[0] || null;
+  $('voiceWrap').hidden = vs.length < 2;
+  $('voice').innerHTML = vs.map(v => `<option value="${esc(v.voiceURI)}"${v === jaVoice ? ' selected' : ''}>${esc(v.name)}</option>`).join('');
+  renderNotices();
+}
+function utter(kana, rate){
+  const u = new SpeechSynthesisUtterance(toKata(kana));
+  u.lang = 'ja-JP'; u.voice = jaVoice; u.rate = rate; u.pitch = 0.85;
+  return u;
+}
+// Petit délai après cancel() : sinon certains navigateurs ignorent la phrase suivante
+function speak(kana, rate = 0.9){
+  if (!hasTTS || !jaVoice) return;
+  speechSynthesis.cancel();
+  const u = utter(kana, rate);
+  setTimeout(() => speechSynthesis.speak(u), 40);
+}
+const sylSpeech = s => s.k.replace(/っ$/, '');
+
+// Durée d'une syllabe à vitesse 1 : apprise ligne par ligne, avec une moyenne générale de repli
+let secPerSyl = store.get('sps', 0.22);
+const lineSps = store.get('lineSps', {});
+const lineKey = L => L.b + '-' + L.l;
+const mora = s => Math.max(1, s.k.replace(/[ゃゅょぁぃぅぇぉ]/g, '').length);
+
+/* ---------- Lecture ---------- */
+let playing = false, runId = 0, timers = [], lastLine = null;
+const later = (fn, ms) => { const t = setTimeout(fn, ms); timers.push(t); return t; };
+const beatMs = () => 60000 / S.bpm;
+
+function buildItems(){
+  const lines = viewBlocks().flatMap(B => B.lines);
+  const out = [{ t: 'rest', n: 1 }];
+  // Ouverture, si l'on part du titre (temps de silence entre les coups) : keisu ken, 5 temps, ken, 5 temps, gatsu,
+  // 2 temps, un coup de mokugyo, 1 temps, puis le titre
+  if (lines[0] === DATA[0].lines[0]) out.push(
+    { t: 'strike', s: 'ken' }, { t: 'rest', n: 5 }, { t: 'strike', s: 'ken' }, { t: 'rest', n: 5 },
+    { t: 'strike', s: 'gatsu' }, { t: 'rest', n: 2 }, { t: 'strike', s: 'moku' }, { t: 'rest', n: 1 });
+  if (S.mode === 'seul') out.push({ t: 'stream', lines });
+  // Avec les syllabes enregistrées : récitation continue, une syllabe par temps
+  else if (LINES && S.mode === 'avec') out.push({ t: 'lines', lines });
+  else if (SAMPLE && S.mode === 'avec') out.push({ t: 'stream', lines, voice: true });
+  else lines.forEach(L => {
+    out.push(LINES ? { t: 'lines', lines: [L] } : SAMPLE ? { t: 'stream', lines: [L], voice: true } : { t: 'voice', L });
+    if (S.mode === 'echo') out.push({ t: 'rest', n: 1 }, { t: 'stream', lines: [L], you: true }, { t: 'rest', n: 1 });
+  });
+  out.push({ t: 'rest', n: 1 });
+  return out;
+}
+
+function clearNow(){
+  main.querySelectorAll('.syl.now').forEach(e => e.classList.remove('now'));
+  main.querySelectorAll('.line.you').forEach(e => e.classList.remove('you'));
+}
+function scrollToLine(el){
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  el.scrollIntoView({ block: 'center', behavior: reduce ? 'auto' : 'smooth' });
+}
+// Un ● sur la première syllabe d'une ligne (« kan ») sonne un temps avant elle, sur le dernier temps de la ligne précédente
+const earlyBell = (L, i) => i === 0 && !!L.syl[0].bell;
+// Suite des temps : chaque groupe = un coup de mokugyo ; les voyelles tenues ajoutent des temps
+function streamGroups(lines){
+  const seq = [];
+  lines.forEach(L => L.syl.forEach((_, i) => seq.push({ L, i })));
+  const out = []; let cur = [];
+  seq.forEach((x, k) => {
+    cur.push(x);
+    if (k === seq.length - 1 || !joins[jkey(x.L, x.i)]){
+      out.push(cur); cur = [];
+      if (x.i === x.L.syl.length - 1) for (let n = 0; n < x.L.hold; n++) out.push([{ L: x.L, i: x.i, hold: true }]);
+    }
+  });
+  return out;
+}
+function lightVisual(members, you){
+  clearNow();
+  members.forEach(({ L, i }) => { const el = chipEl(L.b, L.l, i); if (el) el.classList.add('now'); });
+  const ln = lineEl(members[0].L.b, members[0].L.l);
+  if (ln){ if (you) ln.classList.add('you'); if (ln !== lastLine){ scrollToLine(ln); lastLine = ln; } }
+  pulse();
+}
+function lightUp(members, you, voice){
+  clearNow();
+  members.forEach(({ L, i }) => { const el = chipEl(L.b, L.l, i); if (el) el.classList.add('now'); });
+  const ln = lineEl(members[0].L.b, members[0].L.l);
+  if (ln){ if (you) ln.classList.add('you'); if (ln !== lastLine){ scrollToLine(ln); lastLine = ln; } }
+  mokugyo(); pulse();
+  if (members.some(m => !m.hold && m.L.syl[m.i].bell)) bell(0.6);
+  if (members.some(m => !m.hold && m.L.syl[m.i].ring)) shokei(0.6);
+  if (voice) sing(members);
+}
+const highlight = (L, i) => lightUp([{ L, i }]);
+// Lignes entières : le mokugyo bat chaque temps régulièrement ; la ligne démarre sur son premier temps,
+// légèrement accélérée ou ralentie (0,9 à 1,15) pour tenir dans ses temps. Si elle déborde,
+// on ajoute des temps entiers, toujours au même rythme. Le surlignage suit la voix.
+// Syllabes sans mokugyo (les cloches sonnent quand même) : le titre, chanté seul par l'ino (il entre à « kan ji zai »),
+// et le « shin » du « han nya shin gyō » final
+function noMoku(L, i){
+  if (L === DATA[0].lines[0]) return true;
+  const lastB = DATA[DATA.length - 1], last = lastB.lines[lastB.lines.length - 1];
+  return L === last && i != null && L.syl[i].r === 'shin';
+}
+function runLines(lines, done, id){
+  const a = audio(), out = playBus || master;
+  let li = 0, at = a.currentTime + 0.15;
+  const pump = () => {
+    if (id !== runId) return;
+    while (li < lines.length && at < a.currentTime + 1.5){
+      const L = lines[li], beat = beatMs() / 1000, info = LINES[lineText(L)];
+      const strikes = [];
+      let t = at;
+      groups(L).forEach((g, gi) => { strikes.push([t, g.some(i => L.syl[i].bell && (!earlyBell(L, i) || li === 0)), g.some(i => L.syl[i].ring), g.every(i => noMoku(L, i))]); t += groupSpan(g.length); });
+      for (let n = 0; n < L.hold; n++){ strikes.push([t, false]); t += beat; }
+      if (info){
+        const speech = info.e - info.s, rate = Math.min(1.15, Math.max(0.9, speech / (t - at)));
+        while (at + speech / rate + 0.1 > t){ strikes.push([t, false]); t += beat; }
+        playLine(info, at, rate, Math.min(speech / rate + 0.3, t - at + 0.15), out);
+        info.times.forEach((ts, i) => {
+          const when = at + ts / rate;
+          later(() => { if (id === runId) lightVisual([{ L, i }]); }, Math.max(0, (when - a.currentTime) * 1000));
+        });
+      }
+      const nextL = lines[li + 1];
+      if (nextL && earlyBell(nextL, 0)) strikes[strikes.length - 1][1] = true;   // cloche de la ligne suivante, un temps avant
+      if (L.post === '▼') gatsu(0.6, t, out);   // dernier coup
+      strikes.forEach(([st, isBell, isRing, silent]) => { if (!silent && !noMoku(L)) mokugyo(st, out); if (isBell) bell(0.6, st, out); if (isRing) shokei(0.6, st, out); later(() => { if (id === runId) pulse(); }, Math.max(0, (st - a.currentTime) * 1000)); });
+      at = t; li++;
+    }
+    if (li < lines.length) later(pump, 100);
+    else later(() => { if (id !== runId) return; clearNow(); done(); }, Math.max(0, (at - a.currentTime) * 1000));
+  };
+  pump();
+}
+// Les temps sont programmés à l'avance sur l'horloge audio (régulière à la milliseconde) ;
+// seul le surlignage passe par les minuteries, qui peuvent prendre du retard sans gêner le son
+let playBus = null;
+function runStream(lines, you, done, id, voice){
+  const G = streamGroups(lines), a = audio(), out = playBus || master;
+  let i = 0, at = a.currentTime + 0.15;
+  const pump = () => {
+    if (id !== runId) return;
+    while (i < G.length && at < a.currentTime + 1.0){
+      const g = G[i];
+      if (!g.every(m => noMoku(m.L, m.hold ? null : m.i))) mokugyo(at, out);
+      const nx = G[i + 1];
+      if (g.some(m => !m.hold && m.L.syl[m.i].bell && (!earlyBell(m.L, m.i) || i === 0)) ||
+          (nx && nx.some(m => !m.hold && earlyBell(m.L, m.i)))) bell(0.6, at, out);
+      if (g.some(m => !m.hold && m.L.syl[m.i].ring)) shokei(0.6, at, out);
+      if (voice) sing(g, at, out);
+      const when = at;
+      later(() => { if (id === runId) lightVisual(g, you); }, Math.max(0, (when - a.currentTime) * 1000));
+      at += groupSpan(g.filter(m => !m.hold).length);
+      const z = g[g.length - 1];
+      if (z.i === z.L.syl.length - 1 && z.L.post === '▼' && (z.hold || !z.L.hold)) gatsu(0.6, at, out);   // dernier coup
+      i++;
+    }
+    if (i < G.length) later(pump, 100);
+    else later(() => { if (id !== runId) return; clearNow(); done(); }, Math.max(0, (at - a.currentTime) * 1000));
+  };
+  pump();
+}
+
+// Avec voix : la ligne est dite d'un souffle, le surlignage et le mokugyo suivent la voix
+function runVoice(L, done, id){
+  if (!hasTTS || !jaVoice){ runStream([L], false, done, id); return; }
+  const n = L.syl.length, key = lineKey(L);
+  const sps = lineSps[key] || secPerSyl;
+  const rate = Math.min(2, Math.max(0.6, sps / (beatMs() / 1000)));
+  const parts = L.syl.map(sylSpeech), starts = [];
+  let p = 0; parts.forEach(s => { starts.push(p); p += s.length + 1; });
+  const u = utter(parts.join(' '), rate);
+  const weights = L.syl.map(mora), W = weights.reduce((a, b) => a + b, 0);
+  let cur = -1, t0 = 0, finished = false;
+
+  const go = i => { if (id !== runId || i <= cur || i >= n) return; cur = i; highlight(L, i); };
+  const finish = () => {
+    if (finished) return; finished = true;
+    later(() => { if (id !== runId) return; clearNow(); done(); }, beatMs() * 0.6);
+  };
+  u.onstart = () => {
+    if (id !== runId) return;
+    t0 = performance.now();
+    const D = sps * n / rate * 1000;
+    let acc = 0;
+    weights.forEach((w, i) => { later(() => go(i), D * acc / W); acc += w; });
+  };
+  // Repères envoyés par la voix pendant qu'elle parle : on se recale dessus
+  u.onboundary = e => {
+    if (id !== runId || (e.name && e.name !== 'word')) return;
+    let i = 0; while (i + 1 < n && starts[i + 1] <= e.charIndex) i++;
+    go(i);
+  };
+  u.onend = () => {
+    if (t0 && id === runId){
+      const v = (performance.now() - t0) / 1000 * rate / n;
+      lineSps[key] = lineSps[key] ? 0.5 * lineSps[key] + 0.5 * v : v;
+      secPerSyl = 0.8 * secPerSyl + 0.2 * v;
+      store.set('lineSps', lineSps); store.set('sps', secPerSyl);
+    }
+    finish();
+  };
+  u.onerror = () => finish();
+  speechSynthesis.cancel();
+  later(() => { if (id === runId) speechSynthesis.speak(u); }, 40);
+  // Si la voix ne démarre pas, on continue au mokugyo seul
+  later(() => {
+    if (!t0 && !finished && id === runId){ finished = true; speechSynthesis.cancel(); runStream([L], false, done, id); }
+  }, 2500);
+}
+
+function startPlay(keepMic){
+  if (!keepMic) stopMic();
+  stopPlay();
+  audio(); playing = true; lastLine = null; micUI();
+  playBus = ac.createGain(); playBus.connect(master);
+  const id = ++runId;
+  let items = [], k = 0;
+  setStatus(S.mode === 'echo' ? 'La voix dit la ligne, puis c\'est <b>à toi</b> au rythme du mokugyo.' :
+            S.mode === 'seul' ? 'Récite au rythme du mokugyo, en suivant le marqueur.' : 'Récite en même temps que la voix.');
+  const next = () => {
+    if (id !== runId) return;
+    const it = items[k++];
+    // fin naturelle : on lâche le bus sans le couper, pour laisser résonner les cloches
+    if (!it){ playBus = null; stopPlay(); setStatus(listening ? 'Fin de l\'accompagnement. Le micro écoute toujours.' : ''); return; }
+    if (it.t === 'bell'){ bell(); later(next, it.gap); }
+    // un coup, puis son temps
+    else if (it.t === 'strike'){ const out = playBus || master; ({ ken: () => bell(0.8, undefined, out), gatsu: () => gatsu(0.8, undefined, out), moku: () => mokugyo(undefined, out) })[it.s](); pulse(); later(next, beatMs()); }
+    else if (it.t === 'rest') later(next, beatMs() * it.n);
+    else if (it.t === 'stream') runStream(it.lines, it.you, next, id, it.voice);
+    else if (it.t === 'lines') runLines(it.lines, next, id);
+    else runVoice(it.L, next, id);
+  };
+  Promise.all([loadSamples(), loadLines(), loadMoku(), loadKeisu(), loadBell('shokei')]).then(() => { if (id !== runId) return; items = buildItems(); next(); });
+}
+function stopPlay(){
+  if (playBus){ try { playBus.disconnect(); } catch {} playBus = null; }
+  runId++; timers.forEach(clearTimeout); timers = []; playing = false; clearNow();
+  if (hasTTS) speechSynthesis.cancel();
+  micUI();
+}
+
+/* ---------- Reconnaissance vocale ---------- */
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+let rec = null, listening = false, calib = false, calTok = 0, vmic = null, flat = [], target = 0, committed = '', skipUpTo = 0;
+// fixQ : dernier kanji jugé par « ma voix » { L, i, ok } ; calOne : ce kanji pendant qu'on le recalibre
+let fixQ = null, calOne = null, lineTok = 0;
+
+function norm(t){ return loosen(toHira(t)).replace(/[\s、。・，,.!?！？ー「」]/g, '').toLowerCase(); }
+
+// Exigence souple : les sons que la reconnaissance confond facilement sont gommés des deux côtés
+// (ん, ち/し, つ/す, voyelles longues), et une forme est reconnue à un son près après le premier (しく pour しき)
+const soft = () => S.exig === 'souple';
+const blur = s => s.replace(/ん/g, '').replace(/ち/g, 'し').replace(/つ/g, 'す')
+  .replace(/([おこそとのほもよろ])[うお]/g, '$1').replace(/([えけせてねへめれ])い/g, '$1');
+const forms = s => soft() ? (s.soft ||= [...new Set(s.vars.map(blur))].filter(Boolean).sort((a, b) => b.length - a.length)) : s.vars;
+// Renvoie la longueur lue si la forme v est entendue à la position j, sinon 0
+function fit(v, T, j){
+  if (T.startsWith(v, j)) return v.length;
+  if (!soft() || v.length < 2 || j + v.length > T.length || T[j] !== v[0]) return 0;
+  let d = 0;
+  for (let x = 1; x < v.length; x++) if (T[j + x] !== v[x] && ++d > 1) return 0;
+  return v.length;
+}
+// Alignement syllabes ↔ texte entendu (plus longue sous-suite commune, par syllabe)
+function match(L, text){
+  const T = soft() ? blur(norm(text)) : norm(text), n = L.syl.length, m = T.length;
+  const dp = Array.from({ length: n + 1 }, () => new Int16Array(m + 1));
+  for (let i = n - 1; i >= 0; i--){
+    const vs = forms(L.syl[i]);
+    for (let j = m; j >= 0; j--){
+      let best = dp[i + 1][j];
+      if (j < m && dp[i][j + 1] > best) best = dp[i][j + 1];
+      for (const v of vs){ const len = fit(v, T, j); if (len){ const c = 1 + dp[i + 1][j + len]; if (c > best) best = c; } }
+      dp[i][j] = best;
+    }
+  }
+  const matched = new Array(n).fill(false), pos = [];
+  let i = 0, j = 0;
+  while (i < n){
+    const cur = dp[i][j];
+    const v = forms(L.syl[i]).find(v => { const len = fit(v, T, j); return len && 1 + dp[i + 1][j + len] === cur; });
+    if (v){ matched[i] = true; const len = fit(v, T, j); pos[i] = [j, len]; j += len; i++; }
+    else if (dp[i + 1][j] === cur) i++;
+    else j++;
+  }
+  return { matched, count: dp[0][0], pos, T };
+}
+
+/* ---------- Réciter kanji par kanji ----------
+   Une ligne à la fois, à ton rythme. Tout est caché ; la case du kanji attendu est entourée. Dis-le : il passe en vert et
+   le curseur avance. Tu peux en enchaîner plusieurs : en exigence souple, un kanji mal entendu au milieu d'un groupe
+   compte comme dit si les deux suivants sont reconnus. Après 4 s de silence sans avancer, le kanji attendu est dévoilé et
+   tu le redis ; raté une seconde fois, il est marqué en orange et on passe au suivant. Fin de ligne : la suivante
+   démarre, sans aucun son. Les lignes avec un kanji raté sont « à revoir » et reprises à la fin. */
+const SILENCE_MS = 4000;
+let got = [], shown = [], missed = [], cur = 0, base = 0, tries = 0, review = [];
+let heardIdx = 0, heardText = '', silenceTimer = null, lineLock = false;
+const maskLine = L => L.syl.forEach((_, i) => chipEl(L.b, L.l, i).classList.add('masked'));
+// Trouvés : verts ; dévoilés (indice ou raté) : visibles ; ratés : bord orange ; kanji attendu : entouré
+function showChips(L){
+  L.syl.forEach((_, i) => {
+    const el = chipEl(L.b, L.l, i);
+    el.classList.toggle('ok', got[i]);
+    el.classList.toggle('peek', (shown[i] || missed[i]) && !got[i]);
+    el.classList.toggle('miss', missed[i]);
+    el.classList.toggle('cur', !lineLock && i === cur);
+  });
+}
+// Oublie ce qui a été entendu : l'essai suivant repart du kanji attendu
+function resetHeard(){ committed = ''; skipUpTo = heardIdx; heardText = ''; base = cur; clearTimeout(silenceTimer); }
+function focusTarget(){
+  main.querySelectorAll('.line.target').forEach(e => e.classList.remove('target'));
+  const L = flat[target], ln = lineEl(L.b, L.l);
+  ln.classList.add('target'); ln.classList.remove('done', 'review'); scrollToLine(ln);
+  maskLine(L);
+  ln.querySelectorAll('.syl').forEach(e => e.classList.remove('ok', 'miss', 'peek', 'cur'));
+  got = L.syl.map(() => false); shown = L.syl.map(() => false); missed = L.syl.map(() => false);
+  cur = 0; tries = 0; lineLock = false; resetHeard(); showChips(L); hideFix();
+  setStatus(`Ligne ${target + 1}/${flat.length} : dis le kanji entouré, ou enchaîne-en plusieurs.`);
+  voskRegrammar();
+  if (readBefore()) readFirst(L); else if (vmic && !calib) vmic.armed = true;
+}
+/* Voix sur chaque ligne (réglage « Voix sur chaque ligne », S.lire : both | before | after | none)
+   Avant : la voix lit la ligne, puis tu la récites ; le micro n'écoute pas pendant la lecture.
+   Après : ligne finie, la voix la relit, dit « Répète », te laisse le temps de la répéter (ce n'est pas jugé),
+   puis ligne suivante. sayTok / lineTok : une lecture dépassée (Arrêter, Recommencer, autre ligne) ne fait plus rien. */
+const readBefore = () => S.lire === 'both' || S.lire === 'before';
+const readAfter = () => S.lire === 'both' || S.lire === 'after';
+const pause = ms => new Promise(r => setTimeout(r, ms));
+let sayTok = 0;
+// lit la ligne et attend la fin ; rend sa durée (en secondes)
+async function sayLineWait(L){
+  const lp = loadLines(); if (lp) await lp;
+  const info = LINES && LINES[lineText(L)];
+  if (info){ const len = info.e - info.s + 0.3; playLine(info, audio().currentTime + 0.05, 1, len); await pause(len * 1000 + 100); return len; }
+  const sp = loadSamples(); if (sp) await sp;
+  const len = SAMPLE ? groups(L).reduce((t, g) => t + groupSpan(g.length), 0) : L.syl.length * 0.45;
+  sayLineSyllables(L); await pause(len * 1000 + 200); return len;
+}
+// « Répète », dit dans la langue de la page
+function sayWord(t){
+  if (!hasTTS) return;
+  const u = new SpeechSynthesisUtterance(tr(t)); u.lang = LANG; u.rate = 1;
+  speechSynthesis.cancel(); setTimeout(() => speechSynthesis.speak(u), 40);
+}
+function readFirst(L){
+  const t = ++sayTok;
+  lineLock = true; if (vmic) vmic.armed = false; clearTimeout(silenceTimer);
+  showChips(L); setStatus('Écoute la ligne…');
+  sayLineWait(L).then(() => pause(400)).then(() => {
+    if (t !== sayTok || !listening || calib || L !== flat[target]) return;
+    lineLock = false; resetHeard(); if (vmic) vmic.armed = true; showChips(L);
+    setStatus(`Ligne ${target + 1}/${flat.length} : dis le kanji entouré, ou enchaîne-en plusieurs.`);
+  });
+}
+async function readAfterLine(L, t){
+  if (vmic) vmic.armed = false;
+  const st = ++sayTok, live = () => t === lineTok && st === sayTok && listening;
+  await pause(700);
+  if (!live()) return;
+  const len = await sayLineWait(L);
+  if (!live()) return;
+  sayWord('Répète.');
+  setStatus('<b>Répète</b> la ligne.');
+  await pause(900 + len * 1300 + 800);            // le temps de la répéter, un peu plus lentement
+  if (live()) nextLine();
+}
+function onResult(e){
+  if (!listening) return;
+  // pendant une lecture de la voix (ou entre deux lignes) : ce qui est entendu ne comptera pas, même plus tard
+  if (lineLock){ heardIdx = skipUpTo = e.results.length; return; }
+  const L = flat[target], rest = { syl: L.syl.slice(base) }, finals = [], keep = new Set(L.syl.map(x => x.c));
+  // chaque proposition est lue de plusieurs façons (telle qu'écrite, lecture mixte, tout en kana) :
+  // on garde la proposition et la lecture qui reconnaissent le plus de kanji
+  const pick = alts => {
+    let best = { t: '', sc: -1, forms: [] };
+    alts.forEach((t, a) => { let top = { x: t, sc: -1 };
+      for (const x of readings(t, keep)){ const sc = match(rest, committed + x).count; if (sc > top.sc) top = { x, sc }; }
+      best.forms[a] = top.x;
+      if (top.sc > best.sc) Object.assign(best, { t: top.x, sc: top.sc, a }); });
+    return best;
+  };
+  let interim = '';
+  for (let i = Math.max(e.resultIndex, skipUpTo); i < e.results.length; i++){
+    const r = e.results[i];
+    if (r.isFinal){
+      const alts = Array.from(r, x => x.transcript), best = pick(alts);
+      committed = (committed + best.t).slice(-120);
+      finals.push({ alts, best });
+    } else interim += pick([r[0].transcript]).t;
+  }
+  // résultats déjà définitifs : un essai suivant ne les relira pas (le partiel en cours, lui, n'est pas compté)
+  heardIdx = e.results.length - (e.results.length && !e.results[e.results.length - 1].isFinal ? 1 : 0);
+  const text = committed + interim;
+  if (text === heardText && !finals.length) return; // rien de nouveau (Vosk répète son résultat partiel)
+  heardText = text;
+  // ce qui a été dit depuis le dernier silence, comparé à la suite de la ligne : seuls les kanji
+  // reconnus à la suite, à partir du kanji attendu au début de l'essai, font avancer le curseur
+  const m = match(rest, text).matched;
+  // groupe : en souple, un kanji non reconnu suivi de deux reconnus compte comme dit
+  let p = 0; while (p < m.length && (m[p] || soft() && m[p + 1] && m[p + 2])) p++;
+  if (base + p > cur){
+    for (let i = cur; i < base + p; i++) if (!missed[i]) got[i] = true;
+    cur = base + p; tries = 0;
+  }
+  finals.forEach(f => logResult(L, f));
+  showChips(L);
+  setStatus(`Entendu : <span class="heard">${esc(text) || '…'}</span>`);
+  if (cur >= L.syl.length){ finishLine(); return; }
+  clearTimeout(silenceTimer);
+  if (text) silenceTimer = setTimeout(endAttempt, SILENCE_MS);
+}
+// Silence : si le curseur a avancé, on continue ; sinon le kanji attendu est dévoilé, puis compté raté
+function endAttempt(){
+  if (!listening || lineLock) return;
+  const L = flat[target], progressed = cur > base;
+  if (!progressed) failKanji(L);
+  resetHeard(); showChips(L);
+}
+function failKanji(L){
+  if (++tries === 1 && !shown[cur]){ shown[cur] = true; setStatus('Le kanji est dévoilé : redis-le.'); return; }
+  missed[cur] = true; cur++; tries = 0;
+  if (cur >= L.syl.length){ finishLine(); return; }
+  setStatus('Marqué à revoir. Kanji suivant.');
+}
+function finishLine(){
+  lineLock = true; clearTimeout(silenceTimer);
+  const L = flat[target], bad = missed.some(Boolean);
+  showChips(L); lineEl(L.b, L.l).classList.add(bad ? 'review' : 'done');
+  srsGrade(L, missed, shown);
+  if (bad && !review.includes(L)) review.push(L);
+  setStatus(bad ? 'Ligne finie, <b>à revoir</b> : elle sera reprise à la fin.' : '<b>Ligne trouvée.</b>');
+  const t = ++lineTok;
+  if (readAfter()){ readAfterLine(L, t); return; }
+  setTimeout(() => t === lineTok && nextLine(), bad ? 2500 : 1200);
+}
+function nextLine(){
+  if (!listening) return;
+  if (++target < flat.length){ focusTarget(); return; }
+  if (review.length){
+    flat = review; review = []; target = 0;
+    flat.forEach(maskLine); focusTarget();
+    setStatus(`Reprise des lignes à revoir (${flat.length}) : dis le kanji entouré.`);
+    return;
+  }
+  stopMic();
+  setStatus('<b>Tout est trouvé.</b>');
+}
+
+/* ---------- Révisions espacées ----------
+   Chaque ligne récitée au micro est rangée dans une boîte, de 0 à 5. Tout trouvé sans aide : elle monte d'une boîte ;
+   avec un kanji dévoilé : elle reste ; un kanji raté : elle repart à 0. La boîte fixe le délai avant la prochaine
+   révision (SRS_DAYS). Seul le premier passage d'une séance compte, pas la reprise des lignes à revoir.
+   Une ligne en boîte 3 ou plus (réussie trois fois de suite) est « acquise ». */
+const SRS_DAYS = [1, 1, 3, 7, 14, 30];
+const srs = store.get('srs', {});
+const day = (d = 0) => { const t = new Date(); t.setDate(t.getDate() + d); return t.toLocaleDateString('sv'); };
+let graded = new Set();
+const srsPrev = new Map();
+function srsUngrade(L){
+  if (!srsPrev.has(L)) return;
+  const k = lineKey(L), prev = srsPrev.get(L);
+  if (prev) srs[k] = prev; else delete srs[k];
+  store.set('srs', srs); graded.delete(L); srsPrev.delete(L);
+}
+function srsGrade(L, missed, shown){
+  if (graded.has(L)) return;
+  graded.add(L);
+  srsPrev.set(L, srs[lineKey(L)] ? { ...srs[lineKey(L)] } : null);
+  const k = lineKey(L), r = srs[k] || { box: 0, n: 0 };
+  r.box = missed.some(Boolean) ? 0 : shown.some(Boolean) ? r.box : Math.min(5, r.box + 1);
+  r.n++; r.last = day(); r.due = day(SRS_DAYS[r.box]);
+  srs[k] = r; store.set('srs', srs);
+  renderReview(); renderTabs();
+}
+const dueLines = () => FLAT.filter(L => srs[lineKey(L)] && srs[lineKey(L)].due <= day());
+const lineState = L => { const r = srs[lineKey(L)]; return !r ? 'new' : r.box >= 3 ? 'ok' : 'learn'; };
+function progress(lines){
+  const c = { ok: 0, learn: 0, new: 0 };
+  lines.forEach(L => c[lineState(L)]++);
+  const n = lines.length || 1;
+  return { ...c, style: `--pa:${c.ok / n * 100}%;--pb:${(c.ok + c.learn) / n * 100}%` };
+}
+let reviewOpen = false;
+function renderReview(){
+  const due = dueLines(), all = progress(FLAT);
+  const next = Object.values(srs).map(r => r.due).filter(d => d > day()).sort()[0];
+  const nextTxt = next ? new Date(next + 'T12:00').toLocaleDateString(LANG, { weekday: 'long', day: 'numeric', month: 'long' }) : '';
+  $('review').innerHTML = `<div class="rvrow">
+      <span class="rvh">Révisions du jour</span>
+      <span class="rvs${due.length ? ' due' : ''}"><span>À revoir</span> <b>${due.length}</b></span>
+      <span class="rvs"><span>Acquises</span> <b>${all.ok}</b></span>
+      <span class="rvs"><span>En cours</span> <b>${all.learn}</b></span>
+      <span class="rvs"><span>Jamais récitées</span> <b>${all.new}</b></span>
+      <span class="grow"></span>
+      ${due.length ? `<button class="btn primary" id="rvGo" title="Récite les lignes à revoir aujourd'hui, kanji par kanji">Réviser au micro</button>` : ''}
+      <button class="btn ghost" id="rvProg" aria-expanded="${reviewOpen}">Progression</button>
+    </div>
+    ${due.length ? '' : `<div class="rvnote">${Object.keys(srs).length
+      ? `<span>Rien à revoir aujourd'hui.</span>${next ? ` <span>Prochaine révision :</span> ${esc(nextTxt)}` : ''}`
+      : `<span>Récite au micro : chaque ligne récitée entre dans tes révisions.</span>`}</div>`}
+    <div class="rvprog"${reviewOpen ? '' : ' hidden'}>${DATA.map(B => {
+      const p = progress(B.lines);
+      return `<span>${esc(B.title)}</span><span class="pbar" style="${p.style}"></span><span class="pn">${p.ok}/${B.lines.length}</span>`;
+    }).join('')}</div>`;
+  if (due.length) $('rvGo').onclick = () => startMic(dueLines());
+  $('rvProg').onclick = () => { reviewOpen = !reviewOpen; renderReview(); };
+}
+// Chaque reconnaissance est une instance à part : les événements d'une ancienne instance
+// (arrêtée, mais qui finit de se fermer) sont ignorés, sinon la relance suivante se bloque
+// Coupures réseau : on relance avec un délai croissant ; hors ligne si Chrome sait le faire sur l'appareil
+let netFails = 0, onDevice = false;
+async function checkOnDevice(){
+  if (!SR || typeof SR.available !== 'function') return 'absent';
+  try {
+    const st = await SR.available({ langs: ['ja-JP'], processLocally: true });
+    onDevice = st === 'available';
+    $('offline').hidden = !(st === 'downloadable' || st === 'downloading');
+    return st;
+  } catch { return 'absent'; }
+}
+// Une session reprise par la page (restart) peut échouer le temps que le navigateur libère le micro :
+// ces erreurs-là ne coupent pas l'écoute, la page réessaie (6 fois au plus, de plus en plus lentement)
+let restartFails = 0;
+// Chrome peut annoncer la reconnaissance japonaise sur l'appareil, puis fermer chaque session sans ouvrir le micro
+// (« aborted » en boucle, vu avec Chrome 156) : dès qu'une session locale finit sans son, on passe au service en ligne
+let localBroken = false;
+// Chrome n'accepte qu'une reconnaissance à la fois : deux onglets de l'outil qui écoutent se coupent l'un l'autre
+// (« aborted » en boucle, aucun son). L'onglet qui commence à écouter prévient les autres, qui s'arrêtent ;
+// et 5 sessions de suite fermées sans son arrêtent l'écoute avec une explication, au lieu de relancer sans fin.
+let deadRuns = 0;
+const micChannel = 'BroadcastChannel' in window ? new BroadcastChannel('hannya-micro') : null;
+function claimMic(){ deadRuns = 0; try { micChannel?.postMessage('start'); } catch {} }
+if (micChannel) micChannel.onmessage = e => {
+  if (e.data !== 'start' || !listening) return;
+  stopMic(); setStatus("Le micro est passé à un autre onglet de l'outil.");
+};
+const TRANSIENT = ['audio-capture', 'not-allowed', 'service-not-allowed', 'aborted'];
+function newRecognizer(restart){
+  const r = new SR();
+  r.lang = 'ja-JP'; r.continuous = true; r.interimResults = true; r.maxAlternatives = 4;
+  // la reconnaissance sur l'appareil de Chrome (processLocally) n'est plus utilisée : en test réel (Chrome 156),
+  // un seul résultat en 40 s de récitation, alors que le micro captait bien la voix. Hors ligne : Vosk.
+  r.local = false;
+  if (r.local) r.processLocally = true;
+  const id = ++srN;
+  trace(`#${id} ${r.local ? 'appareil' : 'en ligne'}${restart ? ' (relance)' : ''}`);
+  ['audiostart', 'speechstart', 'end'].forEach(t => r.addEventListener(t, () => trace(`#${id} ${t}`)));
+  r.addEventListener('error', e => trace(`#${id} erreur ${e.error}`));
+  r.addEventListener('result', e => { if (e.results[e.results.length - 1]?.isFinal) trace(`#${id} résultat`); });
+  const mine = fn => (...args) => { if (r === rec) fn(...args); };
+  r.onstart = mine(() => { skipUpTo = 0; });
+  // aux reprises, la consigne de la ligne reste affichée
+  r.onaudiostart = mine(() => { r.audio = true; restartFails = 0; deadRuns = 0; if (!restart && !calib) setStatus('Micro ouvert' + (r.local ? ' (reconnaissance hors ligne)' : '') + '. Récite la ligne surlignée.'); });
+  r.onresult = mine(e => { netFails = 0; restartFails = 0; onResult(e); });
+  r.onerror = mine(e => {
+    if (r.local && !r.audio) return;               // repli géré dans onend
+    if (restart && TRANSIENT.includes(e.error) && ++restartFails <= 6){ r.transient = true; return; }
+    if (restart && TRANSIENT.includes(e.error)){ listening = false; setStatus('Le micro ne reprend pas (' + esc(e.error) + '). Relance « Réciter au micro ».'); return; }
+    if (e.error === 'not-allowed' || e.error === 'service-not-allowed'){ listening = false; setStatus('Le micro est refusé. Autorise-le via l\u0027icône à gauche de la barre d\u0027adresse, puis réessaie.'); }
+    else if (e.error === 'network'){
+      netFails++;
+      if (netFails > 8){ listening = false; setStatus('La connexion au service de reconnaissance ne revient pas. Vérifie internet, puis relance le micro.'); }
+      else setStatus('Connexion perdue, je reprends… (essai ' + netFails + ')');
+    }
+    else if (e.error === 'audio-capture'){ listening = false; setStatus('Aucun micro détecté.'); }
+    else if (e.error === 'no-speech') setStatus("Je n'entends rien. Rapproche le micro ou parle plus fort.");
+    else if (e.error !== 'aborted') setStatus('Erreur de reconnaissance vocale : <b>' + esc(e.error) + '</b>');
+  });
+  // Le navigateur coupe l'écoute après un silence : on relance une nouvelle instance
+  r.onend = mine(() => {
+    if (r.local && !r.audio && listening){
+      localBroken = true;
+      setStatus('La reconnaissance sur l\u0027appareil ne démarre pas : je passe au service en ligne.');
+      setTimeout(() => { if (listening && r === rec){ rec = newRecognizer(); try { rec.start(); } catch {} } }, 300);
+      return;
+    }
+    if (!r.audio && listening && ++deadRuns >= 5){
+      listening = false; micUI();
+      setStatus("Le micro ne s'ouvre pas : une autre page l'utilise sans doute (un autre onglet de l'outil, une visio…). Ferme-la, puis relance.");
+      return;
+    }
+    const delay = netFails ? Math.min(5000, 500 * netFails) : r.transient ? 300 * restartFails : 150;
+    if (listening) setTimeout(() => { if (listening && r === rec){ rec = newRecognizer(true); try { rec.start(); } catch {} } }, delay);
+    else micUI();
+  });
+  return r;
+}
+/* ---------- Comparaison par le son ----------
+   La reconnaissance écrit des mots japonais courants : 感 ou 缶 pour « kan », 時代 pour « ji zai ». Un dictionnaire
+   japonais (kuromoji, 18 Mo chargés une fois depuis le CDN, puis gardés par le navigateur) donne leur lecture en kana :
+   on compare alors les sons, plus l'écriture. Tant qu'il n'est pas chargé, ou s'il ne charge pas, on compare l'écriture. */
+const KUROMOJI = 'https://cdn.jsdelivr.net/npm/kuromoji@0.1.2/';
+let kuro = null, kuroState = '';
+function loadKuromoji(){
+  if (kuroState === 'loading' || kuroState === 'ok') return;
+  kuroState = 'loading'; dictUI();
+  const done = (st, t) => { kuroState = st; if (t) kuro = t; dictUI(); };
+  const build = () => { try { kuromoji.builder({ dicPath: KUROMOJI + 'dict/' }).build((err, t) => err ? done('fail') : done('ok', t)); } catch { done('fail'); } };
+  if (window.kuromoji) return build();
+  const sc = document.createElement('script');
+  sc.src = KUROMOJI + 'build/kuromoji.js'; sc.onload = build; sc.onerror = () => done('fail');
+  document.head.append(sc);
+}
+function dictUI(){
+  $('srdict').textContent = { loading: 'Dictionnaire des sons : chargement…', ok: 'Comparaison par le son ✓',
+    fail: "Dictionnaire des sons indisponible : comparaison de l'écriture" }[kuroState] || '';
+}
+// Lecture en hiragana de ce que la reconnaissance a écrit (mot inconnu du dictionnaire : laissé tel quel).
+// keep : les mots écrits seulement avec ces kanji restent écrits (le dictionnaire lirait 心経 « こころけい »)
+function kanaOf(t, keep){
+  if (!kuro || !t) return t;
+  try { return toHira(kuro.tokenize(t).map(w => keep && [...w.surface_form].every(c => keep.has(c)) || !w.reading || w.reading === '*'
+    ? w.surface_form : w.reading).join('')); }
+  catch { return t; }
+}
+// Les lectures d'une proposition, sans doublon : telle qu'écrite, mixte, tout en kana
+const readings = (t, keep) => [...new Set([t, kanaOf(t, keep), kanaOf(t)])];
+
+/* ---------- Journal de la reconnaissance ----------
+   Pour chaque résultat définitif : le kanji attendu, les propositions (et leur lecture en kana), celle retenue
+   (soulignée) et l'avance du curseur. « Copier le journal » le donne en texte, pour le transmettre. */
+const LOG_MAX = 400;
+let srLog = [], srTrace = [], srN = 0;
+// trace : les sessions de reconnaissance (ouverture du micro, erreurs, fins), pour le journal copié
+function trace(t){
+  srTrace.push(((performance.now() / 1000) % 10000).toFixed(1) + ' ' + t);
+  if (srTrace.length > 80) srTrace.shift();
+}
+// reconnus : les kanji passés depuis le début de l'essai (le dernier silence)
+function logResult(L, f){
+  const exp = L.syl[base];
+  srLog.push({ line: target + 1, exp: exp ? `${exp.c} (${exp.k})` : '—', alts: f.alts.map((t, i) => ({ t, k: f.best.forms[i] })), best: f.best.a,
+    got: L.syl.slice(base, cur).map(x => x.c).join('') });
+  if (srLog.length > LOG_MAX) srLog.shift();
+  renderLog();
+}
+function renderLog(){
+  const ol = $('srlist');
+  ol.innerHTML = srLog.length ? srLog.map(x => `<li><span>Ligne</span> ${x.line} · <span>attendu</span> <b>${esc(x.exp)}</b> · ${x.alts.map((a, i) =>
+      `<span class="alt${i === x.best ? ' best' : ''}">${esc(a.t) || '∅'}</span>${a.k !== a.t ? ` (${esc(a.k)})` : ''}`).join(' / ')} → ${x.learn ? `<span>appris</span> <span class="adv">${esc(x.learn)}</span>` : x.got
+      ? `<span>reconnus</span> <span class="adv">${esc(x.got)}</span>` : '<span class="none">aucun kanji reconnu</span>'}</li>`).join('')
+    : `<li class="empty">Rien entendu pour l'instant.</li>`;
+  ol.scrollTop = ol.scrollHeight;
+}
+function logText(){
+  return [`Hannya Shingyō ${VERSION} · ${S.engine === 'vosk' ? 'hors ligne' : 'en ligne'} · ${S.exig} · ${kuroState || 'sans dictionnaire'} · ${Object.keys(PRINTS || {}).length} kanji calibrés`]
+    .concat(['Sessions : ' + (srTrace.join(' · ') || '—')], srLog.map(x => `L${x.line} attendu ${x.exp} : ${x.alts.map((a, i) => (i === x.best ? '*' : '') + (a.t || '∅') + (a.k !== a.t ? ` (${a.k})` : '')).join(' / ')} → ${x.learn ? 'appris ' + x.learn : x.got || '—'}`))
+    .join('\n');
+}
+$('logBtn').onclick = () => {
+  const open = $('srlog').hidden;
+  $('srlog').hidden = !open; $('logBtn').setAttribute('aria-expanded', open);
+  if (open) dictUI();
+};
+$('logCopy').onclick = () => navigator.clipboard.writeText(logText())
+  .then(() => setStatus('Journal copié : colle-le dans ton message.'), () => setStatus('Copie impossible : sélectionne le journal à la main.'));
+$('logClear').onclick = () => { srLog = []; srTrace = []; renderLog(); };
+renderLog();
+
+/* ---------- Empreintes de ta voix ----------
+   Sans moteur de reconnaissance : la page compare ta voix à tes propres enregistrements.
+   Calibrage : pour chaque kanji, l'exemple (voix japonaise) puis toi, 5 fois. Chaque fois, la page garde l'empreinte
+   de ce que tu as dit : MFCC, le timbre du son, mesuré toutes les 10 ms (sans retirer sa moyenne : sur une syllabe
+   courte, le timbre moyen est la voyelle même ; le micro est le même au calibrage et à la récitation). Récitation (moteur « ma voix ») : chaque mot est découpé par les silences, puis
+   comparé (DTW : alignement souple dans le temps) aux empreintes des kanji de la ligne ; il est reconnu si le kanji
+   attendu est le plus proche, à 10 % près. Un kanji sans empreinte est compté comme dit dès qu'un mot est entendu.
+   Empreintes gardées dans ce navigateur (IndexedDB « hannya », une entrée par kanji + lecture). */
+const voiceKey = x => x.c + '|' + x.k;
+const voiceDB = (() => {
+  let p;
+  const db = () => p ||= new Promise((ok, ko) => {
+    const r = indexedDB.open('hannya', 1);
+    r.onupgradeneeded = () => r.result.createObjectStore('voix');
+    r.onsuccess = () => ok(r.result); r.onerror = () => ko(r.error);
+  });
+  const tx = (mode, f) => db().then(d => new Promise((ok, ko) => {
+    const t = d.transaction('voix', mode), q = f(t.objectStore('voix'));
+    t.oncomplete = () => ok(q && q.result); t.onerror = () => ko(t.error);
+  }));
+  return { all: () => tx('readonly', st => st.getAll()), put: (k, v) => tx('readwrite', st => st.put(v, k)), clear: () => tx('readwrite', st => st.clear()) };
+})();
+let PRINTS = null;
+async function loadPrints(){
+  if (!PRINTS){ try { PRINTS = Object.fromEntries((await voiceDB.all()).map(v => [v.k, v.prints])); } catch { PRINTS = {}; } }
+  return PRINTS;
+}
+
+// Analyse du son : FFT, banc de filtres mel, MFCC, DTW
+function fft(re, im){
+  const n = re.length;
+  for (let i = 1, j = 0; i < n; i++){
+    let b = n >> 1; for (; j & b; b >>= 1) j ^= b; j ^= b;
+    if (i < j){ [re[i], re[j]] = [re[j], re[i]]; [im[i], im[j]] = [im[j], im[i]]; }
+  }
+  for (let len = 2; len <= n; len <<= 1){
+    const a = -2 * Math.PI / len, wr = Math.cos(a), wi = Math.sin(a), h = len >> 1;
+    for (let i = 0; i < n; i += len){
+      let cr = 1, ci = 0;
+      for (let k = 0; k < h; k++){
+        const p = i + k, q = p + h, tr = re[q] * cr - im[q] * ci, ti = re[q] * ci + im[q] * cr;
+        re[q] = re[p] - tr; im[q] = im[p] - ti; re[p] += tr; im[p] += ti;
+        const t = cr * wr - ci * wi; ci = cr * wi + ci * wr; cr = t;
+      }
+    }
+  }
+}
+const melCache = {};
+function melBank(N, sr){
+  const key = N + '/' + sr;
+  if (melCache[key]) return melCache[key];
+  const mel = f => 2595 * Math.log10(1 + f / 700), hz = m => 700 * (10 ** (m / 2595) - 1);
+  const lo = mel(80), hi = mel(Math.min(7600, sr / 2)), M = 26;
+  const bins = Array.from({ length: M + 2 }, (_, i) => Math.min(N >> 1, Math.floor((N + 1) * hz(lo + (hi - lo) * i / (M + 1)) / sr)));
+  const bank = [];
+  for (let m = 1; m <= M; m++){
+    const a = bins[m - 1], b = bins[m], c = bins[m + 1], w = [];
+    for (let k = a; k <= c; k++) w.push(k < b ? (k - a) / Math.max(1, b - a) : (c - k) / Math.max(1, c - b));
+    bank.push({ a, w });
+  }
+  return melCache[key] = bank;
+}
+const CEPS = 12;
+function mfcc(sig, sr){
+  const fl = Math.round(0.025 * sr), hop = Math.round(0.01 * sr);
+  let N = 1; while (N < fl) N <<= 1;
+  const bank = melBank(N, sr), M = bank.length, re = new Float32Array(N), im = new Float32Array(N), frames = [];
+  const win = Float32Array.from({ length: fl }, (_, i) => 0.54 - 0.46 * Math.cos(2 * Math.PI * i / (fl - 1)));
+  for (let s0 = 0; s0 + fl <= sig.length; s0 += hop){
+    re.fill(0); im.fill(0);
+    for (let i = 0; i < fl; i++) re[i] = (sig[s0 + i] - 0.97 * (s0 + i ? sig[s0 + i - 1] : 0)) * win[i];
+    fft(re, im);
+    const lm = bank.map(({ a, w }) => { let e = 1e-10; for (let k = 0; k < w.length; k++){ const x = a + k; e += w[k] * (re[x] * re[x] + im[x] * im[x]); } return Math.log(e); });
+    const c = new Float32Array(CEPS);
+    for (let q = 1; q <= CEPS; q++){ let v = 0; for (let m = 0; m < M; m++) v += lm[m] * Math.cos(Math.PI * q * (m + 0.5) / M); c[q - 1] = v; }
+    frames.push(c);
+  }
+  return frames;
+}
+function dtw(a, b){
+  const m = b.length;
+  let prev = new Float32Array(m + 1).fill(Infinity), cur = new Float32Array(m + 1);
+  prev[0] = 0;
+  for (let i = 1; i <= a.length; i++){
+    cur[0] = Infinity; const x = a[i - 1];
+    for (let j = 1; j <= m; j++){
+      const y = b[j - 1]; let d = 0;
+      for (let q = 0; q < CEPS; q++){ const t = x[q] - y[q]; d += t * t; }
+      cur[j] = Math.sqrt(d) + Math.min(prev[j], cur[j - 1], prev[j - 1]);
+    }
+    [prev, cur] = [cur, prev];
+  }
+  return prev[m] / (a.length + m);
+}
+// Le mot entendu comparé aux empreintes des kanji de la ligne : reconnu si le kanji attendu est le plus proche (10 % près)
+const printDist = (f, k) => Math.min(...PRINTS[k].map(p => dtw(f, p)));
+/* Jugement : ce que tu as dit est comparé à TOUS les kanji calibrés du sutra, pas seulement à ceux de la ligne
+   (sinon « yaku » dit à la place de « metsu » passait : parmi 不 生 滅, metsu était le plus proche).
+   Accepté si le kanji attendu est le plus proche, à 10 % près, ou si le plus proche se lit pareil (色 et 識 : しき). */
+const voiceKana = k => k.slice(k.indexOf('|') + 1);
+function voiceJudge(f, L, i){
+  const exp = voiceKey(L.syl[i]);
+  if (!PRINTS[exp]) return { ok: true, none: true };
+  const keys = Object.keys(PRINTS).filter(k => PRINTS[k] && PRINTS[k].length);
+  const d = Object.fromEntries(keys.map(k => [k, printDist(f, k)]));
+  const best = keys.reduce((a, k) => d[k] < d[a] ? k : a);
+  return { ok: d[exp] <= d[best] * 1.1 || voiceKana(best) === voiceKana(exp), d, best, exp };
+}
+
+// Micro et découpage par les silences : un « mot » commence quand le son dépasse le bruit de fond,
+// et finit après 0,35 s de calme (2,5 s au plus) ; un peu de son d'avant est gardé pour ne pas couper l'attaque
+async function openVoiceMic(onWord, onLevel){
+  const stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true, channelCount: 1 } });
+  const ctx = new AudioContext(), src = ctx.createMediaStreamSource(stream), node = ctx.createScriptProcessor(1024, 1, 1);
+  const sr = ctx.sampleRate, bd = 1024 / sr;
+  let noise = 0.004, on = false, loud = 0, quiet = 0, pre = [], cur = [];
+  node.onaudioprocess = e => {
+    const x = new Float32Array(e.inputBuffer.getChannelData(0));
+    let sq = 0; for (const v of x) sq += v * v;
+    const rms = Math.sqrt(sq / x.length);
+    onLevel?.(rms);
+    if (!vmic?.armed){ on = false; loud = 0; cur = []; pre = []; if (rms < noise * 3) noise = 0.95 * noise + 0.05 * rms; return; }
+    const hiT = Math.max(0.015, noise * 4), loT = Math.max(0.008, noise * 2);
+    if (!on){
+      if (rms > hiT){ cur.push(x); if (++loud >= 2){ on = true; quiet = 0; } }
+      else { loud = 0; pre = pre.concat(cur, [x]).slice(-6); cur = []; noise = 0.95 * noise + 0.05 * rms; }
+      return;
+    }
+    cur.push(x);
+    quiet = rms < loT ? quiet + 1 : 0;
+    if (quiet * bd >= 0.35 || cur.length * bd >= 2.5){
+      const blocks = pre.concat(cur.slice(0, cur.length - Math.max(0, quiet - 3)));
+      on = false; loud = 0; cur = []; pre = [];
+      const sig = new Float32Array(blocks.length * 1024);
+      blocks.forEach((b, i) => sig.set(b, i * 1024));
+      if (sig.length / sr >= 0.15) onWord(sig, sr);
+    }
+  };
+  src.connect(node); node.connect(ctx.destination);
+  vmic = { ctx, stream, src, node, armed: false };
+  return vmic;
+}
+function closeVoiceMic(){
+  if (!vmic) return;
+  const m = vmic; vmic = null;
+  try { m.node.disconnect(); m.src.disconnect(); } catch {}
+  m.stream.getTracks().forEach(t => t.stop());
+  m.ctx.close();
+}
+const micError = err => setStatus(err && err.name === 'NotAllowedError'
+  ? 'Le micro est refusé. Autorise-le via l\u0027icône à gauche de la barre d\u0027adresse, puis réessaie.' : 'Impossible d\u0027ouvrir le micro.');
+
+/* ---------- Calibrer ma voix ----------
+   Un kanji à la fois, en très grand, avec sa lecture : l'exemple (voix japonaise), puis toi, 5 fois
+   (3 ne suffisaient pas : un kanji calibré avec moins de 5 enregistrements est complété au calibrage suivant).
+   Un kanji mal reconnu en récitation (refusé encore une fois après avoir été dévoilé : tu l'avais sous les yeux,
+   c'est donc la reconnaissance qui coince) reçoit 2 enregistrements de plus au calibrage suivant, 7 en tout.
+   Les kanji sont ceux de la partie ouverte, chacun une seule fois : ceux sans empreinte, puis ceux à compléter ;
+   s'il n'y en a aucun, on propose de refaire la partie. À la fin, le moteur « ma voix » est choisi. */
+const CALIB_REPS = 5, CALIB_MAX = 7;
+// calQ : { x : la syllabe, n : enregistrements à faire, keep : empreintes déjà là, gardées, weak : mal reconnu }
+let calQ = [], calI = 0, calRep = 0, calPrints = [], calStep = '';
+const weakPrints = store.get('voixfaible', {});
+const isWeak = x => weakPrints[voiceKey(x)] && PRINTS[voiceKey(x)] && PRINTS[voiceKey(x)].length < CALIB_MAX;
+// enregistrements voulus pour ce kanji, et ce qui manque (0 : rien à faire)
+const calWant = x => isWeak(x) ? CALIB_MAX : CALIB_REPS;
+const calMissing = x => { const P = PRINTS[voiceKey(x)]; return P ? Math.max(0, calWant(x) - P.length) : CALIB_REPS; };
+function markWeak(x){
+  const k = voiceKey(x);
+  if (!PRINTS[k] || PRINTS[k].length >= CALIB_MAX || weakPrints[k]) return;
+  weakPrints[k] = true; store.set('voixfaible', weakPrints); calInfo();
+}
+// auto : lancé par « Réciter au micro » faute d'empreintes ; la récitation suit le calibrage
+let calAuto = false;
+async function startCalib(auto, blocks){
+  stopMic(); stopPlay();
+  if (videoPlaying()) ytPlayer.pauseVideo();
+  await loadPrints();
+  // b : la section où le kanji apparaît en premier (affichée dans l'écran du calibrage)
+  const seen = new Set();
+  const all = (blocks || viewBlocks()).flatMap(B => B.lines).flatMap(L => L.syl.map(x => ({ x, b: L.b })))
+    .filter(({ x }) => !seen.has(voiceKey(x)) && seen.add(voiceKey(x)));
+  calQ = all.filter(({ x }) => !PRINTS[voiceKey(x)]).map(q => ({ ...q, n: CALIB_REPS, keep: [] }))
+    .concat(all.filter(({ x }) => PRINTS[voiceKey(x)] && calMissing(x))
+      .map(q => ({ ...q, n: calMissing(q.x), keep: PRINTS[voiceKey(q.x)], weak: !!isWeak(q.x) })));
+  if (!calQ.length){
+    if (!confirm(tr(`Les ${all.length} kanji de cette partie sont déjà calibrés. Les refaire ?`))) return;
+    calQ = all.map(q => ({ ...q, n: CALIB_REPS, keep: [] }));
+  }
+  calI = 0; calib = true; listening = true; calAuto = !!auto; claimMic();
+  $('calo').hidden = false; micUI();
+  $('caloWhere').textContent = ''; $('caloAsk').textContent = '';
+  $('caloHeard').innerHTML = tr(!auto ? '' : calQ.some(q => !q.keep.length) ? 'Pas encore de calibrage : on commence par là.'
+    : calQ.some(q => q.weak) ? 'Quelques kanji mal reconnus : on les renforce d\u0027abord.' : 'On complète tes empreintes : 5 enregistrements par kanji.');
+  const tok = calTok;
+  try { await openVoiceMic(calWord, lv => $('caloMeter').style.width = Math.min(100, lv * 500) + '%'); }
+  catch (err){ stopMic(); micError(err); return; }
+  if (tok !== calTok){ closeVoiceMic(); return; }
+  await Promise.all([loadSamples(), loadPrints()]);
+  if (tok === calTok) calShow();
+}
+function calShow(){
+  const { x, n, keep, weak } = calQ[calI];
+  calRep = 0; calPrints = []; calTok++;
+  $('caloWhere').textContent = `${calQ[calI].b + 1}. ${DATA[calQ[calI].b].title} · ` + tr(`Kanji ${calI + 1}/${calQ.length}`);
+  $('caloKanji').textContent = x.c; $('caloRoma').textContent = x.r; $('caloKana').textContent = x.k;
+  if (keep.length) $('caloHeard').innerHTML = tr(weak ? `Mal reconnu en récitation : ${n} enregistrements de plus.`
+    : `Déjà ${keep.length} enregistrements : ${n} de plus.`);
+  calTurn();
+}
+const calDots = () => $('caloDots').innerHTML = Array.from({ length: calQ[calI].n }, (_, i) =>
+  `<i class="${i < calRep ? 'ok' : i === calRep ? 'cur' : ''}"></i>`).join('');
+// L'exemple joué, puis le micro écoute ton tour
+function sayExample(x){
+  return new Promise(ok => {
+    const k = sylSpeech(x), buf = SAMPLE && SAMPLE[k];
+    if (buf){ playSample(k, audio().currentTime + 0.05, buf.duration); setTimeout(ok, buf.duration * 1000 + 350); }
+    else { speak(k); setTimeout(ok, 1300); }
+  });
+}
+async function calTurn(){
+  const { x, n } = calQ[calI], tok = calTok;
+  if (!vmic) return;
+  vmic.armed = false; calStep = 'exemple';
+  $('caloAsk').innerHTML = tr(`Écoute l'exemple… · ${calRep + 1}/${n}`); calDots();
+  await sayExample(x);
+  if (!calib || tok !== calTok || !vmic) return;
+  calStep = 'toi'; vmic.armed = true;
+  $('caloAsk').innerHTML = tr(`À toi : dis « ${esc(x.r)} » · ${calRep + 1}/${n}`);
+  clearTimeout(silenceTimer);
+  silenceTimer = setTimeout(() => { if (calib && calStep === 'toi' && tok === calTok) $('caloHeard').innerHTML = tr(`Je n'entends rien. Redis « ${esc(x.r)} ».`); }, 7000);
+}
+function calWord(sig, sr){
+  if (!calib || calStep !== 'toi') return;
+  const f = mfcc(sig, sr);
+  if (f.length < 10){ $('caloHeard').innerHTML = tr('Trop court : redis-le.'); return; }
+  vmic.armed = false; calStep = ''; clearTimeout(silenceTimer);
+  calPrints.push(f); calRep++;
+  $('caloHeard').innerHTML = tr('Enregistré ✓');
+  if (calRep < calQ[calI].n){ calTok++; setTimeout(calTurn, 300); return; }
+  calSave();
+}
+async function calSave(){
+  const { x, keep } = calQ[calI], k = voiceKey(x), prints = keep.concat(calPrints);
+  calDots(); $('caloAsk').innerHTML = tr('Empreinte enregistrée ✓');
+  PRINTS[k] = prints;
+  if (weakPrints[k]){ delete weakPrints[k]; store.set('voixfaible', weakPrints); }
+  try { await voiceDB.put(k, { k, prints }); } catch {}
+  calInfo();
+  setTimeout(calNext, 800);
+}
+function calNext(){
+  if (!calib) return;
+  $('caloHeard').textContent = '';
+  if (++calI < calQ.length){ calShow(); return; }
+  if (calOne){ endRecal(true); return; }
+  const auto = calAuto;
+  stopMic();
+  S.engine = 'voix'; store.set('engine', 'voix'); $('engine').value = 'voix';
+  if (auto){ startMic(); return; }
+  setStatus('<b>Calibrage fini.</b> Le moteur « ma voix » est choisi : récite au micro.');
+}
+function calInfo(){
+  const n = Object.keys(PRINTS || {}).length, w = Object.keys(weakPrints).length;
+  $('calInfo').textContent = (n ? `${n} kanji calibré${n > 1 ? 's' : ''}` : '') + (w ? tr(` · ${w} à renforcer`) : '');
+  $('calClear').hidden = !n;
+  calLabels();
+}
+// Bouton de chaque section : ce qui reste à calibrer (sans empreinte ou à renforcer), ou « Voix calibrée ✓ »
+function calLabels(){
+  if (!PRINTS) return;
+  main.querySelectorAll('[data-calib]').forEach(b => {
+    const seen = new Set(), xs = DATA[+b.dataset.calib].lines.flatMap(L => L.syl).filter(x => !seen.has(voiceKey(x)) && seen.add(voiceKey(x)));
+    const todo = xs.filter(x => calMissing(x)).length;
+    b.textContent = tr(todo ? `Calibrer · ${todo} kanji` : 'Voix calibrée ✓');
+    b.classList.toggle('on', !todo);
+  });
+}
+main.addEventListener('click', e => { const b = e.target.closest('[data-calib]'); if (b) startCalib(false, [DATA[+b.dataset.calib]]); });
+$('calib').onclick = () => { if (calOne) endRecal(false); else if (calib){ stopMic(); setStatus(''); } else startCalib(); };
+$('caloClose').onclick = () => { if (calOne){ endRecal(false); return; } stopMic(); setStatus(''); };
+$('caloSkip').onclick = () => { if (calOne){ endRecal(false); return; } if (calib){ clearTimeout(silenceTimer); calTok++; calNext(); } };
+// Échap arrête ; Espace ne lance pas l'enregistrement pendant le calibrage
+window.addEventListener('keydown', e => {
+  if (!calib) return;
+  if (e.key === 'Escape'){ if (calOne) endRecal(false); else { stopMic(); setStatus(''); } }
+  else if (e.code !== 'Space') return;
+  e.preventDefault(); e.stopImmediatePropagation();
+}, true);
+window.addEventListener('keyup', e => { if (calib && e.code === 'Space'){ e.preventDefault(); e.stopImmediatePropagation(); } }, true);
+$('calClear').onclick = async () => {
+  if (!confirm(tr('Effacer le calibrage de ta voix ?'))) return;
+  Object.keys(VOICE).forEach(k => delete VOICE[k]); store.set('voice', VOICE);
+  FLAT.forEach(L => L.syl.forEach(x => { x.vars = variants(x); delete x.soft; }));
+  try { await voiceDB.clear(); } catch {}
+  Object.keys(weakPrints).forEach(k => delete weakPrints[k]); store.set('voixfaible', weakPrints);
+  PRINTS = {}; calInfo();
+};
+loadPrints().then(calInfo);
+
+/* ---------- Réciter avec le moteur « ma voix » ---------- */
+async function startVoiceRec(){
+  await loadPrints();
+  if (!listening) return;
+  try { await openVoiceMic(voiceWord); } catch (err){ stopMic(); micError(err); return; }
+  if (!listening){ closeVoiceMic(); return; }
+  vmic.armed = !lineLock;                          // la voix lit peut-être la ligne : le micro attend
+  if (!lineLock) setStatus('Micro ouvert (ma voix). Dis le kanji entouré, avec une petite pause après chaque kanji.');
+}
+function voiceWord(sig, sr){
+  if (calOne){ calWord(sig, sr); return; }          // recalibrage d'un kanji : même micro
+  if (!listening || lineLock || calib) return;
+  const L = flat[target], x = L.syl[cur], f = mfcc(sig, sr);
+  if (!x || f.length < 10) return;
+  const j = voiceJudge(f, L, cur), near = j.best && j.best.replace('|', ' (') + ')';
+  const what = j.none ? 'sans empreinte' : `plus proche ${near} ${j.d[j.best].toFixed(2)} · attendu ${j.d[j.exp].toFixed(2)}`;
+  srLog.push({ line: target + 1, exp: `${x.c} (${x.k})`, alts: [{ t: what, k: what }], best: 0, got: j.ok ? x.c : '' });
+  if (srLog.length > LOG_MAX) srLog.shift();
+  renderLog();
+  // refusé alors qu'il était déjà dévoilé : la reconnaissance coince, ce kanji sera renforcé au prochain calibrage
+  const i = cur;
+  if (!j.ok){ if (shown[cur]) markWeak(x); failKanji(L); showChips(L); showFix(L, i, false); return; }
+  if (!missed[cur]) got[cur] = true;
+  cur++; tries = 0; showChips(L);
+  if (j.none) hideFix(); else showFix(L, i, true);
+  setStatus(j.none ? 'Ce kanji n\u0027a pas d\u0027empreinte : compté comme dit.' : 'Reconnu ✓');
+  if (cur >= L.syl.length) finishLine();
+}
+
+/* « Recalibrer ce kanji » : sous le kanji que « ma voix » vient de juger, accepté ou refusé.
+   Si la reconnaissance s'est trompée, un clic refait son calibrage (l'exemple puis toi, 5 fois ; les nouvelles
+   empreintes remplacent les anciennes), sans quitter la récitation. Ensuite la récitation reprend : un kanji refusé
+   est de nouveau attendu (il n'est plus compté raté), un kanji accepté reste trouvé. Échap ou « Passer » : on reprend sans rien changer. */
+function hideFix(){ fixQ = null; const b = $('fixBtn'); if (b) b.hidden = true; }
+function showFix(L, i, ok){ fixQ = { L, i, ok }; placeFix(); }
+function placeFix(){
+  const b = $('fixBtn'), q = fixQ, el = q && chipEl(q.L.b, q.L.l, q.i);
+  if (!b || !el){ if (b) b.hidden = true; return; }
+  const r = el.getBoundingClientRect();
+  b.style.left = (r.left + r.width / 2 + scrollX) + 'px'; b.style.top = (r.bottom + scrollY) + 'px';
+  b.hidden = false;
+}
+addEventListener('resize', () => fixQ && placeFix());
+$('fixBtn').onclick = () => {
+  const q = fixQ; hideFix();
+  if (!q || !listening || !vmic || q.L !== flat[target]) return;
+  const { L, i } = q, x = L.syl[i];
+  vmic.armed = false; calOne = q; calib = true; clearTimeout(silenceTimer);
+  lineTok++;                                       // la ligne suivante attendra la fin du recalibrage
+  calQ = [{ x, b: L.b, n: CALIB_REPS, keep: [] }]; calI = 0; calAuto = false;
+  $('calo').hidden = false; micUI();
+  $('caloHeard').innerHTML = tr(`On refait ce kanji : ${CALIB_REPS} enregistrements, qui remplacent les anciens.`);
+  loadSamples().then(() => { if (calOne === q) calShow(); });
+};
+// fin du recalibrage (done : les empreintes sont enregistrées) ; la récitation reprend au même endroit
+function endRecal(done){
+  const q = calOne; if (!q) return;
+  calOne = null; calib = false; calTok++; clearTimeout(silenceTimer);
+  $('calo').hidden = true; micUI();
+  const { L, i, ok } = q;
+  if (!listening || L !== flat[target]) return;
+  if (done && !ok && missed[i]){
+    // compté raté à cause de la reconnaissance : on le redemande
+    missed[i] = false; shown[i] = true; cur = i; tries = 1;
+    if (lineLock){
+      lineLock = false; lineTok++;
+      lineEl(L.b, L.l).classList.remove('review', 'done');
+      const r = review.indexOf(L); if (r >= 0) review.splice(r, 1);
+      srsUngrade(L);
+    }
+  }
+  showChips(L);
+  if (lineLock){ const t = ++lineTok; setTimeout(() => t === lineTok && nextLine(), 600); }
+  else if (vmic) vmic.armed = true;
+  setStatus(done ? (lineLock ? 'Kanji recalibré ✓' : `Kanji recalibré ✓ Dis le kanji entouré.`) : 'Récitation reprise.');
+}
+
+/* ---------- Reconnaissance hors ligne (Vosk, modèle japonais dans vosk-ja.tar.gz) ---------- */
+let voskModelP = null, vosk = null, voskResults = [];
+const voskAvailable = () => typeof Vosk !== 'undefined' && location.protocol.startsWith('http');
+function loadVoskModel(){
+  if (!voskModelP){
+    setStatus('Chargement du modèle hors ligne (50 Mo, quelques secondes)…');
+    voskModelP = Vosk.createModel(new URL('vosk-ja.tar.gz', location.href).href).catch(err => { voskModelP = null; throw err; });
+  }
+  return voskModelP;
+}
+// Vocabulaire limité aux syllabes du sutra : la reconnaissance devient bien plus fiable. En souple, seulement
+// la ligne récitée : le moteur choisit parmi une poignée de syllabes, ce qui tolère l'accent.
+// Syllabes absentes du modèle : dites en morceaux qu'il connaît
+const VOSK_SPLIT = { 'みゃく': ['みゃ', 'く'] };
+function voskWords(){
+  const lines = S.exig === 'souple' ? flat.slice(target, target + 1) : DATA.flatMap(B => B.lines);
+  return [...new Set(lines.flatMap(L => L.syl.flatMap(s => VOSK_SPLIT[sylSpeech(s)] || [sylSpeech(s)]))), '[unk]'];
+}
+// Les résultats de Vosk sont présentés à onResult comme ceux du navigateur
+function voskRecognizer(model, ctx){
+  const r = new model.KaldiRecognizer(ctx.sampleRate, JSON.stringify(voskWords()));
+  const item = (t, fin) => { const x = [{ transcript: t.replace(/\[unk\]|\s+/g, '') }]; x.isFinal = fin; return x; };
+  const mine = () => listening && vosk && vosk.r === r;
+  r.on('result', m => {
+    const t = m && m.result && m.result.text; if (!t || !mine()) return;
+    voskResults.push(item(t, true));
+    onResult({ resultIndex: voskResults.length - 1, results: voskResults });
+  });
+  r.on('partialresult', m => {
+    const t = m && m.result && m.result.partial; if (!t || !mine()) return;
+    onResult({ resultIndex: voskResults.length, results: voskResults.concat([item(t, false)]) });
+  });
+  return r;
+}
+// Nouvelle ligne visée : en souple, le moteur reçoit le vocabulaire de cette ligne et de la suivante
+function voskRegrammar(){
+  if (!vosk || S.exig !== 'souple') return;
+  const old = vosk.r;
+  vosk.r = voskRecognizer(vosk.model, vosk.ctx);
+  try { old.remove(); } catch {}
+}
+async function startVosk(){
+  try {
+    const model = await loadVoskModel();
+    if (!listening) return;
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, channelCount: 1 } });
+    if (!listening){ stream.getTracks().forEach(t => t.stop()); return; }
+    const ctx = new AudioContext();
+    const src = ctx.createMediaStreamSource(stream), node = ctx.createScriptProcessor(4096, 1, 1);
+    vosk = { model, stream, ctx, node, src };
+    vosk.r = voskRecognizer(model, ctx);
+    node.onaudioprocess = e => { try { vosk && vosk.r.acceptWaveform(e.inputBuffer); } catch {} };
+    src.connect(node); node.connect(ctx.destination);
+    setStatus('Micro ouvert (hors ligne). Récite la ligne surlignée.');
+  } catch (err) {
+    listening = false; micUI();
+    setStatus(err && err.name === 'NotAllowedError'
+      ? 'Le micro est refusé. Autorise-le via l\'icône à gauche de la barre d\'adresse, puis réessaie.'
+      : 'Impossible de démarrer la reconnaissance hors ligne. Choisis « en ligne » dans Reconnaissance.');
+  }
+}
+function stopVosk(){
+  if (!vosk) return;
+  const v = vosk; vosk = null;
+  try { v.node.disconnect(); v.src.disconnect(); } catch {}
+  v.stream.getTracks().forEach(t => t.stop());
+  try { v.r.remove(); } catch {}
+  v.ctx.close();
+}
+// only : les lignes à réciter (révisions du jour), affichées dans le sutra entier ; sinon la partie ouverte
+function startMic(only){
+  const offline = S.engine === 'vosk' && voskAvailable();
+  const own = S.engine === 'voix';
+  if (!SR && !offline && !own){ renderNotices(); return; }
+  stopPlay();
+  if (videoPlaying()) ytPlayer.pauseVideo();       // le micro entendrait la vidéo
+  if (rec){ const old = rec; rec = null; try { old.abort(); } catch {} }
+  if (only){ S.tab = 7; store.set('tab', S.tab); }
+  render();
+  flat = only ? only.slice() : viewBlocks().flatMap(B => B.lines); flat.forEach(maskLine);   // tout est caché, ligne par ligne on dévoile
+  target = 0; committed = ''; skipUpTo = 0; heardIdx = 0; review = []; graded = new Set(); listening = true; claimMic();
+  if (!own) loadKuromoji();
+  micUI(); focusTarget();
+  // petit délai : laisse le temps à l'ancienne écoute de libérer le micro
+  if (own){ startVoiceRec(); return; }
+  if (offline){ voskResults = []; startVosk(); return; }
+  netFails = 0;
+  checkOnDevice().finally(() => setTimeout(() => { if (!listening) return; rec = newRecognizer(); try { rec.start(); } catch {} }, 300));
+}
+function stopMic(){
+  const was = listening; hideFix(); calOne = null; sayTok++;
+  listening = false; clearTimeout(silenceTimer);
+  stopVosk(); closeVoiceMic(); calTok++;
+  if (rec){ const old = rec; rec = null; try { old.abort(); } catch {} }
+  main.querySelectorAll('.line.target').forEach(e => e.classList.remove('target'));
+  // les lignes pas encore récitées retrouvent l'affichage habituel ; les autres gardent leurs résultats
+  const wasCal = calib;
+  calib = false; $('calo').hidden = true;
+  if (was && !wasCal) flat.slice(target + 1).forEach(L => { if (!lineEl(L.b, L.l)?.classList.contains('done'))
+    L.syl.forEach((_, i) => chipEl(L.b, L.l, i)?.classList.toggle('masked', isMasked(i, L))); });
+  micUI();
+}
+function micUI(){
+  const b = $('mic'), on = listening;
+  b.classList.toggle('live', on);
+  b.querySelector('span').textContent = on ? 'Arrêter' : 'Réciter au micro';
+  floatUI();
+  $('calib').querySelector('span').textContent = calib ? 'Arrêter le calibrage' : 'Calibrer ma voix';
+  const r = $('recite');
+  r.classList.toggle('live', playing);
+  r.querySelector('span').textContent = playing ? 'Arrêter' : 'Réciter';
+  $('dojoRecite').textContent = playing ? 'Arrêter' : 'Réciter';
+  document.body.classList.toggle('reciting', listening || playing);   // choisit les boutons de ligne affichés
+  try { if (listening && !calib) practiceSet('micro', true); else if (playing) practiceSet('cloches', true); } catch {}
+  goUI();
+}
+
+/* ---------- Avertissements ---------- */
+function renderNotices(){
+  const msgs = [];
+  if ((!hasTTS || !jaVoice) && !window.SYLLABES) msgs.push('Aucune voix japonaise sur cet appareil. Ajoute-la dans Paramètres Windows › Heure et langue › Voix (japonais), puis recharge la page. Le mokugyo, le surlignage et le micro marchent quand même.');
+  if (!SR) msgs.push('Ce navigateur ne sait pas reconnaître la voix. Ouvre la page dans Edge ou Chrome.');
+  $('notices').innerHTML = msgs.map(m => `<div class="notice">${esc(m)}</div>`).join('');
+}
+
+/* ---------- Événements ---------- */
+$('play').onclick = () => ytToggle();
+function videoPlaying(){ return !!(ytPlayer && ytPlayer.getPlayerState && !$('ytPanel').hidden && ytPlayer.getPlayerState() === YT.PlayerState.PLAYING); }
+// Réciter : ligne par ligne, à ton rythme (voir « Réciter ligne par ligne »)
+// moteur « ma voix » : s'il manque des empreintes dans la partie ouverte, le calibrage de ces kanji se lance d'abord
+$('mic').onclick = async () => {
+  if (listening){ stopMic(); setStatus(''); return; }
+  if (S.engine === 'voix'){
+    const P = await loadPrints();
+    if (viewBlocks().some(B => B.lines.some(L => L.syl.some(x => calMissing(x))))){ startCalib(true); return; }
+  }
+  startMic();
+};
+// Réciter avec les cloches : sans micro, l'accompagnement prévu (keisu, mokugyo, cloches) bat le rythme
+$('recite').onclick = () => {
+  if (playing){ stopPlay(); setStatus(''); return; }
+  if (videoPlaying()) ytPlayer.pauseVideo();
+  startPlay();
+};
+
+/* ---------- Mode dojo ----------
+   Une seule ligne, en très grand, pour réciter devant l'autel. La ligne affichée suit la page (récitation avec les
+   cloches, vidéo, micro) ; sinon on avance soi-même : flèches, Espace, clic à droite ou à gauche de la ligne.
+   Les syllabes sont recopiées de la page avec leur état (cachée, trouvée, chantée), vérifié tous les dixièmes de seconde. */
+let dojoOn = false, dojoIdx = 0, dojoAuto = null, dojoSig = '', dojoTimer = 0, dojoFs = false, wakeLock = null;
+const pageLines = () => [...main.querySelectorAll('.line')];
+const dojoAutoLine = () => main.querySelector('.syl.now')?.closest('.line') || main.querySelector('.line.target');
+function dojoTick(){
+  if (!dojoOn) return;
+  dojoPaint();
+  dojoTimer = setTimeout(dojoTick, 100);
+}
+function dojoPaint(){
+  const lines = pageLines(), auto = dojoAutoLine();
+  if (auto !== dojoAuto){ dojoAuto = auto; if (auto) dojoIdx = Math.max(0, lines.indexOf(auto)); }
+  const ln = lines[Math.min(dojoIdx, lines.length - 1)];
+  if (ln){
+    const sig = dojoIdx + '|' + sylsInner(ln);
+    if (sig !== dojoSig){
+      dojoSig = sig;
+      const b = +ln.dataset.b;
+      $('dojoLine').innerHTML = sylsInner(ln);
+      // boutons de la ligne, copiés de la page (un clic actionne celui de la page) : à gauche ▶ ou « revenir », à droite ↺
+      const copy = sel => { const e = ln.querySelector(sel); return e ? e.outerHTML.replace('<button ', `<button data-src="${sel}" `) : ''; };
+      $('dojoLeft').innerHTML = copy('.lbtns .say') + copy('.lbtns .ygo');
+      $('dojoRight').innerHTML = copy('.syls .again');
+      $('dojoMean').textContent = ln.querySelector('.m').textContent;
+      $('dojoWhere').textContent = `${b + 1}. ${DATA[b].title} · ${dojoIdx + 1}/${lines.length}`;
+      $('dojo').classList.toggle('nojp', main.classList.contains('nojp'));
+    }
+  }
+  dojoPlusPlace();
+}
+function dojoOpen(){
+  const lines = pageLines(), auto = dojoAutoLine();
+  // la ligne en cours, sinon la première visible à l'écran
+  dojoIdx = auto ? lines.indexOf(auto) : Math.max(0, lines.findIndex(l => l.getBoundingClientRect().bottom > 120));
+  dojoAuto = auto; dojoSig = ''; dojoOn = true; $('dojo').hidden = false;
+  document.documentElement.requestFullscreen?.().then(() => { dojoFs = true; }).catch(() => {});
+  navigator.wakeLock?.request('screen').then(w => { wakeLock = w; }).catch(() => {});   // l'écran reste allumé
+  dojoTick();
+}
+function dojoClose(){
+  dojoOn = false; $('dojo').hidden = true; clearTimeout(dojoTimer);
+  if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+  dojoFs = false; wakeLock?.release().catch(() => {}); wakeLock = null;
+}
+function dojoMove(d){ dojoIdx = Math.min(pageLines().length - 1, Math.max(0, dojoIdx + d)); dojoAuto = dojoAutoLine(); dojoPaint(); }
+$('dojoBtn').onclick = dojoOpen;
+// Traduction dans le dojo : affichée par défaut, le choix est retenu
+let dojoTr = store.get('dojotr', true);
+function dojoTrSet(on){ dojoTr = on; store.set('dojotr', on); $('dojo').classList.toggle('tr', on); $('dojoTr').setAttribute('aria-pressed', on); }
+$('dojoTr').onclick = () => dojoTrSet(!dojoTr);
+dojoTrSet(dojoTr);
+$('dojoClose').onclick = dojoClose;
+$('dojoPrev').onclick = () => dojoMove(-1);
+$('dojoNext').onclick = () => dojoMove(1);
+$('dojoRecite').onclick = () => $('recite').click();
+$('dojoLine').onclick = e => dojoMove(e.clientX < innerWidth / 2 ? -1 : 1);
+$('dojoLeft').onclick = $('dojoRight').onclick = e => {
+  const b = e.target.closest('button[data-src]'), ln = pageLines()[dojoIdx];
+  if (b && ln) ln.querySelector(b.dataset.src)?.click();
+};
+/* « + » du dojo : sous le prochain kanji encore caché. En récitation, c'est le kanji attendu (entouré) ; s'il est
+   déjà dévoilé, pas de « + ». Un clic dévoile ce kanji-là. Replacé à chaque tour (10 fois par seconde). */
+function dojoPlusPlace(){
+  const p = $('dojoPlus'), line = $('dojoLine');
+  let a = line.querySelector('.syl.cur');
+  if (a){ if (a.classList.contains('peek') || a.classList.contains('ok')) a = null; }
+  else a = line.querySelector('.syl.masked:not(.peek):not(.ok)');
+  if (!a){ p.style.visibility = 'hidden'; p.dataset.s = ''; return; }
+  const r = a.getBoundingClientRect(), R = $('dojoRow').getBoundingClientRect();
+  p.style.left = (r.left + r.width / 2 - R.left) + 'px'; p.style.top = (r.bottom - R.top + 6) + 'px';
+  p.style.visibility = ''; p.dataset.s = a.dataset.s;
+}
+$('dojoPlus').onclick = () => {
+  const ln = pageLines()[dojoIdx], s = $('dojoPlus').dataset.s;
+  if (!ln || s === '' || s == null) return;
+  const L = DATA[+ln.dataset.b].lines[+ln.dataset.l];
+  if (listening && L === flat[target]) hintTarget();
+  else chipEl(L.b, L.l, +s)?.classList.add('peek');
+  dojoPaint();
+};
+// Échap quitte d'abord le plein écran (le navigateur le gère seul) : on ferme le mode dojo avec lui
+document.addEventListener('fullscreenchange', () => { if (dojoOn && dojoFs && !document.fullscreenElement) dojoClose(); });
+// Avant le raccourci Espace de la page : en mode dojo, Espace et les flèches changent de ligne
+window.addEventListener('keydown', e => {
+  if (!dojoOn) return;
+  if (e.key === 'Escape') dojoClose();
+  else if (e.key === 't' || e.key === 'T') dojoTrSet(!dojoTr);
+  else if (['ArrowRight', 'PageDown', ' '].includes(e.key)) dojoMove(1);
+  else if (['ArrowLeft', 'PageUp'].includes(e.key)) dojoMove(-1);
+  else return;
+  e.preventDefault(); e.stopImmediatePropagation();
+}, true);
+window.addEventListener('keyup', e => { if (dojoOn && e.code === 'Space'){ e.preventDefault(); e.stopImmediatePropagation(); } }, true);
+// Indice : dévoile tout de suite le kanji attendu, sans attendre la fin de l'essai
+function hintTarget(){
+  const L = flat[target]; if (!listening || !L || lineLock || shown[cur]) return;
+  shown[cur] = true; tries = 1; showChips(L);
+}
+$('hint').onclick = hintTarget;
+/* « Recommencer » (fin de ligne) : la ligne repart de zéro, kanji cachés, et la récitation continue à partir d'elle.
+   Micro éteint : la récitation démarre directement sur cette ligne. Une ligne finie « à revoir » qu'on recommence
+   n'est plus dans la liste à revoir (elle y revient si elle est encore ratée). Les révisions espacées ne comptent
+   toujours que le premier passage. */
+// kanji d'une ligne, sans le bouton « Recommencer » (pour le dojo)
+const sylsInner = ln => { const c = ln.querySelector('.syls').cloneNode(true); c.querySelector('.again')?.remove(); return c.innerHTML; };
+function restartLine(L){
+  if (calib) return;
+  if (!listening){ startMic(); if (!listening) return; }
+  const t = flat.indexOf(L);
+  if (t < 0){ setStatus('Cette ligne ne fait pas partie de la récitation en cours.'); return; }
+  lineTok++; clearTimeout(silenceTimer); hideFix();
+  const r = review.indexOf(L); if (r >= 0) review.splice(r, 1);
+  target = t; focusTarget();
+}
+// Bouton « + » d'une ligne : sur la ligne récitée, comme Indice ; ailleurs, dévoile un kanji caché au hasard
+function hintLine(L){
+  if (listening && L === flat[target]){ hintTarget(); return; }
+  const pool = [...lineEl(L.b, L.l).querySelectorAll('.syl.masked:not(.peek):not(.ok)')];
+  if (pool.length) pool[Math.floor(Math.random() * pool.length)].classList.add('peek');
+}
+$('offline').onclick = async () => {
+  setStatus('Téléchargement de la reconnaissance japonaise hors ligne…');
+  try {
+    const ok = await SR.install({ langs: ['ja-JP'], processLocally: true });
+    await checkOnDevice();
+    setStatus(ok && onDevice ? 'Reconnaissance hors ligne installée. Relance le micro.' : 'Installation impossible pour le japonais sur ce navigateur.');
+  } catch { setStatus('Installation impossible pour le japonais sur ce navigateur.'); }
+};
+$('span').value = S.span;
+$('span').onchange = e => { S.span = e.target.value; store.set('span', S.span); if (playing) startPlay(listening); };
+// Langue : la page se recharge dans la langue choisie (les textes du sutra sont posés au chargement)
+$('lang').value = LANG;
+$('lang').onchange = e => { store.set('lang', e.target.value); location.href = location.pathname; };
+$('exig').value = S.exig;
+$('exig').onchange = e => { S.exig = e.target.value; store.set('exig', S.exig); stopMic(); };
+$('engine').value = S.engine;
+$('engine').onchange = e => { S.engine = e.target.value; store.set('engine', S.engine); stopMic(); };
+// Passer : les kanji restants de la ligne sont comptés ratés
+$('skip').onclick = () => {
+  if (!listening || lineLock) return;
+  for (let i = cur; i < missed.length; i++) missed[i] = true;
+  cur = missed.length; finishLine();
+};
+// Réciter : toujours au seul son des instruments (mokugyo, cloches) ; « écho » et « avec la voix » ne sont plus proposés
+S.mode = 'seul';
+// Réglages repliés
+/* Réglages : page plein écran, ouverte par ⚙ ; ← ou Échap la ferme. Ses outils (calibrage, dojo, synchro) la ferment d'abord. */
+function setOpen(open){
+  $('settings').hidden = !open; $('setBtn').setAttribute('aria-expanded', open);
+  document.body.classList.toggle('setopen', open);
+  if (open) $('setClose').focus(); else $('setBtn').focus({ preventScroll: true });
+}
+$('setBtn').onclick = () => setOpen($('settings').hidden);
+$('setClose').onclick = () => setOpen(false);
+window.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('settings').hidden){ e.preventDefault(); setOpen(false); } });
+for (const id of ['calib', 'dojoBtn', 'syncBtn'])
+  $(id).addEventListener('click', () => { if (!$('settings').hidden) setOpen(false); }, true);
+/* Pratique choisie (Écouter / Au micro / Cloches) et gros bouton qui la lance. Le bouton reprend l'état du bouton
+   d'origine (caché) : « Pause » ou « Arrêter » pendant la pratique. Changer de pratique arrête celle en cours. */
+const PRACTICE = {
+  ecouter: { btn: 'play', label: 'Écouter', desc: 'L\u0027enregistrement, en suivant le texte.', icon: 'play' },
+  micro: { btn: 'mic', label: 'Commencer à apprendre', desc: 'Au micro : dis chaque kanji, la page t\u0027écoute et passe au suivant.', icon: 'mic' },
+  cloches: { btn: 'recite', label: 'Commencer à réciter', desc: 'À voix haute, au rythme du mokugyo et des cloches.', icon: 'recite' },
+};
+S.practice = PRACTICE[store.get('practice')] ? store.get('practice') : 'ecouter';
+function practiceSet(p, quiet){
+  if (!PRACTICE[p] || p === S.practice && quiet) return;
+  // en quittant Écouter, l'enregistrement se ferme (sauf pendant la synchro de l'administrateur)
+  if (p !== 'ecouter' && !$('ytPanel').hidden && !syncMode) closeYT();
+  S.practice = p; store.set('practice', p);
+  for (const k of Object.keys(PRACTICE)) document.body.classList.toggle('p-' + k, k === p);
+  floatUI();
+  document.querySelectorAll('.pseg button').forEach(b => b.setAttribute('aria-pressed', b.dataset.p === p));
+  $('pdesc').textContent = tr(PRACTICE[p].desc);
+  goUI();
+}
+/* Barre flottante du bas, selon la pratique : Écouter → commandes de l'enregistrement (vidéo ouverte) ;
+   Réciter → le tempo (toujours, pour le régler avant de commencer) ; Apprendre → Indice, Passer la ligne, Journal (micro ouvert) */
+function floatUI(){
+  const p = S.practice;
+  $('recbar').hidden = p !== 'cloches';
+  $('micbar').hidden = !(p === 'micro' && listening && !calib);
+  document.body.classList.toggle('pfl', !$('recbar').hidden || !$('micbar').hidden || (p === 'ecouter' && !$('ytPanel').hidden));
+}
+function goUI(){
+  let P; try { P = PRACTICE[S.practice || 'ecouter']; } catch { return; }   // appelé par micUI avant la création de PRACTICE
+  const src = $(P.btn), g = $('go'); if (!g || !src) return;
+  const active = src.classList.contains('live') || (P.btn === 'play' && src.querySelector('span').textContent === tr('Pause'));
+  $('goTxt').textContent = active ? src.querySelector('span').textContent : tr(P.label);
+  g.querySelector('.goic').innerHTML = src.querySelector('svg').outerHTML;
+  g.classList.toggle('live', active && P.btn !== 'play');
+}
+document.querySelector('.pseg').onclick = e => {
+  const b = e.target.closest('button[data-p]'); if (!b || b.dataset.p === S.practice) return;
+  if (listening) stopMic(); if (playing){ stopPlay(); setStatus(''); }
+  if (typeof videoPlaying === 'function' && videoPlaying()) ytPlayer.pauseVideo();
+  practiceSet(b.dataset.p);
+};
+$('go').onclick = () => $(PRACTICE[S.practice].btn).click();
+// la synchro (administrateur) se fait sur l'enregistrement : elle passe en Écouter, pour avoir ses commandes en bas
+$('syncBtn').addEventListener('click', () => practiceSet('ecouter', true), true);
+{ const p = S.practice; S.practice = null; practiceSet(p); }
+$('tempo').value = S.bpm; $('bpm').textContent = S.bpm;
+$('tempo').oninput = e => { S.bpm = +e.target.value; $('bpm').textContent = S.bpm; store.set('bpm', S.bpm); };
+// menu « Cacher » : 0 à 3, puis 4, 5, 6 = au hasard 25, 50, 75 % (S.level 4 et S.rand)
+const levelValue = () => S.level === 4 ? 4 + RANDS.indexOf(S.rand) : S.level;
+$('level').onchange = e => { const v = +e.target.value; S.level = Math.min(4, v); if (v >= 4){ S.rand = RANDS[v - 4]; drawRandomMask(); } $('reroll').hidden = S.level !== 4; stopPlay(); stopMic(); render(); levelUI(); };
+/* Boutons « Kanji » de la barre de Réciter : même réglage que « Cacher », mais appliqué sans tout redessiner,
+   pour ne pas arrêter la récitation en cours. « Au hasard » refait un tirage à chaque clic. */
+function levelUI(){ const v = levelValue(); document.querySelectorAll('.kseg [data-lv]').forEach(b => b.setAttribute('aria-pressed', +b.dataset.lv === v)); }
+document.querySelector('.kseg').onclick = e => {
+  const b = e.target.closest('[data-lv]'); if (!b) return;
+  const v = +b.dataset.lv;
+  if (listening){ $('level').value = v; $('level').onchange({ target: $('level') }); return; }
+  S.level = Math.min(4, v);
+  if (v >= 4){ S.rand = RANDS[v - 4]; drawRandomMask(); }
+  $('level').value = v; $('reroll').hidden = S.level !== 4;
+  DATA.forEach(B => B.lines.forEach(L => L.syl.forEach((_, i) => chipEl(L.b, L.l, i)?.classList.toggle('masked', isMasked(i, L)))));
+  levelUI();
+};
+levelUI();
+$('reroll').onclick = () => { drawRandomMask(); stopPlay(); stopMic(); render(); };
+$('meaning').onchange = e => main.classList.toggle('nomeaning', !e.target.checked);
+$('editbeats').onchange = e => {
+  main.classList.toggle('editbeats', e.target.checked);
+  $('resetbeats').hidden = !e.target.checked;
+  if (e.target.checked){ stopPlay(); stopMic(); setStatus('Clique <b>+</b> entre deux syllabes pour les réciter sur un seul temps, <b>×</b> pour les séparer. Tes réglages restent dans ce navigateur.'); }
+};
+$('resetbeats').onclick = () => { joins = { ...PRESET }; store.set('joins3', joins); render(); };
+$('rep').onchange = e => main.classList.toggle('norep', !e.target.checked);
+main.addEventListener('mouseover', e => {
+  const c = e.target.closest('.syl[data-rep]');
+  main.querySelectorAll('.syl.same').forEach(x => x.classList.remove('same'));
+  if (c) main.querySelectorAll(`.syl[data-k="${c.dataset.k}"]`).forEach(x => x.classList.add('same'));
+});
+$('skt').onchange = e => main.classList.toggle('noskt', !e.target.checked);
+$('gloss').onchange = e => main.classList.toggle('nogloss', !e.target.checked);
+$('jp').onchange = e => main.classList.toggle('nojp', !e.target.checked);
+$('voice').onchange = e => { store.set('voice', e.target.value); pickVoice(); };
+// Voix des récitations : ses fichiers sont chargés en tête de page, d'où le rechargement
+$('voix').value = store.get('voix', 'm');
+$('voix').onchange = e => { store.set('voix', e.target.value); location.reload(); };
+$('lire').value = S.lire;
+$('lire').onchange = e => { S.lire = e.target.value; store.set('lire', S.lire); };
+$('tabs').onclick = e => {
+  const b = e.target.closest('[data-tab]'); if (!b) return;
+  S.tab = +b.dataset.tab; store.set('tab', S.tab); stopPlay(); stopMic(); render();
+  // vidéo ouverte : elle se place au début de la partie choisie
+  if (!$('ytPanel').hidden && ytPlayer && ytPlayer.seekTo && !syncMode){ stopFade(); ytPlayer.seekTo(Math.max(0, studyRange().start - 0.5), true); }
+};
+main.onclick = e => {
+  const j = e.target.closest('.join');
+  if (j){ const k = j.dataset.j; if (joins[k]) delete joins[k]; else joins[k] = true; store.set('joins3', joins); render(); return; }
+  const yg = e.target.closest('.ygo');
+  if (yg){ lineFromVideo(DATA[+yg.dataset.b].lines[+yg.dataset.l]); return; }
+  const hb = e.target.closest('.hintb');
+  if (hb){ hintLine(DATA[+hb.dataset.b].lines[+hb.dataset.l]); return; }
+  const ag = e.target.closest('.again');
+  if (ag){ restartLine(DATA[+ag.dataset.b].lines[+ag.dataset.l]); return; }
+  const yn = e.target.closest('.ytn');
+  if (yn){ const box = yn.closest('.ytline'); nudgeLine(DATA[+box.dataset.b].lines[+box.dataset.l], yn.dataset.d); return; }
+  const syl = e.target.closest('.syl'), say = e.target.closest('.say'), kn = e.target.closest('[data-known]');
+  if (syl && !$('ytPanel').hidden && ytPlayer && ytPlayer.getCurrentTime){
+    const L = DATA[+syl.dataset.b].lines[+syl.dataset.l], i = +syl.dataset.s;
+    if (syncMode) setAnchor(L, i); else jumpTo(L, i);
+    return;
+  }
+  if (syl){
+    const L = DATA[+syl.dataset.b].lines[+syl.dataset.l];
+    if (syl.classList.contains('masked')) syl.classList.toggle('peek');
+    sayOne(sylSpeech(L.syl[+syl.dataset.s]));
+  } else if (say){
+    const L = DATA[+say.dataset.b].lines[+say.dataset.l];
+    sayLine(L);
+  } else if (kn){
+    const i = +kn.dataset.known; S.known[i] = !S.known[i]; store.set('known', S.known); render();
+  }
+};
+/* ---------- Chanter avec l'enregistrement (lecteur YouTube officiel) ----------
+   Synchronisation faite une fois par l'utilisateur : l'instant de début de chaque ligne dans la vidéo.
+   Ensuite le surlignage suit la vidéo ; dans une ligne, les syllabes se répartissent jusqu'à la ligne suivante. */
+const YT_ID = '_76-ek1QdM0';
+let ytPlayer = null, ytTimer = 0, ytSyncing = false, ytIdx = 0, ytTimes = store.get('ytsync', []);
+// Temps de réaction : on clique un peu après avoir entendu la syllabe
+const YT_REACTION = 0.2;
+let ytAnchors = store.get('ytanchors', {});
+let ytSpeed = store.get('ytspeed', 1);              // vitesse du texte (1 = débit mesuré ou estimé)            // { indice global de syllabe : instant (s) }
+// Toutes les syllabes dans l'ordre, avec leur poids en temps : les syllabes réunies (temps du dojo, y compris
+// d'une ligne à l'autre) se partagent un temps ; une voyelle tenue ajoute ses temps à la dernière syllabe
+function ytSyllables(){
+  const out = [];
+  streamGroups(DATA.flatMap(B => B.lines)).forEach(g => {
+    if (g[0].hold){ out[out.length - 1].w += 1; return; }
+    g.forEach(m => out.push({ L: m.L, i: m.i, w: 1 / g.length }));
+  });
+  return out;
+}
+// Instant de chaque syllabe : interpolation linéaire (pondérée) entre les repères posés,
+// avec le début et la fin du chant (0:02 et 4:58) comme repères par défaut
+// Les repères sont placés en « position » = nombre de temps écoulés depuis le début du chant :
+// temps tapés avec Espace (ytBeats, position entière) et syllabes cliquées (ytAnchors, position de la syllabe)
+let ytBeats = store.get('ytbeats', {});               // { position (temps) : instant (s) }
+function ytSyllableTimes(){
+  const S2 = ytSyllables(), cum = [0];
+  S2.forEach(s => cum.push(Math.round((cum[cum.length - 1] + s.w) * 720) / 720));   // arrondi : les temps tombent juste
+  const total = cum[S2.length];
+  const byPos = new Map();
+  Object.entries(ytBeats).forEach(([k, t]) => byPos.set(+k, t));
+  Object.entries(ytAnchors).forEach(([g, t]) => { if (cum[+g] != null) byPos.set(cum[+g], t); });
+  const pts = [...byPos].sort((a, b) => a[0] - b[0]);
+  // débit (s par temps) : mesuré sur les repères les plus récents s'il y en a deux, sinon estimé ;
+  // dans les deux cas modulé par le réglage « Plus vite / Plus lent »
+  let rate = (YT_CHANT[1] - YT_CHANT[0]) / total;
+  if (pts.length >= 2){
+    const b = pts[pts.length - 1]; let a = pts[0];
+    for (let k = pts.length - 2; k >= 0; k--){ a = pts[k]; if (b[0] - a[0] >= 8) break; }
+    if (b[0] > a[0]) rate = Math.min(2, Math.max(0.25, (b[1] - a[1]) / (b[0] - a[0])));
+  }
+  rate /= ytSpeed;
+  if (!pts.length) pts.push([0, YT_CHANT[0]]);
+  else if (pts[0][0] > 0) pts.unshift([0, Math.max(0, pts[0][1] - pts[0][0] * rate)]);
+  const last = pts[pts.length - 1];
+  if (last[0] < total) pts.push([total, last[1] + (total - last[0]) * rate]);
+  const times = new Array(S2.length);
+  let k = 0;
+  for (let g = 0; g < S2.length; g++){
+    while (k + 2 < pts.length && pts[k + 1][0] <= cum[g]) k++;
+    const [p1, t1] = pts[k], [p2, t2] = pts[k + 1];
+    times[g] = t1 + (t2 - t1) * (cum[g] - p1) / Math.max(1e-6, p2 - p1);
+  }
+  return { syl: S2, times, cum, pts, total };
+}
+// Position (en temps) qui correspond à un instant de la vidéo
+function posAt(t){
+  const { pts } = ytSyllableTimes();
+  if (t <= pts[0][1]) return pts[0][0];
+  for (let k = 0; k + 1 < pts.length; k++){
+    const [p1, t1] = pts[k], [p2, t2] = pts[k + 1];
+    if (t <= t2) return p1 + (p2 - p1) * (t - t1) / Math.max(1e-6, t2 - t1);
+  }
+  return pts[pts.length - 1][0];
+}
+// Pose un repère (position → instant) et retire les repères qui contrediraient l'ordre du texte
+// Lignes dont la synchro est sauvée (figée) : { "bloc-ligne": true }
+let ytLocked = store.get('ytlocked', {});
+const lockKey = lineKey;
+// Positions couvertes par les lignes sauvées
+function lockedSpans(){
+  const S2 = ytSyllables(), { cum } = ytSyllableTimes();
+  return allLines().filter(L => ytLocked[lockKey(L)]).map(L => lineSpan(L, S2, cum));
+}
+// Renvoie false (sans rien changer) si le repère tombe dans une ligne sauvée ou la contredirait
+// force (clic sur un kanji) : la ligne du repère peut être sauvée, on la corrige quand même
+function putMark(pos, t, sylG, force){
+  const { cum } = ytSyllableTimes(), spans = lockedSpans().filter(([a, b]) => !(force && pos >= a && pos < b));
+  const locked = p => spans.some(([a, b]) => p >= a && p < b);
+  const clash = (p, tp) => (p < pos && tp >= t) || (p > pos && tp <= t) || p === pos;
+  if (locked(pos)) return false;
+  if (Object.keys(ytBeats).some(k => locked(+k) && clash(+k, ytBeats[k])) ||
+      Object.keys(ytAnchors).some(g => locked(cum[+g]) && clash(cum[+g], ytAnchors[g]))) return false;
+  Object.keys(ytBeats).forEach(k => { if (clash(+k, ytBeats[k])) delete ytBeats[k]; });
+  Object.keys(ytAnchors).forEach(g => { if (clash(cum[+g], ytAnchors[g])) delete ytAnchors[g]; });
+  if (sylG == null) ytBeats[pos] = t; else ytAnchors[sylG] = t;
+  store.set('ytbeats', ytBeats); store.set('ytanchors', ytAnchors);
+  return true;
+}
+// Instant correspondant à une position (en temps), d'après la synchro actuelle
+function timeAt(pos){
+  const { pts } = ytSyllableTimes();
+  for (let k = 0; k + 1 < pts.length; k++){
+    const [p1, t1] = pts[k], [p2, t2] = pts[k + 1];
+    if (pos <= p2) return t1 + (t2 - t1) * (pos - p1) / Math.max(1e-6, p2 - p1);
+  }
+  return pts[pts.length - 1][1];
+}
+// Instant de la vidéo, lissé entre deux mises à jour du lecteur
+let ytClock = { v: -1, w: 0 };
+function ytNow(){
+  const v = ytPlayer.getCurrentTime(), w = performance.now();
+  if (v !== ytClock.v){ ytClock = { v, w }; return v; }
+  if (ytPlayer.getPlayerState() !== YT.PlayerState.PLAYING) return v;
+  return v + Math.min(1, (w - ytClock.w) / 1000) * (ytPlayer.getPlaybackRate ? ytPlayer.getPlaybackRate() : 1);
+}
+function sylIndex(L, i){ return ytSyllables().findIndex(s => s.L === L && s.i === i); }
+const fmtTime = t => Math.floor(t / 60) + ':' + (t % 60).toFixed(1).padStart(4, '0').replace('.', ',');
+function paintAnchors(){
+  main.querySelectorAll('.syl.anchor').forEach(e => e.classList.remove('anchor'));
+  const S2 = ytSyllables();
+  Object.keys(ytAnchors).forEach(g => { const s = S2[+g]; if (s){ const el = chipEl(s.L.b, s.L.l, s.i); if (el) el.classList.add('anchor'); } });
+  // début de chaque ligne : instant enregistré (en couleur) ou estimé (≈)
+  const { times, cum } = ytSyllableTimes();
+  main.querySelectorAll('.ytline').forEach(box => {
+    const L = DATA[+box.dataset.b].lines[+box.dataset.l], g = S2.findIndex(s => s.L === L && s.i === 0);
+    const [p0, p1] = lineSpan(L, S2, cum), set = Object.keys(ytBeats).some(k => +k >= p0 && +k < p1) || S2.some((s, k) => s.L === L && ytAnchors[k] != null);
+    const span = box.querySelector('.ytt');
+    span.textContent = (set ? '' : '≈ ') + fmtTime(times[g]);
+    span.classList.toggle('set', set);
+    const saved = !!ytLocked[lockKey(L)], btn = box.querySelector('.ytsave');
+    btn.classList.toggle('saved', saved); btn.textContent = saved ? 'Synchro sauvée ✓' : 'Sauver la synchro';
+    btn.title = saved ? 'Ligne figée. Clique pour la libérer et pouvoir la refaire' : 'Fige la synchro de cette ligne : les prochains Espace et clics ne la modifieront plus';
+    box.closest('.line')?.classList.toggle('locked', saved);
+  });
+}
+// Positions (en temps) couvertes par une ligne : [début, fin)
+function lineSpan(L, S2, cum){
+  const a = S2.findIndex(s => s.L === L), b = S2.findLastIndex(s => s.L === L);
+  return [cum[a], cum[b + 1]];
+}
+// Réglage fin d'une ligne entière (±0,1 s), effacement de ses repères, ou écoute à partir de son début
+function nudgeLine(L, d){
+  const S2 = ytSyllables(), g = S2.findIndex(s => s.L === L && s.i === 0), { times, cum } = ytSyllableTimes(), [p0, p1] = lineSpan(L, S2, cum);
+  const inLine = k => +k >= p0 && +k < p1;
+  if (d === 'save'){
+    // sauver : chaque temps de la ligne reçoit son instant actuel (même estimé), puis la ligne est figée ; un second clic la libère
+    if (ytLocked[lockKey(L)]){ delete ytLocked[lockKey(L)]; store.set('ytlocked', ytLocked); }
+    else saveLine(L);
+  } else if (d === 'clear'){
+    // retire tous les repères de la ligne (temps tapés et syllabes cliquées) : elle redevient estimée et n'est plus sauvée
+    delete ytLocked[lockKey(L)]; store.set('ytlocked', ytLocked);
+    Object.keys(ytBeats).forEach(k => { if (inLine(k)) delete ytBeats[k]; });
+    S2.forEach((s, k) => { if (s.L === L) delete ytAnchors[k]; });
+  } else if (d === 'redo'){
+    // refaire : la ligne est effacée puis recalée kanji par kanji ; la vidéo repart un peu avant son ancien début
+    const start = times[g];
+    delete ytLocked[lockKey(L)]; store.set('ytlocked', ytLocked);
+    Object.keys(ytBeats).forEach(k => { if (inLine(k)) delete ytBeats[k]; });
+    S2.forEach((s, k) => { if (s.L === L) delete ytAnchors[k]; });
+    store.set('ytbeats', ytBeats); store.set('ytanchors', ytAnchors);
+    if (ytPlayer && ytPlayer.seekTo){ ytPlayer.seekTo(Math.max(0, start - 1.5), true); ytPlayer.playVideo(); }
+    scrollToLine(lineEl(L.b, L.l)); tapFrom(p0);
+    paintAnchors(); ytInfo();
+    setStatus('Clique sur chaque kanji de la ligne, au moment où il est chanté.');
+    return;
+  } else if (d === 'play'){
+    if (ytPlayer && ytPlayer.seekTo){ ytPlayer.seekTo(Math.max(0, times[g] - 0.5), true); ytPlayer.playVideo(); }
+    lightVisual([{ L, i: 0 }]); scrollToLine(lineEl(L.b, L.l));
+    tapFrom(p0);
+    return;
+  } else {
+    // décale tous les repères de la ligne ; s'il n'y en a aucun, on fixe son début à partir de l'estimation
+    const keys = Object.keys(ytBeats).filter(inLine), syls = S2.map((s, k) => k).filter(k => S2[k].L === L && ytAnchors[k] != null);
+    if (!keys.length && !syls.length){ ytBeats[p0] = times[g]; keys.push(String(p0)); }
+    keys.forEach(k => ytBeats[k] = Math.max(0, +(ytBeats[k] + +d).toFixed(2)));
+    syls.forEach(k => ytAnchors[k] = Math.max(0, +(ytAnchors[k] + +d).toFixed(2)));
+  }
+  store.set('ytbeats', ytBeats); store.set('ytanchors', ytAnchors);
+  paintAnchors(); ytInfo(); saveSyncFile();
+}
+// Clic sur une syllabe pendant la vidéo : elle est chantée maintenant
+// (les prochains Espace continuent au kanji suivant)
+function setAnchor(L, i){
+  markSyl(sylIndex(L, i), Math.max(0, +(ytNow() - YT_REACTION).toFixed(2)), true);
+  tapShow(); lightVisual([{ L, i }]);
+}
+// Synchro estimée avant tout repère : le titre commence vers 0:34, la fin vers 4:58
+const YT_CHANT = [34, 298];
+function ytAutoTimes(){
+  const lines = DATA.flatMap(B => B.lines), w = lines.map(L => L.syl.length + L.hold), total = w.reduce((a, b) => a + b, 0);
+  let acc = 0;
+  return lines.map((_, i) => { const t = YT_CHANT[0] + (YT_CHANT[1] - YT_CHANT[0]) * acc / total; acc += w[i]; return +t.toFixed(2); });
+}
+const ytManual = () => ytTimes.filter(x => x != null).length > 0;
+const ytActiveTimes = () => ytManual() ? ytTimes : ytAutoTimes();
+const allLines = () => DATA.flatMap(B => B.lines);
+function ytInfo(){
+  const k = Object.keys(ytBeats).length + Object.keys(ytAnchors).length;
+  $('ytInfo').innerHTML = tr(k
+    ? `<b>${k} repère${k > 1 ? 's' : ''}</b> posé${k > 1 ? 's' : ''}. `
+    : 'Synchro estimée. ') +
+    tr('Pendant la vidéo, <b>clique sur chaque kanji au moment où il est chanté</b> (ou tape Espace) : le kanji attendu est entouré. Chaque ligne est sauvée à son dernier kanji, et synchro.json est mis à jour. Sous chaque ligne : réglage fin, et « Refaire la ligne » pour la recaler.');
+  $('ytSpeedShow').textContent = Math.round(ytSpeed * 100) + ' %';
+}
+function loadYT(){
+  if (window.YT && YT.Player) return Promise.resolve();
+  return new Promise(res => {
+    window.onYouTubeIframeAPIReady = res;
+    const s = document.createElement('script'); s.src = 'https://www.youtube.com/iframe_api'; document.head.appendChild(s);
+  });
+}
+async function openYT(){
+  if (!listening) stopPlay();
+  $('ytPanel').hidden = false; $('ytFloat').hidden = false; document.body.classList.add('ytopen');
+  ytInfo(); tapFrom(null);
+  await loadYT();
+  if (!ytPlayer) ytPlayer = new YT.Player('yt', {
+    videoId: YT_ID, playerVars: { playsinline: 1, rel: 0, disablekb: 1 },
+    events: { onReady: () => ytPlayer.setPlaybackRate(ytRate),
+              onPlaybackRateChange: e => { ytRate = e.data; store.set('ytrate', ytRate); showRate(); },
+              onStateChange: e => { const on = e.data === YT.PlayerState.PLAYING; playLabel(on); if (on) startFollow(); else { stopFollow(); tapLast = null; tapShow(); }
+                                    if (e.data === YT.PlayerState.PAUSED || e.data === YT.PlayerState.ENDED) stopFade(); } }
+  });
+}
+function closeYT(){
+  setSync(false); playLabel(false);
+  $('ytPanel').hidden = true; $('ytFloat').hidden = true; document.body.classList.remove('ytopen'); stopFollow(); endSync();
+  if (ytPlayer && ytPlayer.pauseVideo) ytPlayer.pauseVideo();
+  clearNow(); tapShow();
+}
+function startFollow(){ clearInterval(ytTimer); followPrev = null; ytTimer = setInterval(follow, 60); }
+function stopFollow(){ clearInterval(ytTimer); }
+// Partie étudiée : la section affichée, ou tout le sutra. Fin = après le dernier kanji (temps tenu compris)
+function studyRange(){
+  const { syl, times, cum } = ytSyllableTimes(), b = S.tab < DATA.length ? DATA[S.tab].lines[0].b : null;
+  const first = b == null ? 0 : syl.findIndex(s => s.L.b === b), last = b == null ? syl.length - 1 : syl.findLastIndex(s => s.L.b === b);
+  return { start: times[first], end: timeAt(cum[last + 1]) };
+}
+// Fondu de 5/3 s sur le son de la vidéo, puis pause ; le volume d'origine revient une fois la vidéo arrêtée
+const FADE_S = 5 / 3;
+let fade = null, followPrev = null;
+function fadeOut(){
+  if (fade) return;
+  const v0 = ytPlayer.getVolume(), t0 = performance.now();
+  fade = { v0, id: setInterval(() => {
+    const k = (performance.now() - t0) / (FADE_S * 1000);
+    if (k < 1){ ytPlayer.setVolume(Math.round(v0 * (1 - k))); return; }
+    clearInterval(fade.id); fade = null;
+    ytPlayer.pauseVideo(); setTimeout(() => ytPlayer.setVolume(v0), 500);
+  }, 100) };
+}
+function stopFade(){ if (!fade) return; clearInterval(fade.id); ytPlayer.setVolume(fade.v0); fade = null; }
+function follow(){
+  if (!ytPlayer || ytSyncing || !ytPlayer.getCurrentTime) return;
+  const t = ytNow(), { syl, times } = ytSyllableTimes();
+  // fin d'étude : la vidéo passe le dernier kanji de la section (ou du sutra) → fondu puis arrêt
+  if (!syncMode){
+    const { end } = studyRange();
+    if (fade && t < end - 0.5) stopFade();                       // on est revenu en arrière pendant le fondu
+    else if (followPrev != null && followPrev < end && t >= end && t - followPrev < 1 &&
+             ytPlayer.getPlayerState() === YT.PlayerState.PLAYING) fadeOut();
+  }
+  followPrev = t;
+  let lo = -1;
+  for (let g = 0; g < times.length; g++){ if (times[g] <= t) lo = g; else break; }
+  if (lo < 0){ clearNow(); return; }
+  const { L, i } = syl[lo], el = chipEl(L.b, L.l, i);
+  if (el && !el.classList.contains('now')) lightVisual([{ L, i }]);
+}
+function targetLine(L){
+  main.querySelectorAll('.line.target').forEach(e => e.classList.remove('target'));
+  if (!L) return;
+  const ln = lineEl(L.b, L.l); ln.classList.add('target'); scrollToLine(ln);
+}
+function startSync(){
+  if (!ytPlayer || !ytPlayer.seekTo) return;
+  ytSyncing = true; ytIdx = 0; ytTimes = [];
+  $('ytMark').hidden = false; clearNow(); targetLine(allLines()[0]);
+  ytPlayer.seekTo(0, true); ytPlayer.playVideo();
+  ytInfo(); $('ytMark').focus();
+}
+function endSync(){
+  ytSyncing = false; $('ytMark').hidden = true; targetLine(null);
+  store.set('ytsync', ytTimes); ytInfo();
+}
+function markLine(){
+  if (!ytSyncing || !ytPlayer) return;
+  ytTimes[ytIdx] = +ytPlayer.getCurrentTime().toFixed(2);
+  store.set('ytsync', ytTimes);
+  ytIdx++;
+  const lines = allLines();
+  if (ytIdx >= lines.length) endSync();
+  else { targetLine(lines[ytIdx]); ytInfo(); }
+}
+const speedYT = k => { ytSpeed = Math.round(ytSpeed * k * 100) / 100; store.set('ytspeed', ytSpeed); ytInfo(); };
+$('ytFaster').onclick = () => speedYT(1.05);
+// Recommencer : la vidéo revient au début de la ligne, de la section (bloc) ou du sutra en cours
+function ytCurrent(){
+  const t = ytNow(), { syl, times } = ytSyllableTimes();
+  let lo = 0;
+  for (let g = 0; g < times.length; g++){ if (times[g] <= t) lo = g; else break; }
+  return { syl, times, cur: syl[lo] };
+}
+function restartAt(pick){
+  if (!ytPlayer || !ytPlayer.getCurrentTime) return;
+  const { syl, times, cur } = ytCurrent(), { cum } = ytSyllableTimes();
+  const g = syl.findIndex(s => pick(s, cur));
+  if (g < 0) return;
+  ytPlayer.seekTo(Math.max(0, times[g] - 0.3), true);
+  tapFrom(cum[g]);
+  ytPlayer.playVideo();
+}
+// Vitesse de l'enregistrement : le surlignage suit l'horloge de la vidéo, il reste donc synchronisé à toute vitesse
+let ytRate = store.get('ytrate', 1);
+function showRate(){ document.querySelectorAll('.ratev').forEach(e => e.textContent = '×' + String(ytRate).replace('.', ',')); }
+function setRate(v){
+  ytRate = Math.min(2, Math.max(0.5, Math.round(v * 20) / 20));
+  store.set('ytrate', ytRate); showRate();
+  if (ytPlayer && ytPlayer.setPlaybackRate) ytPlayer.setPlaybackRate(ytRate);
+}
+document.querySelectorAll('[data-rate]').forEach(b => b.onclick = () => { setRate(b.dataset.rate === 'reset' ? 1 : ytRate + +b.dataset.rate); b.blur(); });
+showRate();
+$('fLine').onclick = () => restartAt((s, cur) => s.L === cur.L);
+$('fBlock').onclick = () => restartAt((s, cur) => s.L.b === cur.L.b);
+$('fAll').onclick = () => { if (S.tab !== 7){ S.tab = 7; store.set('tab', 7); render(); } restartAt(() => true); };
+// Recommencer une ligne avec l'enregistrement : ouvre la vidéo si besoin, attend le lecteur, puis reprend au début de la ligne
+async function lineFromVideo(L){
+  stopPlay();
+  if ($('ytPanel').hidden) openYT();
+  for (let i = 0; i < 100 && !(ytPlayer && ytPlayer.seekTo && ytPlayer.getPlayerState); i++) await new Promise(r => setTimeout(r, 100));
+  if (!(ytPlayer && ytPlayer.seekTo)) return;
+  nudgeLine(L, 'play');
+}
+function lockedNote(){ setStatus('Ligne déjà sauvée : clique un kanji pour le corriger, ou « Refaire la ligne ».'); }
+/* Taper la synchro, kanji par kanji : chaque Espace (ou clic sur un kanji) marque le kanji suivant au moment où il est
+   chanté, même deux kanji réunis sur un temps, sans rattrapage, en retranchant le temps de réaction ; un double appui
+   (moins de 0,08 s) est ignoré. Au dernier kanji d'une ligne, la ligne est sauvée (figée) et synchro.json mis à jour. */
+let tapLast = null, tapNext = null;
+function tapFrom(pos){ tapLast = null; tapNext = pos; tapShow(); }
+// Syllabe qui commence à une position (ou la contient) : son indice, sa position, la position de la suivante
+function sylAt(pos){
+  const { syl, cum } = ytSyllableTimes();
+  let g = 0; while (g + 1 < syl.length && cum[g + 1] <= pos + 1e-6) g++;
+  return { g, s: syl[g], pos: cum[g], next: cum[g + 1] };
+}
+// Position du kanji que vise le prochain Espace : le suivant du dernier marqué, sinon celui où en est la vidéo
+function tapTarget(t){
+  if (tapLast) return t - tapLast.t < 0.08 ? null : sylAt(tapLast.k).next;
+  if (tapNext != null) return tapNext;
+  return sylAt(posAt(t)).pos;
+}
+function tapBeat(){
+  if (!ytPlayer || !ytPlayer.getCurrentTime) return;
+  const now = +ytNow().toFixed(2), k = tapTarget(now), { total } = ytSyllableTimes();
+  if (k == null || k >= total) return;
+  markSyl(sylAt(k).g, Math.max(0, +(now - YT_REACTION).toFixed(2)));
+  tapShow(true);
+}
+// Marque la syllabe g à l'instant t. force (clic) : corrige aussi un kanji d'une ligne déjà sauvée.
+// Une ligne est sauvée à son dernier kanji, ou de nouveau après une correction si elle l'était déjà.
+function markSyl(g, t, force){
+  const { syl, cum } = ytSyllableTimes(), L = syl[g].L, wasLocked = !!ytLocked[lockKey(L)];
+  const ok = putMark(cum[g], t, g, force);
+  tapLast = { t, k: cum[g] }; tapNext = null;     // même refusé, le compte continue
+  const last = g + 1 >= syl.length || syl[g + 1].L !== L;
+  if (ok && (last || wasLocked)) saveLine(L);
+  if (!ok) lockedNote();
+  paintAnchors(); ytInfo();
+  return ok;
+}
+// Fige une ligne : chaque temps reçoit son instant actuel (même estimé)
+function fixLine(L){
+  const S2 = ytSyllables(), { cum } = ytSyllableTimes(), [p0, p1] = lineSpan(L, S2, cum), fixed = [];
+  for (let p = Math.ceil(p0 - 1e-6); p < p1; p++) fixed.push([p, +timeAt(p).toFixed(2)]);
+  fixed.forEach(([p, t]) => ytBeats[p] = t);
+  ytLocked[lockKey(L)] = true;
+}
+// Sauve une ligne : elle est figée, puis synchro.json est mis à jour
+function saveLine(L){
+  fixLine(L);
+  store.set('ytbeats', ytBeats); store.set('ytlocked', ytLocked);
+  saveSyncFile(true);
+}
+// Entoure la syllabe attendue au prochain Espace et l'annonce dans le menu
+function tapShow(hit){
+  main.querySelectorAll('.syl.tapnext').forEach(e => e.classList.remove('tapnext'));
+  if ($('ytPanel').hidden || !syncMode) return;
+  const { syl, cum, total } = ytSyllableTimes();
+  const k = tapLast ? sylAt(tapLast.k).next : tapNext;
+  let txt = '';
+  if (k != null && k < total){
+    let g = 0; while (g + 1 < syl.length && cum[g + 1] <= k + 1e-6) g++;
+    const s = syl[g], el = chipEl(s.L.b, s.L.l, s.i);
+    if (el) el.classList.add('tapnext');
+    txt = `Prochain kanji : « ${s.L.syl[s.i].r} » · ${g + 1}/${syl.length}`;
+  }
+  $('fRecInfo').textContent = txt;
+  if (hit){ $('fRecInfo').classList.remove('hit'); void $('fRecInfo').offsetWidth; $('fRecInfo').classList.add('hit'); }
+}
+// Espace : en synchro, marque un temps (jamais Pause) ; sinon Écouter / Pause de l'enregistrement
+['keydown', 'keyup'].forEach(type => document.addEventListener(type, e => {
+  if (e.code !== 'Space' || /INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName)) return;
+  e.preventDefault(); e.stopImmediatePropagation();
+  if (type === 'keydown' && !e.repeat){ if (syncMode) tapBeat(); else ytToggle(); }
+}, true));
+// Un clic dans la vidéo lui donne le clavier : on le reprend aussitôt pour que Espace reste à la page
+window.addEventListener('blur', () => setTimeout(() => {
+  if (!$('ytPanel').hidden && document.activeElement && document.activeElement.tagName === 'IFRAME'){ document.activeElement.blur(); window.focus(); }
+}, 0));
+$('ytSlower').onclick = () => speedYT(1 / 1.05);
+// Écouter / Pause : ouvre l'enregistrement si besoin ; la première fois, part du début du bloc affiché
+function playLabel(on){
+  $('play').querySelector('span').textContent = on ? 'Pause' : 'Écouter';
+  try { if (on) practiceSet('ecouter', true); } catch {}
+  goUI();
+  $('fPlay').textContent = on ? 'Pause' : 'Lecture';
+}
+async function waitPlayer(){
+  for (let i = 0; i < 100 && !(ytPlayer && ytPlayer.seekTo && ytPlayer.getPlayerState); i++) await new Promise(r => setTimeout(r, 100));
+  return !!(ytPlayer && ytPlayer.seekTo);
+}
+async function ytToggle(){
+  if (playing) stopPlay();
+  const open = !$('ytPanel').hidden && ytPlayer && ytPlayer.getPlayerState;
+  if (open && ytPlayer.getPlayerState() === YT.PlayerState.PLAYING){ ytPlayer.pauseVideo(); return; }
+  if (!open){ openYT(); if (!(await waitPlayer())) return; }
+  // reprend dans la partie étudiée : à son début si la vidéo est avant elle ou déjà au bout
+  const { start, end } = studyRange(), t = ytPlayer.getCurrentTime();
+  if (!syncMode && (t < 1 || t < start - 1 || t >= end - 0.2)) ytPlayer.seekTo(Math.max(0, start - 0.5), true);
+  ytPlayer.playVideo();
+}
+// Hors synchro, un clic sur une syllabe fait sauter l'enregistrement à cet endroit
+function jumpTo(L, i){
+  const { times } = ytSyllableTimes(), g = sylIndex(L, i);
+  ytPlayer.seekTo(Math.max(0, times[g] - 0.3), true); ytPlayer.playVideo();
+  lightVisual([{ L, i }]);
+}
+// Mode synchro : affiche les outils de calage, et Espace marque les temps
+let syncMode = false;
+function setSync(on){
+  syncMode = on;
+  if (on && S.tab !== 7){ S.tab = 7; store.set('tab', 7); render(); }   // la synchro se fait sur tout le sutra
+  document.body.classList.toggle('syncmode', on);
+  $('syncBtn').setAttribute('aria-pressed', on);
+  if (on){ ytInfo(); tapShow(); paintAnchors(); }
+  else main.querySelectorAll('.syl.tapnext').forEach(e => e.classList.remove('tapnext'));
+}
+$('syncBtn').onclick = async () => {
+  if (syncMode){ setSync(false); return; }
+  if ($('ytPanel').hidden){ openYT(); await waitPlayer(); }
+  setSync(true);
+};
+$('fPlay').onclick = () => ytToggle();
+const setYtSize = compact => {
+  $('ytPanel').classList.toggle('compact', compact);
+  $('ytSize').textContent = compact ? '⤢' : '⤡';
+  $('ytSize').title = $('ytSize').ariaLabel = compact ? 'Agrandir la vidéo' : 'Réduire la vidéo';
+  store.set('ytcompact', compact);
+};
+setYtSize(store.get('ytcompact', true));
+$('ytSize').onclick = () => setYtSize(!$('ytPanel').classList.contains('compact'));
+$('ytClose').onclick = closeYT;
+$('ytMark').onclick = markLine;
+$('ytClear').onclick = () => { if (Object.keys(ytLocked).length && !confirm(tr('Effacer aussi les lignes sauvées ?'))) return; ytLocked = {}; store.set('ytlocked', ytLocked); ytAnchors = {}; ytBeats = {}; store.set('ytanchors', ytAnchors); store.set('ytbeats', ytBeats); tapFrom(0); paintAnchors(); clearNow(); ytInfo(); };
+
+
+if (hasTTS){ pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }
+render(); renderNotices();
+
+/* ---------- Synchro dans un fichier ----------
+   synchro.json, à côté de la page, garde la synchro et les réglages hors du navigateur. Il est chargé quand le
+   navigateur n'a encore aucune synchro (autre navigateur, données effacées) ; le bouton en télécharge une version à jour. */
+const SYNC_KEYS = ['ytbeats', 'ytanchors', 'ytlocked', 'ytspeed', 'ytrate', 'known'];
+// Site en ligne : la synchro est réservée à l'administrateur, qui la fait en local (lancer-hannya.pyw) puis publie synchro.json.
+// Ailleurs que sur localhost, le bouton « Synchroniser » est masqué, synchro.json est relu à chaque visite (la dernière synchro
+// publiée l'emporte) et sa progression « Je le connais » (known) n'est pas reprise : chaque visiteur garde la sienne.
+const ADMIN = ['localhost', '127.0.0.1'].includes(location.hostname);
+if (!ADMIN) $('syncBtn').style.display = 'none';
+function applySync(o){
+  SYNC_KEYS.forEach(k => { if (o[k] != null && (ADMIN || k !== 'known')) store.set(k, o[k]); });
+  ytBeats = store.get('ytbeats', {}); ytAnchors = store.get('ytanchors', {}); ytLocked = store.get('ytlocked', {});
+  ytSpeed = store.get('ytspeed', 1); ytRate = store.get('ytrate', 1); S.known = store.get('known', {});
+  showRate(); ytInfo(); render();
+}
+if (!ADMIN || (store.get('ytbeats', null) == null && store.get('ytanchors', null) == null))
+  fetch('synchro.json', { cache: 'no-cache' }).then(r => r.ok ? r.json() : null).then(o => { if (o) applySync(o); }).catch(() => {});
+function syncData(){
+  const o = { sauve: new Date().toISOString().slice(0, 10) };
+  SYNC_KEYS.forEach(k => o[k] = store.get(k, null));
+  return o;
+}
+// synchro.json est réécrit par le serveur local (lancer-hannya.pyw) ; plusieurs changements rapprochés n'en font qu'un
+let syncFileTimer = 0, syncFileNote = false;
+function writeSyncFile(){
+  if (!ADMIN) return Promise.resolve(false);   // site en ligne : rien à écrire
+  return fetch('synchro.json', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(syncData(), null, 1) })
+    .then(r => r.ok, () => false);
+}
+function saveSyncFile(announce){
+  syncFileNote = syncFileNote || !!announce;
+  clearTimeout(syncFileTimer);
+  syncFileTimer = setTimeout(() => writeSyncFile().then(ok => {
+    if (syncFileNote) setStatus(ok ? 'Ligne sauvée ✓ · synchro.json mis à jour'
+      : "Ligne sauvée ✓ dans ce navigateur. synchro.json n'a pas pu être mis à jour : relance la page avec le raccourci Hannya Shingyo.");
+    syncFileNote = false;
+  }), 400);
+}
+// Boutons (panneau et menu flottant) : toutes les lignes sont sauvées (leurs boutons passent à « Synchro sauvée ✓ »),
+// puis synchro.json est écrit tout de suite ; si le serveur ne sait pas écrire (ancienne version), on télécharge le fichier
+function saveAllSync(){
+  allLines().forEach(L => { if (!ytLocked[lockKey(L)]) fixLine(L); });
+  store.set('ytbeats', ytBeats); store.set('ytlocked', ytLocked);
+  paintAnchors(); ytInfo();
+  return writeSyncFile();
+}
+$('syncSave').onclick = $('fSave').onclick = () => saveAllSync().then(ok => {
+  if (ok){ setStatus('Synchro sauvée dans synchro.json ✓'); return; }
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([JSON.stringify(syncData(), null, 1)], { type: 'application/json' }));
+  a.download = 'synchro.json'; a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+});
+</script>
+</body>
+</html>
