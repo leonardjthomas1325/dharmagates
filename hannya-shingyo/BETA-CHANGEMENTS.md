@@ -79,3 +79,13 @@ Copie de travail préparée le 10/11/2026 à partir de `Zen Archive` (version 1.
 
 ## 1.28.1-bêta (11/11/2026)
 - **Crédits et confidentialité** réorganisés en 4 rubriques (Confidentialité, Sons et voix, Image, Traductions), une puce par élément, dans les 5 langues.
+
+## 1.30.0-bêta (11/11/2026) : référencement, adresse dharmagates.eu
+- **Une page d'accueil par langue** : anglais à `hannya-shingyo/`, français à `hannya-shingyo/fr/`, chacune avec son texte écrit dans le HTML,
+  son titre et sa description. Le style et le script sont partagés (`accueil.css`, `accueil.js`). Les pages traduites se régénèrent avec
+  `node outils/accueil-langues.mjs` après toute modification du texte de l'accueil. Les anciens liens `?lang=fr` mènent à `fr/`.
+- **Balises de référencement** sur l'accueil, l'outil et les mentions : description, adresse canonique, `hreflang`, aperçu de partage
+  Open Graph (image `partage.png`, le sceau DharmaGates).
+- **`robots.txt` et `sitemap.xml`** à la racine du site, pour l'adresse `https://dharmagates.eu/`.
+- **Ouverture plus rapide de l'outil** : `vosk.js` (5,5 Mo) n'est plus chargé d'office, seulement au premier usage de la reconnaissance hors ligne.
+- Le logo de l'outil et le lien retour des mentions ramènent à l'accueil français quand l'outil est en français.

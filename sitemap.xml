@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Plan du site pour les moteurs de recherche. Ajouter ici toute nouvelle page à référencer. -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://dharmagates.eu/hannya-shingyo/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://dharmagates.eu/hannya-shingyo/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://dharmagates.eu/hannya-shingyo/fr/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://dharmagates.eu/hannya-shingyo/"/>
+  </url>
+  <url>
+    <loc>https://dharmagates.eu/hannya-shingyo/fr/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://dharmagates.eu/hannya-shingyo/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://dharmagates.eu/hannya-shingyo/fr/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://dharmagates.eu/hannya-shingyo/"/>
+  </url>
+  <url>
+    <loc>https://dharmagates.eu/hannya-shingyo/hannya-shingyo.html</loc>
+  </url>
+  <url>
+    <loc>https://dharmagates.eu/hannya-shingyo/mentions.html</loc>
+  </url>
+</urlset>

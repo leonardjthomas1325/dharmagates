@@ -1,0 +1,5 @@
+# DharmaGates : tout le site peut être exploré.
+User-agent: *
+Allow: /
+
+Sitemap: https://dharmagates.eu/sitemap.xml

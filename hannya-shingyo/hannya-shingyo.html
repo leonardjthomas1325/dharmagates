@@ -3,7 +3,19 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Hannya Shingyō</title>
+<title>Hannya Shingyō · Apprendre à chanter le Sutra du cœur</title>
+<meta name="description" content="Apprendre à chanter l'Hannya Shingyō (Sutra du cœur) en lecture japonaise Sōtō : texte en kanji, kana et rōmaji, enregistrement surligné, récitation au micro et au rythme du mokugyo.">
+<link rel="canonical" href="https://dharmagates.eu/hannya-shingyo/hannya-shingyo.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="DharmaGates">
+<meta property="og:title" content="Hannya Shingyō · Apprendre à chanter le Sutra du cœur">
+<meta property="og:description" content="Apprendre à chanter l'Hannya Shingyō (Sutra du cœur) en lecture japonaise Sōtō : texte en kanji, kana et rōmaji, enregistrement surligné, récitation au micro et au rythme du mokugyo.">
+<meta property="og:url" content="https://dharmagates.eu/hannya-shingyo/hannya-shingyo.html">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:image" content="https://dharmagates.eu/hannya-shingyo/partage.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
@@ -629,7 +641,6 @@ footer .don a{color:var(--accent)}
   <p class="dhint">Écoute l'exemple, puis dis le kanji · 5 fois · Échap : arrêter</p>
 </div>
 
-<script src="vosk.js"></script>
 <!-- voix des récitations : Keita (masculine) ou Nanami (féminine, fichiers en -f) ; seule la voix choisie est chargée -->
 <script>(() => { let f = false; try { f = JSON.parse(localStorage.getItem('hannya:voix')) === 'f'; } catch {}
   const x = f ? '-f' : ''; document.write(`<script src="syllabes${x}.js"><\/script><script src="lignes${x}.js"><\/script>`); })();</script>
@@ -653,6 +664,8 @@ const LANG = (() => {
 })();
 const TX = LANG === 'fr' ? null : I18N[LANG];
 document.documentElement.lang = LANG;
+// Le logo ramène à l'accueil dans la langue de l'outil (anglais à la racine, français dans fr/)
+if (LANG === 'fr') document.querySelector('.brand.home').href = 'fr/';
 function tr(s){
   if (!TX || typeof s !== 'string') return s;
   const k = s.trim(); if (!k) return s;
@@ -2279,11 +2292,21 @@ function endRecal(done){
 
 /* ---------- Reconnaissance hors ligne (Vosk, modèle japonais dans vosk-ja.tar.gz) ---------- */
 let voskModelP = null, vosk = null, voskResults = [];
-const voskAvailable = () => typeof Vosk !== 'undefined' && location.protocol.startsWith('http');
+// vosk.js (5,5 Mo) n'est chargé qu'au premier usage de la reconnaissance hors ligne : la page s'ouvre plus vite
+const voskAvailable = () => location.protocol.startsWith('http');
+let voskLibP = null;
+function loadVoskLib(){
+  if (typeof Vosk !== 'undefined') return Promise.resolve();
+  return voskLibP ||= new Promise((ok, ko) => {
+    const s = document.createElement('script');
+    s.src = 'vosk.js'; s.onload = ok; s.onerror = () => { voskLibP = null; s.remove(); ko(new Error('vosk.js')); };
+    document.head.appendChild(s);
+  });
+}
 function loadVoskModel(){
   if (!voskModelP){
     setStatus('Chargement du modèle hors ligne (50 Mo, quelques secondes)…');
-    voskModelP = Vosk.createModel(new URL('vosk-ja.tar.gz', location.href).href).catch(err => { voskModelP = null; throw err; });
+    voskModelP = loadVoskLib().then(() => Vosk.createModel(new URL('vosk-ja.tar.gz', location.href).href)).catch(err => { voskModelP = null; throw err; });
   }
   return voskModelP;
 }
