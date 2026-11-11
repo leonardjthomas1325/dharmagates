@@ -66,3 +66,6 @@ Copie de travail préparée le 10/11/2026 à partir de `Zen Archive` (version 1.
   Les anciennes venaient d'edge-tts (service de lecture d'Edge, hors contrat). Même format : MP3 24 kHz 48 kb/s, syllabes en katakana + « ーー » à −10 %,
   lignes recalées sur la durée visée (`t`), mêmes positions de syllabes (`c`). Script : `Zen Archive\voix-azure\generer_voix_azure.py`.
 - **Crédits** : mention « voix de synthèse … Microsoft Azure AI Speech » dans les 5 langues et dans `mentions.html`.
+
+## 1.28.1-bêta (11/11/2026)
+- **Crédits et confidentialité** réorganisés en 4 rubriques (Confidentialité, Sons et voix, Image, Traductions), une puce par élément, dans les 5 langues.
