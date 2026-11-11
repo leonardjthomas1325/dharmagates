@@ -1,6 +1,6 @@
 // Page de dons de DharmaGates (Ko-fi). Tant que l'adresse est vide, les liens de don restent cachés.
 // Chaque élément marqué data-don est montré, et reçoit l'adresse s'il s'agit d'un lien.
-window.DHARMA_DONS = '';
+window.DHARMA_DONS = 'https://ko-fi.com/dharmagates';
 (function(){
   const url = window.DHARMA_DONS;
   if (!url) return;

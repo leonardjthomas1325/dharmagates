@@ -13,6 +13,9 @@ Copie de travail préparée le 10/11/2026 à partir de `Zen Archive` (version 1.
 - **Version** : `1.26.0-bêta` (`version.js`).
 - `.nojekyll` pour GitHub Pages.
 
+## 1.29.1-bêta
+- Dons activés : `dons.js` pointe vers https://ko-fi.com/dharmagates.
+
 ## 1.29.0-bêta
 - **Dons (Ko-fi)** : nouvelle adresse unique `dons.js` (`window.DHARMA_DONS`). Tant qu'elle est vide, rien ne s'affiche.
   - Accueil et pied de page de l'outil : une ligne « DharmaGates est gratuit, sans publicité, et le restera. Soutenir DharmaGates ».
