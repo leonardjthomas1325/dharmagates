@@ -58,7 +58,7 @@ Copie de travail préparée le 10/11/2026 à partir de `Zen Archive` (version 1.
 - Téléphone (≤ 720 px) : la vignette vidéo (200 × 200 px, minimum imposé par YouTube) et ses commandes tiennent dans une seule bande en bas de l'écran, côte à côte, au lieu d'empiler le menu au-dessus de la vignette. Le texte suivi reste centré au-dessus de la bande.
 
 ## Reste à faire avant d'envoyer le lien
-- Remplacer `erratum@exemple.org` par l'adresse réelle : `index.html` (constante `ERRATA` et lien `errata`) et `mentions.html` (lien `contact`).
+- ~~Remplacer l'adresse provisoire~~ : fait, adresse de contact `dharmagates.contact@gmail.com` (index.html et mentions.html).
 - Créer le dépôt GitHub et activer Pages.
 
 ## 1.28.0-bêta (11/11/2026)
