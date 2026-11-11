@@ -13,6 +13,13 @@ Copie de travail préparée le 10/11/2026 à partir de `Zen Archive` (version 1.
 - **Version** : `1.26.0-bêta` (`version.js`).
 - `.nojekyll` pour GitHub Pages.
 
+## 1.29.0-bêta
+- **Dons (Ko-fi)** : nouvelle adresse unique `dons.js` (`window.DHARMA_DONS`). Tant qu'elle est vide, rien ne s'affiche.
+  - Accueil et pied de page de l'outil : une ligne « DharmaGates est gratuit, sans publicité, et le restera. Soutenir DharmaGates ».
+  - Outil : après une récitation ou une écoute complète du sutra entier, une invitation calme (« Gasshō. Si cette pratique t'aide… ») apparaît 4 s plus tard, au plus une fois tous les 30 jours. Jamais pendant la pratique, ni en mode dojo ou plein écran.
+  - Mentions légales : rubrique « Dons » (libres et sans contrepartie, Ko-fi + Stripe/PayPal, pas d'attestation fiscale).
+  - Textes traduits dans les 5 langues.
+
 ## 1.27.1-bêta
 - Crédits du pied de page repliés sous un petit lien « Crédits et confidentialité » (ils s'ouvrent d'un toucher).
 
