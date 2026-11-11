@@ -353,6 +353,19 @@ footer .credits #credits h4:first-child{margin-top:.3em}
 footer .credits #credits ul{margin:0;padding-left:1.2em}
 footer .credits #credits li{margin:.2em 0}
 footer .edition{margin:1.2em 0 0;padding-top:.8em;border-top:1px solid var(--line)}
+/* Dons : une ligne discrète au pied de page, et une invitation calme après une récitation complète du sutra */
+footer .don{margin:1.4em 0 0}
+footer .don a{color:var(--accent)}
+.donask{position:fixed;left:16px;right:16px;bottom:16px;z-index:23;max-width:30rem;margin:0 auto;display:flex;align-items:center;gap:10px 14px;flex-wrap:wrap;
+  padding:12px 14px;background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:0 6px 20px rgba(0,0,0,.12);
+  transition:opacity .8s ease,transform .8s ease}
+.donask[hidden]{display:none}
+.donask.out{opacity:0;transform:translateY(8px)}
+.donask p{margin:0;flex:1 1 16rem;font-size:.95em}
+.donask p b{font-family:var(--f-display)}
+.donask .acts{display:flex;gap:8px;margin-left:auto}
+.donask a.btn{text-decoration:none}
+@media (prefers-reduced-motion:reduce){.donask{transition:none}}
 @media (prefers-reduced-motion:reduce){.beat{transition:none}}
 /* Révisions du jour : compteurs, bouton, progression par partie ; petite barre de progression sous chaque onglet */
 .review{margin-top:16px;padding:10px 14px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
@@ -552,8 +565,15 @@ footer .edition{margin:1.2em 0 0;padding-top:.8em;border-top:1px solid var(--lin
       <li><b>Anglais, italien, espagnol et allemand</b> : écrites pour cette page à partir du sens français, avec le vocabulaire des traductions Sōtō de référence (<a href="https://www.sotozen.com/eng/practice/sutra/scriptures.html">Sōtōshū et Soto Zen Text Project</a>, <a href="https://meditation-zen.org/sites/default/files/inline-files/hannya_shingyo.pdf">version allemande de la Sōtō-shū</a>, <a href="https://abzen.eu/wp-content/uploads/2024/02/ABZE-traduction-sutras-IT.pdf">ABZE en italien</a> et <a href="https://abzen.eu/wp-content/uploads/2024/02/ABZE-traduction-sutras-ES.pdf">en espagnol</a>), sans les recopier.</li>
     </ul>
     </div></details>
+    <p class="don" data-don hidden><span>DharmaGates est gratuit, sans publicité, et le restera.</span> <a data-don href="#">Soutenir DharmaGates</a></p>
     <p class="edition">© 2026 Thomas Léonard. <span>Tous droits réservés.</span> · <span>Éditeur :</span> DharmaGates · <span>Version</span> <span id="version"></span> · <a href="mentions.html">Mentions légales et vie privée</a>.</p>
   </footer>
+</div>
+
+<!-- invitation au don : après une récitation complète du sutra, au plus une fois tous les 30 jours ; jamais pendant la pratique -->
+<div class="donask" id="donAsk" hidden role="status">
+  <p><b>Gasshō.</b> <span>Si cette pratique t'aide, tu peux soutenir DharmaGates.</span></p>
+  <div class="acts"><a class="btn primary" data-don href="#" id="donGo">Soutenir</a><button class="btn ghost" id="donNo">Plus tard</button></div>
 </div>
 
 <div class="dojo" id="dojo" hidden role="dialog" aria-label="Mode dojo">
@@ -615,6 +635,7 @@ footer .edition{margin:1.2em 0 0;padding-top:.8em;border-top:1px solid var(--lin
   const x = f ? '-f' : ''; document.write(`<script src="syllabes${x}.js"><\/script><script src="lignes${x}.js"><\/script>`); })();</script>
 <script src="traductions.js"></script>
 <script src="version.js"></script>
+<script src="dons.js"></script>
 <script>
 // Numéro de version, affiché en bas de page : il est défini dans version.js, commun avec la page d'accueil
 const VERSION = window.HANNYA_VERSION || '';
@@ -1397,7 +1418,7 @@ function startPlay(keepMic){
     if (id !== runId) return;
     const it = items[k++];
     // fin naturelle : on lâche le bus sans le couper, pour laisser résonner les cloches
-    if (!it){ playBus = null; stopPlay(); setStatus(listening ? 'Fin de l\'accompagnement. Le micro écoute toujours.' : ''); return; }
+    if (!it){ playBus = null; stopPlay(); setStatus(listening ? 'Fin de l\'accompagnement. Le micro écoute toujours.' : ''); if (S.tab === 7) donAsk(); return; }
     if (it.t === 'bell'){ bell(); later(next, it.gap); }
     // un coup, puis son temps
     else if (it.t === 'strike'){ const out = playBus || master; ({ ken: () => bell(0.8, undefined, out), gatsu: () => gatsu(0.8, undefined, out), moku: () => mokugyo(undefined, out) })[it.s](); pulse(); later(next, beatMs()); }
@@ -1408,6 +1429,23 @@ function startPlay(keepMic){
   };
   Promise.all([loadSamples(), loadLines(), loadMoku(), loadKeisu(), loadBell('shokei')]).then(() => { if (id !== runId) return; items = buildItems(); next(); });
 }
+/* Invitation au don : après une récitation ou une écoute complète du sutra, quelques secondes plus tard (le temps que
+   les cloches résonnent). Au plus une fois tous les 30 jours, qu'on la ferme ou qu'on donne. Rien si aucune page de dons
+   n'est réglée (dons.js), ni en mode dojo ou plein écran, ni si une autre pratique a repris entre-temps. */
+const DON_PAUSE = 30 * 24 * 3600 * 1000;
+function donAsk(){
+  if (!window.DHARMA_DONS || Date.now() - store.get('donAsk', 0) < DON_PAUSE) return;
+  const box = $('donAsk');
+  setTimeout(() => {
+    if (playing || listening || !$('dojo').hidden || document.body.classList.contains('fs')) return;
+    store.set('donAsk', Date.now());
+    box.classList.add('out'); box.hidden = false; void box.offsetWidth; box.classList.remove('out');
+  }, 4000);
+}
+function donClose(){ const box = $('donAsk'); box.classList.add('out'); setTimeout(() => { box.hidden = true; }, 800); }
+$('donNo').onclick = donClose;
+$('donGo').addEventListener('click', donClose);
+
 function stopPlay(){
   if (playBus){ try { playBus.disconnect(); } catch {} playBus = null; }
   runId++; timers.forEach(clearTimeout); timers = []; playing = false; clearNow();
@@ -2907,7 +2945,8 @@ async function openYT(){
   if (!ytPlayer) ytPlayer = audioPlayer(AUDIO_SRC, { onReady: () => ytPlayer.setPlaybackRate(ytRate),
               onPlaybackRateChange: e => { ytRate = e.data; store.set('ytrate', ytRate); showRate(); },
               onStateChange: e => { const on = e.data === YT.PlayerState.PLAYING; playLabel(on); if (on) startFollow(); else { stopFollow(); tapLast = null; tapShow(); }
-                                    if (e.data === YT.PlayerState.PAUSED || e.data === YT.PlayerState.ENDED) stopFade(); } });
+                                    if (e.data === YT.PlayerState.PAUSED || e.data === YT.PlayerState.ENDED) stopFade();
+                                    if (e.data === YT.PlayerState.ENDED && S.tab === 7) donAsk(); } });
 }
 function closeYT(){
   setSync(false); playLabel(false);

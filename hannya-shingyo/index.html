@@ -88,6 +88,8 @@ h1{font:700 clamp(34px,6vw,62px)/1.08 var(--f-display);margin:12px 0 0;letter-sp
 .feats span{color:var(--muted);font-size:.93em}
 .notes{margin-top:44px;font-size:.85em;color:var(--muted)}
 .notes p{margin:.3em 0}
+.notes .don{margin:.3em 0 .9em}
+.notes .don a{color:var(--accent)}
 @media (max-width:600px){.langs a{min-width:calc(50% - 5px)}}
 @media (prefers-reduced-motion:reduce){.hl,.syl > span{transition:none}}
 </style>
@@ -138,6 +140,7 @@ h1{font:700 clamp(34px,6vw,62px)/1.08 var(--f-display);margin:12px 0 0;letter-sp
   </main>
 </div>
 <script src="version.js"></script>
+<script src="dons.js"></script>
 <script>
 // Textes de la page d'accueil dans les 5 langues (l'anglais est dans le HTML, langue par défaut)
 const T = {
@@ -156,6 +159,7 @@ const T = {
     ai: 'English, Italian, Spanish and German translations made by AI from the French text, using the vocabulary of the reference Sōtō translations.',
     err: 'Found a mistake in the text or a translation?', errLink: 'Write to the publisher', legal: 'Legal notice and privacy',
     rights: 'All rights reserved.', pub: 'Publisher:', ver: 'Version',
+    don: 'DharmaGates is free, ad-free, and will remain so.', donLink: 'Support DharmaGates',
   },
   fr: {
     title: 'Hannya Shingyō · Apprendre le Sutra du cœur par cœur',
@@ -172,6 +176,7 @@ const T = {
     ai: 'Traductions anglaise, italienne, espagnole et allemande réalisées par IA à partir du texte français, avec le vocabulaire des traductions Sōtō de référence.',
     err: 'Une erreur dans le texte ou une traduction ?', errLink: 'Écrire à l\'éditeur', legal: 'Mentions légales et vie privée',
     rights: 'Tous droits réservés.', pub: 'Éditeur :', ver: 'Version',
+    don: 'DharmaGates est gratuit, sans publicité, et le restera.', donLink: 'Soutenir DharmaGates',
   },
   it: {
     title: 'Hannya Shingyō · Imparare a memoria il Sutra del Cuore',
@@ -188,6 +193,7 @@ const T = {
     ai: 'Traduzioni inglese, italiana, spagnola e tedesca realizzate con l\'IA a partire dal testo francese, con il lessico delle traduzioni Sōtō di riferimento.',
     err: 'Un errore nel testo o in una traduzione?', errLink: 'Scrivi all\'editore', legal: 'Note legali e privacy',
     rights: 'Tutti i diritti riservati.', pub: 'Editore:', ver: 'Versione',
+    don: 'DharmaGates è gratuito, senza pubblicità, e lo resterà.', donLink: 'Sostieni DharmaGates',
   },
   es: {
     title: 'Hannya Shingyō · Aprender de memoria el Sutra del Corazón',
@@ -204,6 +210,7 @@ const T = {
     ai: 'Traducciones al inglés, italiano, español y alemán realizadas con IA a partir del texto francés, con el vocabulario de las traducciones Sōtō de referencia.',
     err: '¿Un error en el texto o en una traducción?', errLink: 'Escribir al editor', legal: 'Aviso legal y privacidad',
     rights: 'Todos los derechos reservados.', pub: 'Editor:', ver: 'Versión',
+    don: 'DharmaGates es gratuito, sin publicidad, y lo seguirá siendo.', donLink: 'Apoyar DharmaGates',
   },
   de: {
     title: 'Hannya Shingyō · Das Herz-Sutra auswendig lernen',
@@ -220,6 +227,7 @@ const T = {
     ai: 'Englische, italienische, spanische und deutsche Übersetzungen mit KI aus dem französischen Text erstellt, mit dem Wortschatz der maßgeblichen Sōtō-Übersetzungen.',
     err: 'Ein Fehler im Text oder in einer Übersetzung?', errLink: 'An den Herausgeber schreiben', legal: 'Impressum und Datenschutz',
     rights: 'Alle Rechte vorbehalten.', pub: 'Herausgeber:', ver: 'Version',
+    don: 'DharmaGates ist kostenlos, werbefrei und wird es bleiben.', donLink: 'DharmaGates unterstützen',
   },
 };
 // Adresse des erratums et du contact
