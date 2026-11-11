@@ -60,3 +60,9 @@ Copie de travail préparée le 10/11/2026 à partir de `Zen Archive` (version 1.
 ## Reste à faire avant d'envoyer le lien
 - Remplacer `erratum@exemple.org` par l'adresse réelle : `index.html` (constante `ERRATA` et lien `errata`) et `mentions.html` (lien `contact`).
 - Créer le dépôt GitHub et activer Pages.
+
+## 1.28.0-bêta (11/11/2026)
+- **Voix régénérées avec Microsoft Azure AI Speech** : `syllabes.js`, `syllabes-f.js`, `lignes.js`, `lignes-f.js` (Keita et Nanami).
+  Les anciennes venaient d'edge-tts (service de lecture d'Edge, hors contrat). Même format : MP3 24 kHz 48 kb/s, syllabes en katakana + « ーー » à −10 %,
+  lignes recalées sur la durée visée (`t`), mêmes positions de syllabes (`c`). Script : `Zen Archive\voix-azure\generer_voix_azure.py`.
+- **Crédits** : mention « voix de synthèse … Microsoft Azure AI Speech » dans les 5 langues et dans `mentions.html`.
