@@ -1,4 +1,4 @@
-# DharmaGate
+# DharmaGates
 
 Offre éditoriale web autour du zen Sōtō.
 
