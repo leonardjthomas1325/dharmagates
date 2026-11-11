@@ -3,96 +3,28 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Hannya Shingyō</title>
-<meta name="description" content="Learn the Heart Sutra by heart, in its Sōtō Zen Japanese reading.">
+<title>Hannya Shingyō · Learn the Heart Sutra by heart</title>
+<meta name="description" content="Learn to chant the Heart Sutra (Hannya Shingyō) in its Sōtō Zen Japanese reading: listen kanji by kanji, recite at the mic and with the bells, free and offline.">
+<!-- Référencement : adresse de référence, versions par langue (hreflang), aperçu de partage (Open Graph) -->
+<link rel="canonical" href="https://dharmagates.eu/hannya-shingyo/">
+<link rel="alternate" hreflang="en" href="https://dharmagates.eu/hannya-shingyo/">
+<link rel="alternate" hreflang="fr" href="https://dharmagates.eu/hannya-shingyo/fr/">
+<link rel="alternate" hreflang="x-default" href="https://dharmagates.eu/hannya-shingyo/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="DharmaGates">
+<meta property="og:title" content="Hannya Shingyō · Learn the Heart Sutra by heart">
+<meta property="og:description" content="Learn to chant the Heart Sutra (Hannya Shingyō) in its Sōtō Zen Japanese reading: listen kanji by kanji, recite at the mic and with the bells, free and offline.">
+<meta property="og:url" content="https://dharmagates.eu/hannya-shingyo/">
+<meta property="og:locale" content="en_GB">
+<meta property="og:image" content="https://dharmagates.eu/hannya-shingyo/partage.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="DharmaGates seal: the kanji 門 (gate) on worn red stone">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="alternate icon" href="hannya.ico">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
-<style>
-/* Page d'accueil : présente l'outil et fait entrer dans la langue choisie. Mêmes couleurs et polices que l'outil.
-   Le titre en grand, les kanji dessous, tout centré ; au milieu, le vers « shin mu ke ge » (l'esprit sans obstacle)
-   comme dans l'outil, le carré jaune passant doucement de kanji en kanji. */
-:root{
-  --bg:#eef0ec; --surface:#f8f9f6; --ink:#1d2128; --muted:#5d6560; --line:#d3d8d1;
-  --accent:#2c3f73; --accent-soft:#dfe4ef; --on-accent:#f8f9f6;
-  --f-display:"Shippori Mincho","Yu Mincho","Hiragino Mincho ProN",Georgia,serif;
-  --f-body:"Zen Kaku Gothic New","Yu Gothic","Segoe UI",system-ui,sans-serif;
-  color-scheme:light;
-}
-@media (prefers-color-scheme:dark){
-  :root:not([data-theme="light"]){
-    --bg:#12151c; --surface:#1a1e27; --ink:#e6e4dc; --muted:#9aa09a; --line:#2d323d;
-    --accent:#c9a55a; --accent-soft:#29271f; --on-accent:#12151c; color-scheme:dark;
-  }
-}
-:root[data-theme="dark"]{
-  --bg:#12151c; --surface:#1a1e27; --ink:#e6e4dc; --muted:#9aa09a; --line:#2d323d;
-  --accent:#c9a55a; --accent-soft:#29271f; --on-accent:#12151c; color-scheme:dark;
-}
-*{box-sizing:border-box}
-html,body{margin:0}
-body{background:var(--bg);color:var(--ink);font:16px/1.65 var(--f-body)}
-a{color:inherit}
-:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.page{position:relative;overflow:hidden;min-height:100vh}
-/* Langue de la page d'accueil (les boutons plus bas, eux, font entrer dans l'outil) */
-.pagelang{position:absolute;top:16px;right:16px;display:inline-flex;align-items:center;gap:.4em;font-size:.9em;color:var(--muted)}
-.pagelang select{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:.25em .4em}
-/* Logo DharmaGates : sceau de pierre usée portant 門 (la porte) ; les éclats prennent la couleur du fond */
-.brand{display:inline-flex;align-items:center;gap:10px;color:var(--ink);text-decoration:none}
-.brand .seal{width:40px;height:40px;flex:none}
-.brand .seal path{fill:#a3482f}
-.brand .seal .wear{fill:var(--bg)}
-.brand .seal text{fill:#f8f9f6;font-family:var(--f-display)}
-.brand span{font:700 20px/1 var(--f-display);letter-spacing:.01em}
-.brand:hover span,.brand:focus-visible span{color:var(--accent)}
-.brand.corner{position:absolute;top:12px;left:16px}
-@media (max-width:600px){.pagelang{position:static;justify-content:center;margin-bottom:12px}.brand.corner{position:static;display:flex;width:max-content;margin:0 auto 14px}}
-/* Kannon en filigrane : le dessin sert de masque, la couleur suit le thème */
-.kannon{position:absolute;inset:0;pointer-events:none;background:var(--ink);opacity:.07;
-  -webkit-mask:url(kannon.webp) center/contain no-repeat;mask:url(kannon.webp) center/contain no-repeat}
-main{position:relative;max-width:1000px;margin:0 auto;padding:48px 16px 40px;text-align:center}
-main > .intro,main > .langs,main > .feats,main > .notes{max-width:820px;margin-left:auto;margin-right:auto}
-h1{font:700 clamp(34px,6vw,62px)/1.08 var(--f-display);margin:12px 0 0;letter-spacing:.01em;text-wrap:balance}
-.title-jp{margin:.45em 0 0;font:500 clamp(20px,2.8vw,28px)/1.3 var(--f-display);letter-spacing:.32em;color:var(--muted)}
-.tagline{margin:1.3em 0 0;font:500 clamp(18px,2.2vw,22px) var(--f-display);min-height:1.6em}
-/* L'accroche passe d'une langue à l'autre : elle s'efface en montant, la suivante apparaît */
-.tagline .rot{display:inline-block;transition:opacity .7s ease,transform .7s ease}
-.tagline .rot.out{opacity:0;transform:translateY(-.4em)}
-.tagline .rot.in{opacity:0;transform:translateY(.4em);transition:none}
-.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-/* Le vers : le carré jaune est un calque sous le texte des kanji, qui glisse de l'un à l'autre */
-.hero{max-width:520px;margin:30px auto 0;padding:22px 0 18px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
-.line{position:relative;display:inline-flex;gap:6px;flex-wrap:wrap;justify-content:center;font-size:clamp(17px,2.4vw,22px)}
-.syl{position:relative;display:inline-flex;flex-direction:column;align-items:center;min-width:3em;padding:.35em .5em;border:1px solid var(--line);border-radius:8px;background:var(--surface);line-height:1.25}
-.syl > span{position:relative;z-index:2;transition:color .9s ease}
-.syl .c{font:500 1.6em var(--f-display)}
-.syl .k{font:500 .72em var(--f-display);color:var(--muted)}
-.syl .r{font:700 1.05em var(--f-display)}
-.syl.on > span{color:var(--on-accent)}
-.hl{position:absolute;left:0;top:0;z-index:1;border-radius:8px;background:var(--accent);
-  transition:transform 1.1s cubic-bezier(.45,0,.25,1),width 1.1s cubic-bezier(.45,0,.25,1)}
-.hero .m{margin:.9em 0 0;font:500 1.1em var(--f-display);color:var(--accent)}
-.hero .m em{font-style:normal;color:var(--muted)}
-.intro{margin-top:1.6em;color:var(--muted)}
-/* Entrée : un bouton par langue, chacun dans sa langue ; celle de la page est en avant */
-.langs{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:30px}
-.langs a{display:inline-flex;flex-direction:column;align-items:center;min-width:7.2em;padding:.55em 1.1em;border:1px solid var(--line);border-radius:999px;
-  background:var(--surface);text-decoration:none;font-weight:500;transition:border-color .15s,background .15s}
-.langs a small{font-size:.72em;font-weight:400;color:var(--muted);line-height:1.2}
-.langs a:hover,.langs a:focus-visible{border-color:var(--accent);background:var(--accent-soft)}
-.langs a[aria-current="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
-.langs a[aria-current="true"] small{color:var(--on-accent);opacity:.8}
-.feats{list-style:none;padding:30px 0 0;margin-top:52px;border-top:1px solid var(--line);display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));text-align:left}
-.feats b{font:700 1em var(--f-display);display:block}
-.feats span{color:var(--muted);font-size:.93em}
-.notes{margin-top:44px;font-size:.85em;color:var(--muted)}
-.notes p{margin:.3em 0}
-.notes .don{margin:.3em 0 .9em}
-.notes .don a{color:var(--accent)}
-@media (max-width:600px){.langs a{min-width:calc(50% - 5px)}}
-@media (prefers-reduced-motion:reduce){.hl,.syl > span{transition:none}}
-</style>
+<link rel="stylesheet" href="accueil.css">
 </head>
 <body>
 <div class="page">
@@ -100,7 +32,7 @@ h1{font:700 clamp(34px,6vw,62px)/1.08 var(--f-display);margin:12px 0 0;letter-sp
   <main>
     <a class="brand corner" href="./" aria-label="DharmaGates"><svg class="seal" viewBox="0 0 200 200" aria-hidden="true"><path d="M 16 12 L 40 8 L 46 14 L 70 7 L 104 12 L 132 6 L 150 10 L 176 8 L 192 16 L 190 40 L 195 64 L 188 98 L 194 128 L 190 150 L 196 172 L 186 193 L 160 188 L 138 194 L 110 189 L 84 195 L 58 188 L 34 194 L 10 190 L 13 164 L 6 138 L 12 110 L 7 82 L 14 56 L 8 32 Z"/><g class="wear"><circle cx="14" cy="40" r="5"/><circle cx="60" cy="196" r="6"/><circle cx="196" cy="88" r="5"/><circle cx="190" cy="180" r="4"/></g><text x="100" y="106" text-anchor="middle" dominant-baseline="central" font-weight="700" font-size="128">門</text></svg><span aria-hidden="true">DharmaGates</span></a>
     <label class="pagelang" for="pageLang"><span data-t="pageLang">Language</span>
-      <select id="pageLang"><option value="en">English</option><option value="fr">Français</option></select>
+      <select id="pageLang"><option value="en" selected>English</option><option value="fr">Français</option></select>
     </label>
     <h1>Maka Hannya Haramita Shingyō</h1>
     <p class="title-jp" lang="ja">摩訶般若波羅蜜多心経</p>
@@ -141,158 +73,6 @@ h1{font:700 clamp(34px,6vw,62px)/1.08 var(--f-display);margin:12px 0 0;letter-sp
 </div>
 <script src="version.js"></script>
 <script src="dons.js"></script>
-<script>
-// Textes de la page d'accueil dans les 5 langues (l'anglais est dans le HTML, langue par défaut)
-const T = {
-  en: {
-    title: 'Hannya Shingyō · Learn the Heart Sutra by heart',
-    tagline: 'The Heart Sutra, to learn by heart.',
-    hero: '心無罣礙, shin mu ke ge: “a mind without hindrance”',
-    verse: '“A mind without hindrance”',
-    intro: 'Chanted every day in Sōtō dojos and temples, the Hannya Shingyō is learned here in its Japanese reading, line after line, to the rhythm of the mokugyo, until the mind carries it without hindrance.',
-    langs: 'Choose a language and enter', pageLang: 'Language',
-    f1: 'Listen', f1d: 'The recording, with the text highlighted kanji by kanji.',
-    f2: 'Chant with the bells', f2d: 'Keisu, mokugyo and shokei where they belong.',
-    f3: 'Chant with the mic', f3d: 'Kanji by kanji, with offline recognition.',
-    f4: 'Dojo mode', f4d: 'One line at a time, readable in front of the altar.',
-    f5: 'Reviews', f5d: 'The lines to review each day, progress by part.',
-    ai: 'English, Italian, Spanish and German translations made by AI from the French text, using the vocabulary of the reference Sōtō translations.',
-    err: 'Found a mistake in the text or a translation?', errLink: 'Write to the publisher', legal: 'Legal notice and privacy',
-    rights: 'All rights reserved.', pub: 'Publisher:', ver: 'Version',
-    don: 'DharmaGates is free, ad-free, and will remain so.', donLink: 'Support DharmaGates',
-  },
-  fr: {
-    title: 'Hannya Shingyō · Apprendre le Sutra du cœur par cœur',
-    tagline: 'Le Sutra du cœur, à apprendre par cœur.',
-    hero: '心無罣礙, shin mu ke ge : « l\'esprit sans obstacle »',
-    verse: '« L\'esprit sans obstacle »',
-    intro: 'Récité chaque jour dans les dojos et les temples Sōtō, le Hannya Shingyō s\'apprend ici dans la lecture japonaise, ligne après ligne, au rythme du mokugyo, jusqu\'à ce que l\'esprit le porte sans obstacle.',
-    langs: 'Choisir la langue et entrer', pageLang: 'Langue',
-    f1: 'Écouter', f1d: 'L\'enregistrement, le texte surligné kanji par kanji.',
-    f2: 'Réciter avec les cloches', f2d: 'Keisu, mokugyo et shokei aux endroits prévus.',
-    f3: 'Réciter au micro', f3d: 'Kanji par kanji, reconnaissance hors ligne.',
-    f4: 'Mode dojo', f4d: 'Une ligne à la fois, lisible devant l\'autel.',
-    f5: 'Révisions', f5d: 'Les lignes à revoir chaque jour, la progression par partie.',
-    ai: 'Traductions anglaise, italienne, espagnole et allemande réalisées par IA à partir du texte français, avec le vocabulaire des traductions Sōtō de référence.',
-    err: 'Une erreur dans le texte ou une traduction ?', errLink: 'Écrire à l\'éditeur', legal: 'Mentions légales et vie privée',
-    rights: 'Tous droits réservés.', pub: 'Éditeur :', ver: 'Version',
-    don: 'DharmaGates est gratuit, sans publicité, et le restera.', donLink: 'Soutenir DharmaGates',
-  },
-  it: {
-    title: 'Hannya Shingyō · Imparare a memoria il Sutra del Cuore',
-    tagline: 'Il Sutra del Cuore, da imparare a memoria.',
-    hero: '心無罣礙, shin mu ke ge: «la mente senza ostacoli»',
-    verse: '«La mente senza ostacoli»',
-    intro: 'Recitato ogni giorno nei dojo e nei templi Sōtō, l\'Hannya Shingyō si impara qui nella lettura giapponese, riga dopo riga, al ritmo del mokugyo, finché la mente lo porta senza ostacoli.',
-    langs: 'Scegli la lingua ed entra', pageLang: 'Lingua',
-    f1: 'Ascoltare', f1d: 'La registrazione, con il testo evidenziato kanji per kanji.',
-    f2: 'Recitare con le campane', f2d: 'Keisu, mokugyo e shokei nei punti previsti.',
-    f3: 'Recitare al microfono', f3d: 'Kanji per kanji, riconoscimento offline.',
-    f4: 'Modalità dojo', f4d: 'Una riga alla volta, leggibile davanti all\'altare.',
-    f5: 'Ripassi', f5d: 'Le righe da rivedere ogni giorno, i progressi per parte.',
-    ai: 'Traduzioni inglese, italiana, spagnola e tedesca realizzate con l\'IA a partire dal testo francese, con il lessico delle traduzioni Sōtō di riferimento.',
-    err: 'Un errore nel testo o in una traduzione?', errLink: 'Scrivi all\'editore', legal: 'Note legali e privacy',
-    rights: 'Tutti i diritti riservati.', pub: 'Editore:', ver: 'Versione',
-    don: 'DharmaGates è gratuito, senza pubblicità, e lo resterà.', donLink: 'Sostieni DharmaGates',
-  },
-  es: {
-    title: 'Hannya Shingyō · Aprender de memoria el Sutra del Corazón',
-    tagline: 'El Sutra del Corazón, para aprender de memoria.',
-    hero: '心無罣礙, shin mu ke ge: «la mente sin obstáculos»',
-    verse: '«La mente sin obstáculos»',
-    intro: 'Recitado cada día en los dojos y templos Sōtō, el Hannya Shingyō se aprende aquí en su lectura japonesa, línea a línea, al ritmo del mokugyo, hasta que la mente lo lleva sin obstáculos.',
-    langs: 'Elige el idioma y entra', pageLang: 'Idioma',
-    f1: 'Escuchar', f1d: 'La grabación, con el texto resaltado kanji a kanji.',
-    f2: 'Recitar con las campanas', f2d: 'Keisu, mokugyo y shokei en su lugar.',
-    f3: 'Recitar con micrófono', f3d: 'Kanji a kanji, reconocimiento sin conexión.',
-    f4: 'Modo dojo', f4d: 'Una línea cada vez, legible ante el altar.',
-    f5: 'Repasos', f5d: 'Las líneas para repasar cada día, el progreso por parte.',
-    ai: 'Traducciones al inglés, italiano, español y alemán realizadas con IA a partir del texto francés, con el vocabulario de las traducciones Sōtō de referencia.',
-    err: '¿Un error en el texto o en una traducción?', errLink: 'Escribir al editor', legal: 'Aviso legal y privacidad',
-    rights: 'Todos los derechos reservados.', pub: 'Editor:', ver: 'Versión',
-    don: 'DharmaGates es gratuito, sin publicidad, y lo seguirá siendo.', donLink: 'Apoyar DharmaGates',
-  },
-  de: {
-    title: 'Hannya Shingyō · Das Herz-Sutra auswendig lernen',
-    tagline: 'Das Herz-Sutra, zum Auswendiglernen.',
-    hero: '心無罣礙, shin mu ke ge: „ein Geist ohne Hindernis“',
-    verse: '„Ein Geist ohne Hindernis“',
-    intro: 'Täglich in den Sōtō-Dojos und -Tempeln rezitiert, lernt man das Hannya Shingyō hier in der japanischen Lesung, Zeile für Zeile, im Rhythmus des Mokugyo, bis der Geist es ohne Hindernis trägt.',
-    langs: 'Sprache wählen und eintreten', pageLang: 'Sprache',
-    f1: 'Anhören', f1d: 'Die Aufnahme, der Text Kanji für Kanji markiert.',
-    f2: 'Mit den Glocken rezitieren', f2d: 'Keisu, Mokugyo und Shokei an den vorgesehenen Stellen.',
-    f3: 'Mit Mikrofon rezitieren', f3d: 'Kanji für Kanji, Offline-Erkennung.',
-    f4: 'Dojo-Modus', f4d: 'Eine Zeile auf einmal, lesbar vor dem Altar.',
-    f5: 'Wiederholungen', f5d: 'Die täglich fälligen Zeilen, der Fortschritt pro Teil.',
-    ai: 'Englische, italienische, spanische und deutsche Übersetzungen mit KI aus dem französischen Text erstellt, mit dem Wortschatz der maßgeblichen Sōtō-Übersetzungen.',
-    err: 'Ein Fehler im Text oder in einer Übersetzung?', errLink: 'An den Herausgeber schreiben', legal: 'Impressum und Datenschutz',
-    rights: 'Alle Rechte vorbehalten.', pub: 'Herausgeber:', ver: 'Version',
-    don: 'DharmaGates ist kostenlos, werbefrei und wird es bleiben.', donLink: 'DharmaGates unterstützen',
-  },
-};
-// Adresse des erratums et du contact
-const ERRATA = 'dharmagates.contact@gmail.com';
-
-// Langue de la page : l'anglais par défaut, ou ?lang=… dans l'adresse ; le sélecteur la change sur place.
-// Les boutons d'entrée ouvrent l'outil dans leur langue, qui devient aussi celle de l'outil (mémoire commune)
-const store = {
-  get(k, d){ try { const v = localStorage.getItem('hannya:' + k); return v == null ? d : JSON.parse(v); } catch { return d; } },
-  set(k, v){ try { localStorage.setItem('hannya:' + k, JSON.stringify(v)); } catch {} }
-};
-function applyLang(lang){
-  const L = T[lang];
-  document.documentElement.lang = lang;
-  document.title = L.title;
-  document.querySelectorAll('[data-t]').forEach(e => { e.textContent = L[e.dataset.t]; });
-  document.querySelectorAll('[data-t-label]').forEach(e => e.setAttribute('aria-label', L[e.dataset.tLabel]));
-  document.querySelectorAll('#langs a').forEach(a => { if (a.dataset.lang === lang) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current'); });
-  document.getElementById('errata').href = `mailto:${ERRATA}?subject=${encodeURIComponent('Hannya Shingyō · erratum (' + lang + ')')}`;
-  document.getElementById('pageLang').value = lang;
-  showTagline(lang);
-}
-// L'accroche défile dans les 5 langues, à partir de celle de la page ; immobile si l'animation est réduite
-const ORDER = ['en', 'fr'];   // 'it', 'es', 'de' désactivés pour le moment
-let tagIdx = 0, tagTimer = 0;
-const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
-function setTagline(lang){ const e = document.getElementById('tagline'); e.textContent = T[lang].tagline; e.lang = lang; }
-function showTagline(lang){
-  tagIdx = ORDER.indexOf(lang); setTagline(lang);
-  clearInterval(tagTimer);
-  if (!still) tagTimer = setInterval(nextTagline, 3200);
-}
-function nextTagline(){
-  const e = document.getElementById('tagline');
-  e.classList.add('out');
-  setTimeout(() => {
-    tagIdx = (tagIdx + 1) % ORDER.length; setTagline(ORDER[tagIdx]);
-    e.classList.remove('out'); e.classList.add('in');
-    void e.offsetWidth;                    // part d'en bas, puis remonte à sa place
-    e.classList.remove('in');
-  }, 700);
-}
-const q = new URLSearchParams(location.search).get('lang');
-applyLang(ORDER.includes(q) ? q : 'en');
-document.getElementById('pageLang').onchange = e => {
-  const lang = e.target.value;
-  applyLang(lang);
-  history.replaceState(null, '', lang === 'en' ? location.pathname : '?lang=' + lang);   // un rechargement garde la langue
-};
-document.querySelectorAll('#langs a').forEach(a => a.addEventListener('click', () => store.set('lang', a.dataset.lang)));
-document.getElementById('version').textContent = window.HANNYA_VERSION || '';
-
-// Le carré jaune passe d'un kanji au suivant toutes les 1,8 s, puis revient au premier ; immobile si l'animation est réduite
-const line = document.getElementById('demo'), chips = [...line.querySelectorAll('.syl')], hl = line.querySelector('.hl');
-let cur = 0;
-function place(){
-  const c = chips[cur];
-  hl.style.width = c.offsetWidth + 'px'; hl.style.height = c.offsetHeight + 'px';
-  hl.style.transform = `translate(${c.offsetLeft}px, ${c.offsetTop}px)`;
-  chips.forEach((x, k) => x.classList.toggle('on', k === cur));
-}
-place();
-addEventListener('resize', place);
-document.fonts?.ready.then(place);
-if (!matchMedia('(prefers-reduced-motion: reduce)').matches) setInterval(() => { cur = (cur + 1) % chips.length; place(); }, 1800);
-</script>
+<script src="accueil.js"></script>
 </body>
 </html>
