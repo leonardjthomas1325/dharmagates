@@ -348,6 +348,10 @@ footer{margin-top:40px;color:var(--muted);font-size:.85em;text-align:center}
 footer .credits summary{cursor:pointer;display:inline-block;padding:.3em .6em;text-decoration:underline;text-underline-offset:2px}
 footer .credits[open] summary{margin-bottom:.5em}
 footer .credits #credits{text-align:left;max-width:60ch;margin:0 auto;line-height:1.5}
+footer .credits #credits h4{margin:1em 0 .25em;font-size:1em;font-weight:600;color:var(--ink)}
+footer .credits #credits h4:first-child{margin-top:.3em}
+footer .credits #credits ul{margin:0;padding-left:1.2em}
+footer .credits #credits li{margin:.2em 0}
 footer .edition{margin:1.2em 0 0;padding-top:.8em;border-top:1px solid var(--line)}
 @media (prefers-reduced-motion:reduce){.beat{transition:none}}
 /* Révisions du jour : compteurs, bouton, progression par partie ; petite barre de progression sous chaque onglet */
@@ -532,13 +536,21 @@ footer .edition{margin:1.2em 0 0;padding-top:.8em;border-top:1px solid var(--lin
   <footer>
     <details class="credits"><summary>Crédits et confidentialité</summary>
     <div id="credits">
-    La reconnaissance vocale fonctionne hors ligne par défaut (Vosk) : l'audio ne quitte pas l'ordinateur. En mode « en ligne », il est envoyé au service du navigateur (Microsoft pour Edge, Google pour Chrome).
-    Ta progression (« Je le connais ») reste dans ce navigateur.
-    Son du mokugyo : « Mokugyo drum sounds » de <a href="https://freesound.org/people/George_Papargyris/sounds/837177/">George Papargyris</a>, via Freesound, sous licence <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> (un coup extrait, rendu plus grave et plus fort).
-    Sons des cloches : démonstrations des cloches zen Daitokuji <a href="https://tierrazen.com/fr-en/products/campana-zen-daitokuji-39-cm">39 cm</a> (keisu) et <a href="https://tierrazen.com/fr-en/products/campana-zen-daitokuji-12-cm">12 cm</a> (shokei) de Tierra Zen.
-    Voix des syllabes et des lignes : voix de synthèse Keita et Nanami de Microsoft Azure AI Speech.
-    Image de Kannon générée par IA d'après le <i>Bodhisattva Kannon aux mille bras</i> (XIVᵉ siècle), Musée national de Tokyo, C-306. Créée à partir de <a href="https://colbase.nich.go.jp/collection_items/tnm/C-306">ColBase</a> ; image modifiée, le musée n'en est pas l'auteur.
-    Traductions anglaise, italienne, espagnole et allemande : écrites pour cette page à partir du sens français, avec le vocabulaire des traductions Sōtō de référence (<a href="https://www.sotozen.com/eng/practice/sutra/scriptures.html">Sōtōshū et Soto Zen Text Project</a>, <a href="https://meditation-zen.org/sites/default/files/inline-files/hannya_shingyo.pdf">version allemande de la Sōtō-shū</a>, <a href="https://abzen.eu/wp-content/uploads/2024/02/ABZE-traduction-sutras-IT.pdf">ABZE en italien</a> et <a href="https://abzen.eu/wp-content/uploads/2024/02/ABZE-traduction-sutras-ES.pdf">en espagnol</a>), sans les recopier.
+    <h4>Confidentialité</h4><ul>
+      <li><b>Reconnaissance vocale</b> : hors ligne par défaut (Vosk), l'audio ne quitte pas l'ordinateur. En mode « en ligne », il est envoyé au service du navigateur (Microsoft pour Edge, Google pour Chrome).</li>
+      <li><b>Progression</b> (« Je le connais ») : enregistrée seulement dans ce navigateur.</li>
+    </ul>
+    <h4>Sons et voix</h4><ul>
+      <li><b>Mokugyo</b> : « Mokugyo drum sounds » de <a href="https://freesound.org/people/George_Papargyris/sounds/837177/">George Papargyris</a>, via Freesound, sous licence <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> (un coup extrait, rendu plus grave et plus fort).</li>
+      <li><b>Cloches</b> : démonstrations des cloches zen Daitokuji <a href="https://tierrazen.com/fr-en/products/campana-zen-daitokuji-39-cm">39 cm</a> (keisu) et <a href="https://tierrazen.com/fr-en/products/campana-zen-daitokuji-12-cm">12 cm</a> (shokei) de Tierra Zen.</li>
+      <li><b>Voix des syllabes et des lignes</b> : voix de synthèse Keita et Nanami de Microsoft Azure AI Speech.</li>
+    </ul>
+    <h4>Image</h4><ul>
+      <li><b>Kannon</b> : image générée par IA d'après le <i>Bodhisattva Kannon aux mille bras</i> (XIVᵉ siècle), Musée national de Tokyo, C-306. Créée à partir de <a href="https://colbase.nich.go.jp/collection_items/tnm/C-306">ColBase</a> ; image modifiée, le musée n'en est pas l'auteur.</li>
+    </ul>
+    <h4>Traductions</h4><ul>
+      <li><b>Anglais, italien, espagnol et allemand</b> : écrites pour cette page à partir du sens français, avec le vocabulaire des traductions Sōtō de référence (<a href="https://www.sotozen.com/eng/practice/sutra/scriptures.html">Sōtōshū et Soto Zen Text Project</a>, <a href="https://meditation-zen.org/sites/default/files/inline-files/hannya_shingyo.pdf">version allemande de la Sōtō-shū</a>, <a href="https://abzen.eu/wp-content/uploads/2024/02/ABZE-traduction-sutras-IT.pdf">ABZE en italien</a> et <a href="https://abzen.eu/wp-content/uploads/2024/02/ABZE-traduction-sutras-ES.pdf">en espagnol</a>), sans les recopier.</li>
+    </ul>
     </div></details>
     <p class="edition">© 2026 Thomas Léonard. <span>Tous droits réservés.</span> · <span>Éditeur :</span> DharmaGate · <span>Version</span> <span id="version"></span> · <a href="mentions.html">Mentions légales et vie privée</a>.</p>
   </footer>
