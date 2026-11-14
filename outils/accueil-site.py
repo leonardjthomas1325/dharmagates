@@ -8,6 +8,7 @@ SEAL = '<svg class="seal" viewBox="0 0 200 200" aria-hidden="true"><path d="M 16
 # Dessins au trait (viewBox 150×100), la touche rouge = couleur du sceau
 ICONS = {
   'dojo': '<path d="M18 78 L132 78 L124 88 L26 88 Z"/><ellipse cx="75" cy="50" rx="34" ry="10"/><path d="M41 50 L41 64 Q75 82 109 64 L109 50"/><circle class="fill" cx="75" cy="22" r="5"/>',  # zafu sur zabuton
+  'roles': '<path d="M75 16 Q60 38 61 72 L89 72 Q90 38 75 16 Z"/><path d="M75 22 L75 72"/><path d="M40 86 Q52 70 61 66 M110 86 Q98 70 89 66"/><circle class="fill" cx="75" cy="84" r="4"/>',  # mains en gasshō
   'instr': '<ellipse cx="66" cy="34" rx="34" ry="7"/><path d="M32 34 Q34 70 66 70 Q98 70 100 34"/><path d="M28 80 Q66 70 104 80 Q66 92 28 80 Z"/><path d="M108 22 L130 70"/><ellipse class="fill" cx="106" cy="17" rx="6" ry="7" transform="rotate(-24 106 17)"/>',  # keisu et baguette
   'chant': '<path d="M42 70 Q30 42 60 31 Q92 21 106 46 Q113 64 97 71 Z"/><path d="M52 57 Q76 64 100 55"/><path d="M28 81 Q72 71 116 81 Q72 93 28 81 Z"/><path d="M128 20 L104 44"/><circle class="fill" cx="131" cy="16" r="7"/>',  # mokugyo et maillet
   'sens': '<path d="M20 30 L48 20 L76 30 L104 20 L132 30 L132 82 L104 72 L76 82 L48 72 L20 82 Z"/><path d="M48 20 L48 72 M76 30 L76 82 M104 20 L104 72"/><path d="M30 40 L30 70 M38 37 L38 67 M86 40 L86 70 M94 37 L94 62" opacity=".55"/><rect class="fill" x="56" y="34" width="12" height="12" rx="1.5"/>',  # livre de sutra en accordéon
@@ -30,6 +31,7 @@ FR = dict(
   g2='Comprendre le zen Sōtō', g2d="Le sens des textes que l'on chante, et d'où ils viennent.",
   soon='Bientôt', ok='Disponible',
   i_dojo=('Le dojo', "Entrer et saluer, zazen, kinhin, gasshō : les gestes expliqués simplement."),
+  i_roles=('Les rôles au dojo', "Dōshi, kokyō, jisha, tenzo… qui fait quoi pendant zazen et la cérémonie, et ce qui varie d'un dojo à l'autre."),
   i_instr=('Les instruments', "Mokugyo, keisu, inkin, han, taiko… leur nom, leur rôle et leur son."),
   i_chant=('Chanter le Hannya Shingyō', "Écouter kanji par kanji, réciter avec les cloches ou au micro, mode dojo."),
   i_sens=('Le sens du Sutra du cœur', "Le texte ligne à ligne, ses mots clés et son histoire, avec les sources."),
@@ -56,6 +58,7 @@ EN = dict(
   g2='Understanding Sōtō Zen', g2d="What the chanted texts mean, and where they come from.",
   soon='Coming soon', ok='Available',
   i_dojo=('The dojo', "Entering and bowing, zazen, kinhin, gasshō: the forms, simply explained."),
+  i_roles=('Roles in the dojo', "Dōshi, kokyō, jisha, tenzo… who does what during zazen and the ceremony, and what varies from one dojo to another."),
   i_instr=('The instruments', "Mokugyo, keisu, inkin, han, taiko… their names, their role and their sound."),
   i_chant=('Chanting the Hannya Shingyō', "Listen kanji by kanji, recite with the bells or into the microphone, dojo mode."),
   i_sens=('The meaning of the Heart Sutra', "The text line by line, its key words and its history, with sources."),
@@ -137,6 +140,7 @@ def page(t):
       <header><span class="kanji" lang="ja" aria-hidden="true">行</span><div><h2 id="g1">{t['g1']}</h2><p>{t['g1d']}</p></div></header>
       <ul>
 {item(t,'i_dojo','dojo')}
+{item(t,'i_roles','roles')}
 {item(t,'i_instr','instr')}
 {item(t,'i_chant','chant',t['tool'])}
       </ul>
