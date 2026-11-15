@@ -40,13 +40,20 @@ a{color:inherit}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .menu .don a{color:#d98a6e}}
 :root[data-theme="dark"] .menu .don a{color:#d98a6e}
 
-/* Ouverture : un titre, une phrase, Kannon en filigrane */
-.hero{position:relative;overflow:hidden;padding:56px 0 64px;border-bottom:1px solid var(--line)}
-.hero .kannon{position:absolute;right:-40px;top:0;bottom:0;width:min(46vw,440px);pointer-events:none;background:var(--ink);opacity:.07;
-  -webkit-mask:url(hannya-shingyo/kannon.webp) center/contain no-repeat;mask:url(hannya-shingyo/kannon.webp) center/contain no-repeat}
-.hero .wrap{position:relative}
+/* Ouverture : en-tête et titre sur fond d'encre, l'estrade du dojo en filigrane dans le coin haut gauche.
+   Le fond (.encre) remonte derrière l'en-tête ; l'image est rognée en haut et à gauche et s'efface vers la droite. */
+.top,.hero{--ink:#ece9df;--muted:#aab0ad;--line:#2f3542;--accent:#c9a55a;--accent-soft:#262b38;--on-accent:#12151c;--bg:#141822;color:var(--ink)}
+.top{position:relative;z-index:2}
+.top .menu .don a{color:#e09a7e}
+body{overflow-x:hidden}
+.hero{position:relative;padding:0;border-bottom:1px solid #2f3542}
+.hero .encre{position:absolute;left:0;right:0;bottom:0;top:-220px;z-index:0;overflow:hidden;background:#141822;pointer-events:none}
+.hero .encre img{position:absolute;left:-72px;top:-78px;height:calc(100% + 152px);width:auto;opacity:.26;
+  -webkit-mask:linear-gradient(90deg,#000 34%,transparent 88%);mask:linear-gradient(90deg,#000 34%,transparent 88%)}
+.hero .wrap{position:relative;z-index:1;min-height:min(640px,74vh);display:flex;align-items:center}
+.hero-text{margin-left:min(43vw,455px);max-width:620px;padding:20px 0 76px}
 .eyebrow{margin:0;font:500 .85em var(--f-body);letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
-h1{font:700 clamp(36px,6.4vw,64px)/1.08 var(--f-display);margin:.3em 0 0;max-width:13em;text-wrap:balance}
+h1{font:700 clamp(36px,4.6vw,64px)/1.08 var(--f-display);margin:.3em 0 0;max-width:13em;text-wrap:balance}
 h1 .jp{display:block;margin-top:.35em;font-size:.42em;font-weight:500;letter-spacing:.3em;color:var(--muted)}
 .lead{max-width:34em;margin:1.4em 0 0;font-size:1.08em;color:var(--muted)}
 
@@ -88,9 +95,12 @@ footer ul{list-style:none;padding:0;margin:0 0 .6em;display:flex;flex-wrap:wrap;
 footer a{color:var(--ink)}
 footer p{margin:.2em 0}
 
+@media (max-width:900px){
+  .hero .wrap{min-height:0;display:block}
+  .hero-text{margin-left:0;padding:150px 0 60px}
+  .hero .encre img{left:-45px;height:calc(100% + 120px);opacity:.14;-webkit-mask:none;mask:none}
+}
 @media (max-width:600px){
   .top{flex-direction:column;align-items:flex-start}
-  .hero{padding:36px 0 44px}
-  .hero .kannon{width:70vw;right:-80px;opacity:.05}
 }
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
