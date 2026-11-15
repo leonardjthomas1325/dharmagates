@@ -1,0 +1,173 @@
+/* Module « Cérémonies et rôles du dojo » : s'appuie sur ../site.css (couleurs, polices, en-tête). */
+
+/* Bandeau d'encre en haut, comme l'accueil, mais plus court */
+.bande{background:#141822;border-bottom:1px solid #2f3542}
+.titre{--ink:#ece9df;--muted:#aab0ad;color:var(--ink);padding-top:18px;padding-bottom:34px}
+.titre h1{font-size:clamp(30px,4vw,48px);max-width:none}
+.titre .lead{margin-top:.8em}
+
+main.wrap{padding-top:24px}
+h2{font:700 clamp(22px,2.6vw,28px)/1.2 var(--f-display);margin:0 0 .5em}
+h3{font:700 1.1em/1.3 var(--f-display);margin:0 0 .4em}
+.kanji{font:500 .7em var(--f-display);color:var(--muted);margin-left:.45em;letter-spacing:.05em}
+.minute{font-size:.75em;color:var(--muted);margin-left:.5em;white-space:nowrap;font-weight:400}
+
+/* Barre du haut : choix de la cérémonie et fichiers */
+.barre{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:space-between}
+.choix{display:flex;align-items:center;gap:8px;font-size:.92em;color:var(--muted);min-width:0;max-width:100%}
+select,button,.bouton{font:inherit;font-size:.92em;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:.4em .75em}
+select{max-width:100%;min-width:0}
+.choix select{flex:1}
+button,.bouton{cursor:pointer}
+button:hover,.bouton:hover{background:var(--accent-soft)}
+button:disabled{opacity:.4;cursor:default}
+.outils{display:flex;flex-wrap:wrap;gap:6px}
+.message{margin:10px 0 0;padding:.5em .8em;border-radius:8px;background:var(--accent-soft);font-size:.92em}
+
+/* Onglets des vues */
+.onglets{display:flex;gap:4px;margin:20px 0 22px;border-bottom:1px solid var(--line);overflow-x:auto;scrollbar-width:none}
+.onglets a{flex:none;padding:.55em .9em;text-decoration:none;color:var(--muted);border-bottom:3px solid transparent;margin-bottom:-1px;font-weight:500}
+.onglets a:hover{color:var(--ink)}
+.onglets a.actif{color:var(--ink);border-bottom-color:var(--seal)}
+
+.tag{display:inline-block;font-size:.72em;font-weight:500;letter-spacing:.04em;padding:.1em .6em;border-radius:999px;border:1px solid var(--line);color:var(--muted);vertical-align:middle;margin-left:.5em;white-space:nowrap}
+.aide{color:var(--muted);font-size:.9em;margin:0 0 12px}
+
+/* Une action : texte, sons, signal */
+.action{line-height:1.45}
+.action + .action{margin-top:.5em}
+.action .qui{font-weight:700}
+.action.optionnelle .quoi{font-style:italic}
+.sons{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
+.son{display:inline-block;font-size:.78em;font-weight:500;padding:.1em .55em;border-radius:6px;background:var(--accent-soft);color:var(--accent);white-space:nowrap}
+.son.grand{font-size:.9em;padding:.2em .7em}
+.signal{display:block;font-size:.85em;color:var(--seal);margin-top:3px}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .signal{color:#e09a7e}}
+:root[data-theme="dark"] .signal{color:#e09a7e}
+
+/* Aperçu */
+.apercu section{margin-bottom:40px}
+.resume{font-size:1.05em;margin:.2em 0 .4em;max-width:44em}
+.meta{color:var(--muted);font-size:.9em;margin:0}
+.encart{margin-top:22px;padding:16px 20px;border-left:4px solid var(--seal);background:var(--surface);border-radius:0 10px 10px 0;max-width:46em}
+.encart p{margin:.4em 0 0}
+.cartes{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.carte{display:block;height:100%;padding:14px 16px;border:1px solid var(--line);border-radius:10px;background:var(--surface);text-decoration:none}
+.carte:hover,.carte:focus-visible{background:var(--accent-soft)}
+.carte b{font:700 1.1em var(--f-display)}
+.carte .tag{margin-left:.4em}
+.carte small{display:block;color:var(--muted);font-size:.88em;line-height:1.45;margin-top:.3em}
+.prepa{margin:0;padding-left:1.2em}
+.prepa li{margin:.25em 0}
+.lignees > p{max-width:44em}
+.tableau{border-collapse:collapse;font-size:.9em;min-width:640px}
+.tableau th,.tableau td{border:1px solid var(--line);padding:.45em .7em;text-align:left;vertical-align:top}
+.tableau thead th{background:var(--surface)}
+.tableau tbody th{font-weight:500}
+.tableau sup a{text-decoration:none;color:var(--accent)}
+.notes{font-size:.85em;color:var(--muted);padding-left:1.4em;margin-top:14px}
+.notes li{margin:.2em 0}
+.defile{overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%}
+
+/* Déroulé : la matrice étapes × rôles */
+.matrice-cadre{border:1px solid var(--line);border-radius:10px;max-height:78vh;overflow:auto;background:var(--surface)}
+.matrice{border-collapse:separate;border-spacing:0;font-size:.86em;min-width:1300px;width:100%}
+.matrice th,.matrice td{padding:.5em .6em;border-bottom:1px solid var(--line);border-right:1px solid var(--line);vertical-align:top;text-align:left}
+.matrice thead th{position:sticky;top:0;z-index:2;background:var(--surface);font:700 1em var(--f-display);white-space:nowrap;border-bottom:2px solid var(--line)}
+.matrice thead th a{text-decoration:none}
+.matrice thead th .kanji{display:block;margin:0;font-size:.8em}
+.matrice .col-moment{position:sticky;left:0;z-index:1;background:var(--surface);width:150px;min-width:130px;font-weight:500}
+.matrice thead .col-moment{z-index:3}
+.matrice td{min-width:110px;background:var(--bg)}
+.matrice td.vide{background:var(--surface)}
+.matrice td.fusion{background:var(--accent-soft)}
+.matrice tr.suite th .idem{color:var(--muted)}
+.matrice tr.debut > *{border-top:1px solid var(--line)}
+.matrice tr.phase th{position:static;background:var(--ink);color:var(--bg);font:700 .95em var(--f-display);letter-spacing:.04em;padding:.4em .7em}
+.matrice tr.phase th span{position:sticky;left:.7em}
+.matrice tr.variante th{font-size:.85em;color:var(--seal);font-weight:700}
+.matrice tr.variante td{background:var(--surface);font-style:italic}
+
+/* Par rôle / par instrument */
+.puces-choix{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px}
+.puces-choix a{padding:.3em .8em;border-radius:999px;border:1px solid var(--line);text-decoration:none;font-size:.92em;background:var(--surface)}
+.puces-choix a:hover{background:var(--accent-soft)}
+.puces-choix a.actif{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.fiche{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:24px}
+.fiche h2 .tag{font-family:var(--f-body)}
+.fiche dl{display:grid;grid-template-columns:max-content 1fr;gap:.35em 1.2em;margin:.8em 0 0}
+.fiche dt{color:var(--muted);font-size:.9em}
+.fiche dd{margin:0}
+@media (max-width:560px){.fiche dl{grid-template-columns:1fr}.fiche dd{margin-bottom:.4em}}
+.cta-direct{display:inline-block;margin-top:14px;padding:.5em 1.1em;border-radius:999px;background:var(--accent);color:var(--on-accent);text-decoration:none;font-weight:500;font-size:.95em}
+.ecouter{margin:.4em 0 .2em}
+.option{display:inline-flex;align-items:center;gap:.3em;font-size:.92em;color:var(--muted);margin:0 0 12px;cursor:pointer}
+.sous{margin-top:8px}
+.phase-titre{margin:22px 0 8px;padding-bottom:4px;border-bottom:1px solid var(--line)}
+.fil{list-style:none;margin:0;padding:0}
+.fil > li{padding:10px 0 10px 14px;border-left:3px solid var(--accent);margin-bottom:6px;background:var(--surface);border-radius:0 8px 8px 0;padding-right:12px}
+.fil > li.pas-moi{border-left-color:var(--line);background:transparent}
+.fil .moment{font-size:.82em;color:var(--muted);font-weight:500;margin-bottom:2px}
+.fil .autres{margin-top:6px;padding-top:6px;border-top:1px dashed var(--line);font-size:.88em;color:var(--muted)}
+.fil .variante,.direct .variante{margin-top:6px;font-size:.92em;font-style:italic}
+.fil .variante b,.direct .variante b{color:var(--seal);font-style:normal}
+.son-ligne{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.son-ligne .qui{font-weight:700;font-size:.92em}
+.sons-liste .quoi{font-size:.9em;color:var(--muted);margin-top:2px}
+
+@media (max-width:560px){
+  .onglets{gap:0}
+  .onglets a{padding:.5em .42em;font-size:.88em}
+  .matrice .col-moment{width:100px;min-width:96px}
+}
+
+/* En direct : une étape à la fois, gros texte, gros boutons */
+.direct{max-width:640px;margin:0 auto}
+.direct-reglages{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;margin-bottom:12px;font-size:.92em}
+.direct-reglages .option{margin:0}
+.direct-reglages select{font-weight:700}
+button.lien{border:none;background:none;text-decoration:underline;color:var(--muted);padding:0}
+.direct-carte{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 20px 20px;min-height:46vh;touch-action:pan-y}
+.direct-carte .ou{font-size:.8em;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.direct-carte h2{font-size:clamp(24px,6vw,32px);margin:.15em 0 .5em}
+.direct-carte .moi{font-size:clamp(19px,4.8vw,23px);line-height:1.4;padding:14px 16px;border-radius:10px;background:var(--accent-soft)}
+.direct-carte .moi .son{font-size:.8em}
+.direct-carte .moi .signal{font-size:.85em}
+.direct-carte .moi.rien{background:transparent;border:1px dashed var(--line);font-size:1em;color:var(--muted)}
+.direct-carte .moi.rien p{margin:0}
+.direct-carte .autres{margin-top:16px;font-size:.92em;color:var(--muted)}
+.direct-carte .autres h3{font:500 .8em var(--f-body);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.4em}
+.direct-carte .ensuite{margin:18px 0 0;font-size:.88em;color:var(--muted)}
+.direct-nav{position:sticky;bottom:0;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 0 calc(12px + env(safe-area-inset-bottom));background:var(--bg)}
+.direct-nav .nav{font-size:1.05em;padding:.75em 1.1em;border-radius:12px;min-width:120px}
+.direct-nav .nav.principal{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.direct-nav .compteur{font-size:.85em;color:var(--muted);text-align:center}
+/* En direct, sur téléphone, on gagne de la place en haut */
+@media (max-width:700px){
+  body.mode-direct .bande,body.mode-direct .barre,body.mode-direct footer{display:none}
+  body.mode-direct main.wrap{padding-top:4px}
+  body.mode-direct .onglets{margin:4px 0 12px}
+  .direct-nav{flex-wrap:wrap}
+  .direct-nav .compteur{order:-1;width:100%}
+  .direct-nav .nav{min-width:0;flex:1;white-space:nowrap}
+  .direct-carte{min-height:40vh}
+}
+
+/* Impression : la cérémonie complète en liste, rien d'autre */
+#impression{display:none}
+@media print{
+  .bande,.barre,.message,.onglets,#vue,footer{display:none!important}
+  #impression{display:block;font-size:10.5pt;line-height:1.4;color:#000}
+  #impression h1{font-size:18pt;margin:0 0 4pt}
+  #impression h2{font-size:13pt;margin:14pt 0 4pt;border-bottom:1px solid #999;break-after:avoid}
+  #impression h3{font-size:11pt;margin:8pt 0 2pt;break-after:avoid}
+  #impression ul{margin:0;padding-left:1.1em}
+  #impression li{break-inside:avoid;margin:1pt 0}
+  #impression .action{display:inline}
+  #impression .action + .action::before{content:" · "}
+  #impression .action + .action{margin:0}
+  #impression .sons,#impression .signal{display:inline;margin-left:.4em}
+  #impression .son{background:none;color:#000;border:1px solid #999;padding:0 .3em}
+  #impression .signal{color:#000;font-style:italic}
+  body{background:#fff}
+}
