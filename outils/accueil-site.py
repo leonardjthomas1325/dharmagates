@@ -125,13 +125,14 @@ def page(t):
 
 <main>
   <div class="hero">
-    <div class="kannon" aria-hidden="true"></div>
-    <div class="wrap">
+    <!-- Fond d'encre qui remonte derrière l'en-tête, avec l'estrade du dojo en filigrane calée dans le coin haut gauche -->
+    <div class="encre" aria-hidden="true"><img src="{r}accueil-dojo.webp" alt="" width="926" height="1463"></div>
+    <div class="wrap"><div class="hero-text">
       <p class="eyebrow">{t['eyebrow']}</p>
       <h1>{t['h1']}<span class="jp" lang="ja">曹洞禅の門</span></h1>
       <p class="lead">{t['lead']}</p>
       <a class="cta" href="{t['tool']}"><span class="jp" lang="ja" aria-hidden="true">般若心経</span> {t['cta']} →</a>
-    </div>
+    </div></div>
   </div>
 
   <!-- Deux portes. Une ligne « soon » devient un lien (href) quand sa page est en ligne. -->
