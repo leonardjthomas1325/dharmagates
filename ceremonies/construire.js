@@ -10,7 +10,8 @@
   const GESTES = [
     { id: 'gassho', nom: 'Gasshō', texte: 'Gasshō.' },
     { id: 'shashu', nom: 'Debout en shashu', texte: 'Debout, mains en shashu.' },
-    { id: 'lever', nom: 'Se lever', texte: 'Gasshō assis, puis se lève lentement.' },
+    { id: 'gassho-assis', nom: 'Gasshō assis', texte: 'Gasshō assis.' },
+    { id: 'lever', nom: 'Se lever', texte: 'Se lève lentement.' },
     { id: 'salut-zafu', nom: 'Salut au zafu', texte: 'Gasshō vers son zafu.' },
     { id: 'salut-rang', nom: 'Salut au rang d’en face', texte: 'Gasshō vers le rang d’en face.' },
     { id: 'zazen', nom: 'Zazen', texte: 'Zazen immobile, en silence.' },
@@ -21,7 +22,9 @@
     { id: 'chante', nom: 'Chante', texte: 'Chante en suivant le kokyō.' },
     { id: 'encens', nom: 'Offre l’encens', texte: 'Fait l’offrande d’encens.' },
     { id: 'zagu', nom: 'Déplie le zagu', texte: 'Déplie son zagu.' },
-    { id: 'kyosaku', nom: 'Kyōsaku', texte: 'Offre le kyōsaku si on le demande, corrige les postures.' },
+    { id: 'allumer', nom: 'Allumer', texte: 'Allume la bougie.', options: [['bougie', 'la bougie', 'Allume la bougie.'], ['charbon', 'le charbon', 'Allume le charbon.'], ['encens', 'l’encens', 'Allume l’encens.']] },
+    { id: 'kyosaku', nom: 'Kyōsaku', texte: 'Offre le kyōsaku si on le demande.' },
+    { id: 'postures', nom: 'Corrige les postures', texte: 'Corrige les postures.' },
     { id: 'kusen', nom: 'Kusen', texte: 'Donne le kusen.' },
     { id: 'libre', nom: 'Texte libre…', texte: 'Nouvelle action.' },
   ];
@@ -54,10 +57,10 @@
   const BLOCS = [
     { id: 'vide', nom: 'Étape vide', etapes: [{ moment: 'Nouvelle étape', actions: [] }] },
     { id: 'debut-zazen', nom: 'Début du zazen', etapes: [{ moment: 'Début du zazen', actions: [{ f: 'shokei-zazen', texte: 'Ouvre le zazen.', sons: [S('shokei', 3)] }] }] },
-    { id: 'zazen', nom: 'Zazen', etapes: [{ moment: 'Zazen', actions: [{ f: 'kusen', texte: 'Zazen ; donne le kusen.' }, { f: '*', texte: 'Zazen immobile, en silence.' }] }] },
+    { id: 'zazen', nom: 'Zazen', etapes: [{ moment: 'Zazen', actions: [{ f: 'kusen', texte: 'Zazen.' }, { f: 'kusen', texte: 'Donne le kusen.' }, { f: '*', texte: 'Zazen immobile, en silence.' }] }] },
     { id: 'fin-zazen', nom: 'Fin du zazen', etapes: [{ moment: 'Fin du zazen', actions: [{ f: 'shokei-zazen', texte: 'Clôt le zazen.', sons: [S('shokei', 2)] }] }] },
     { id: 'lever', nom: 'Se lever et saluer', etapes: [
-      { moment: 'Se lever et saluer', actions: [{ f: '*', texte: 'Gasshō assis, puis se lève lentement.' }] },
+      { moment: 'Se lever et saluer', actions: [{ f: '*', texte: 'Gasshō assis.' }, { f: '*', texte: 'Se lève lentement.' }] },
       { moment: 'Se lever et saluer', actions: [{ f: '*', texte: 'Gasshō vers son zafu.' }] },
       { moment: 'Se lever et saluer', actions: [{ f: '*', texte: 'Gasshō vers le rang d’en face.' }] }] },
     { id: 'kinhin', nom: 'Kinhin', etapes: [
@@ -515,6 +518,22 @@
     maj();
     return el;
   }
+  // Geste à options (ex. Allumer : bougie, charbon, encens) : on choisit l'option sur l'étiquette avant de glisser.
+  const CHOIX_GESTE = {};
+  function carteGeste(g) {
+    const opt = () => g.options.find(o => o[0] === CHOIX_GESTE[g.id]) || g.options[0];
+    const choix = h('select', { class: 'ps-frappe', 'aria-label': g.nom + ' : quoi ?' },
+      g.options.map(o => h('option', { value: o[0], selected: opt()[0] === o[0] || null }, o[1])));
+    const el = h('div', { class: 'p-item p-geste p-option', tabindex: '0', role: 'button' }, h('span', { class: 'ps-nom' }, g.nom), choix);
+    const charge = () => { const o = opt(); return { type: 'geste', item: { id: g.id + '-' + o[0], texte: o[2] }, libelle: g.nom + ' ' + o[1] }; };
+    const maj = () => { el.title = opt()[2] + ' Glissez dans une case, ou touchez puis touchez une case.'; };
+    choix.addEventListener('change', () => { CHOIX_GESTE[g.id] = choix.value; maj(); });
+    glissable(el, charge);
+    el.addEventListener('click', ev => { if (ev.target.closest('select')) return; armer(charge(), el); });
+    el.addEventListener('keydown', ev => { if ((ev.key === 'Enter' || ev.key === ' ') && ev.target === el) { ev.preventDefault(); armer(charge(), el); } });
+    maj();
+    return el;
+  }
   function peindrePalette(z) {
     const onglets = [['blocs', 'Blocs'], ['gestes', 'Gestes'], ['sons', 'Sons'], ['roles', 'Rôles']];
     const corps = h('div', { class: 'p-corps' });
@@ -523,7 +542,7 @@
       const listes = {
         blocs: [itemPalette({ type: 'phase', libelle: 'Nouvelle phase', aide: 'Sépare la cérémonie en grandes parties' }, 'p-phase'),
           ...BLOCS.map(b => itemPalette({ type: 'bloc', item: b, libelle: b.nom, aide: b.etapes.length + ' étape(s)' }, 'p-bloc'))],
-        gestes: GESTES.map(g => itemPalette({ type: 'geste', item: g, libelle: g.nom, aide: g.texte }, 'p-geste')),
+        gestes: GESTES.map(g => g.options ? carteGeste(g) : itemPalette({ type: 'geste', item: g, libelle: g.nom, aide: g.texte }, 'p-geste')),
         sons: SONS.map(carteSon),
         roles: [...rolesCatalogue().filter(r => !presents.has(r.id)).map(r => itemPalette({ type: 'role', item: r, libelle: r.nom, aide: r.resume }, 'p-role')),
           itemPalette({ type: 'role', item: null, libelle: 'Nouveau rôle…' }, 'p-role')],

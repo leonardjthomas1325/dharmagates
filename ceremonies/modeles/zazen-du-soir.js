@@ -134,8 +134,12 @@
   "etapes": [
     { "id": "e01", "phase": "avant", "moment": "Appel au zazen", "minute": -5,
       "actions": [
-        { "roles": ["jisha"], "texte": "Allume le charbon pour le shoko et fait l'offrande d'encens, puis s'assoit face au mur." },
-        { "roles": ["jikido"], "texte": "Allume la bougie, frappe le moppan, puis s'assoit face au mur.", "sons": [{ "instrument": "moppan" }] },
+        { "roles": ["jisha"], "texte": "Allume le charbon pour le shoko." },
+        { "roles": ["jisha"], "texte": "Fait l'offrande d'encens." },
+        { "roles": ["jisha"], "texte": "S'assoit face au mur." },
+        { "roles": ["jikido"], "texte": "Allume la bougie." },
+        { "roles": ["jikido"], "texte": "Frappe le moppan.", "sons": [{ "instrument": "moppan" }] },
+        { "roles": ["jikido"], "texte": "S'assoit face au mur." },
         { "roles": ["shuso"], "texte": "S'assoit face à la sangha, à gauche du godō." },
         { "roles": ["godo"], "texte": "S'assoit face à la sangha, à droite du shuso." },
         { "roles": ["doshi"], "texte": "S'assoit face à la sangha." },
@@ -150,14 +154,15 @@
       "actions": [ { "roles": ["shuso"], "texte": "Ouvre le zazen.", "sons": [{ "instrument": "shokei", "coups": 3 }] } ] },
     { "id": "e03", "phase": "zazen1", "moment": "Zazen",
       "actions": [
-        { "roles": ["shuso", "godo"], "texte": "Offre le kyōsaku si on le demande, corrige les postures." },
+        { "roles": ["shuso", "godo"], "texte": "Offre le kyōsaku si on le demande." },
+        { "roles": ["shuso", "godo"], "texte": "Corrige les postures." },
         { "roles": ["*"], "texte": "Zazen immobile, en silence." }
       ] },
     { "id": "e04", "phase": "zazen1", "moment": "Fin du zazen", "minute": 30,
       "actions": [ { "roles": ["shuso"], "texte": "Clôt le zazen.", "sons": [{ "instrument": "shokei", "coups": 2 }] } ] },
 
     { "id": "e05", "phase": "kinhin", "moment": "Passage au kinhin",
-      "actions": [ { "roles": ["*"], "texte": "Gasshō assis, puis se lève lentement." } ] },
+      "actions": [ { "roles": ["*"], "texte": "Gasshō assis." }, { "roles": ["*"], "texte": "Se lève lentement." } ] },
     { "id": "e06", "phase": "kinhin", "moment": "Passage au kinhin",
       "actions": [ { "roles": ["*"], "texte": "Gasshō vers son zafu." } ] },
     { "id": "e07", "phase": "kinhin", "moment": "Passage au kinhin",
@@ -182,7 +187,8 @@
       "actions": [ { "roles": ["shuso"], "texte": "Ouvre le zazen.", "sons": [{ "instrument": "shokei", "coups": 3 }] } ] },
     { "id": "e15", "phase": "zazen2", "moment": "Zazen",
       "actions": [
-        { "roles": ["godo"], "texte": "Zazen ; donne le kusen." },
+        { "roles": ["godo"], "texte": "Zazen." },
+        { "roles": ["godo"], "texte": "Donne le kusen." },
         { "roles": ["*"], "texte": "Zazen immobile, en silence." }
       ] },
     { "id": "e16", "phase": "zazen2", "moment": "Les quatre vœux (Shigu seigan mon)",
@@ -194,7 +200,7 @@
       "actions": [ { "roles": ["shuso"], "texte": "Clôt le zazen.", "sons": [{ "instrument": "shokei", "coups": 1 }] } ] },
 
     { "id": "e18", "phase": "ceremonie", "moment": "Passage à la cérémonie",
-      "actions": [ { "roles": ["*"], "texte": "Gasshō assis, puis se lève lentement." } ] },
+      "actions": [ { "roles": ["*"], "texte": "Gasshō assis." }, { "roles": ["*"], "texte": "Se lève lentement." } ] },
     { "id": "e19", "phase": "ceremonie", "moment": "Passage à la cérémonie",
       "actions": [ { "roles": ["*"], "texte": "Gasshō vers son zafu." } ] },
     { "id": "e20", "phase": "ceremonie", "moment": "Passage à la cérémonie",
@@ -211,7 +217,8 @@
     { "id": "e24", "phase": "ceremonie", "moment": "Offrande d'encens",
       "actions": [
         { "roles": ["jisha"], "texte": "Accompagne le dōshi, à sa droite." },
-        { "roles": ["doshi"], "texte": "Monte à l'autel par la gauche et fait l'offrande d'encens." }
+        { "roles": ["doshi"], "texte": "Monte à l'autel par la gauche." },
+        { "roles": ["doshi"], "texte": "Fait l'offrande d'encens." }
       ] },
     { "id": "e25", "phase": "ceremonie", "moment": "Offrande d'encens",
       "actions": [
@@ -245,7 +252,7 @@
         { "roles": ["jisha", "jikido", "shuso", "godo", "inkin", "kokyo", "fukudo", "sangha"], "texte": "Debout, mains en shashu." }
       ] },
     { "id": "e31", "phase": "ceremonie", "moment": "Offrande du shoko",
-      "actions": [ { "roles": ["doshi"], "texte": "Monte seul à l'autel pour offrir le shoko." } ] },
+      "actions": [ { "roles": ["doshi"], "texte": "Monte seul à l'autel." }, { "roles": ["doshi"], "texte": "Offre le shoko." } ] },
     { "id": "e32", "phase": "ceremonie", "moment": "Offrande du shoko",
       "actions": [
         { "roles": ["doshi"], "texte": "Gasshō au Bouddha." },
@@ -267,7 +274,8 @@
     { "id": "e36", "phase": "ceremonie", "moment": "Sanpai",
       "actions": [
         { "roles": ["doshi"], "texte": "Trois fois gasshō puis prosternation (pai)." },
-        { "roles": ["doan"], "texte": "Keisu : un coup normal au 2e gasshō, un coup étouffé au 3e.", "sons": [{ "instrument": "keisu", "coups": 1, "frappe": "ken", "quand": "au 2e gasshō" }, { "instrument": "keisu", "coups": 1, "frappe": "gatsu", "quand": "au 3e gasshō" }], "signal": { "role": "doshi", "texte": "sur les gasshō du dōshi" } }
+        { "roles": ["doan"], "texte": "Un coup normal de keisu au 2e gasshō.", "sons": [{ "instrument": "keisu", "coups": 1, "frappe": "ken", "quand": "au 2e gasshō" }], "signal": { "role": "doshi", "texte": "sur les gasshō du dōshi" } },
+        { "roles": ["doan"], "texte": "Un coup étouffé de keisu au 3e gasshō.", "sons": [{ "instrument": "keisu", "coups": 1, "frappe": "gatsu", "quand": "au 3e gasshō" }], "signal": { "role": "doshi", "texte": "sur les gasshō du dōshi" } }
       ] },
     { "id": "e37", "phase": "ceremonie", "moment": "Hannya Shingyō",
       "actions": [
@@ -282,7 +290,9 @@
     { "id": "e40", "phase": "ceremonie", "moment": "Hannya Shingyō",
       "actions": [
         { "roles": ["kokyo"], "texte": "Lance et mène le chant, mains en gasshō." },
-        { "roles": ["doan"], "texte": "Ponctue le chant : coups normaux de keisu, shōkei pour le mantra, puis un coup étouffé de keisu pour clore.", "sons": [{ "instrument": "keisu", "frappe": "ken", "quand": "pendant le chant" }, { "instrument": "shokei", "quand": "pour le mantra" }, { "instrument": "keisu", "coups": 1, "frappe": "gatsu", "quand": "pour clore" }] },
+        { "roles": ["doan"], "texte": "Ponctue le chant de coups normaux de keisu.", "sons": [{ "instrument": "keisu", "frappe": "ken", "quand": "pendant le chant" }] },
+        { "roles": ["doan"], "texte": "Frappe le shōkei pour le mantra.", "sons": [{ "instrument": "shokei", "quand": "pour le mantra" }] },
+        { "roles": ["doan"], "texte": "Un coup étouffé de keisu pour clore le chant.", "sons": [{ "instrument": "keisu", "coups": 1, "frappe": "gatsu", "quand": "pour clore" }] },
         { "roles": ["fukudo"], "texte": "Donne le rythme au mokugyo : commence après le « KAN », ne frappe pas l'avant-dernier mot.", "sons": [{ "instrument": "mokugyo", "quand": "pendant tout le chant" }] },
         { "roles": ["*"], "texte": "Chante en suivant le kokyō, mains en hokkai jō-in." }
       ] },
@@ -290,14 +300,16 @@
       "actions": [
         { "roles": ["kokyo"], "texte": "Récite seul l'ekō (la dédicace)." },
         { "roles": ["doan"], "texte": "Ponctue l'ekō de coups normaux de keisu.", "sons": [{ "instrument": "keisu", "frappe": "ken" }] },
-        { "roles": ["jisha", "jikido", "shuso", "godo", "doshi", "inkin"], "texte": "En silence, mains en gasshō ; s'incline entre les deux coups de keisu." },
-        { "roles": ["fukudo", "sangha"], "texte": "En silence, mains en hokkai jō-in ; s'incline entre les deux coups de keisu." }
+        { "roles": ["jisha", "jikido", "shuso", "godo", "doshi", "inkin"], "texte": "En silence, mains en gasshō." },
+        { "roles": ["jisha", "jikido", "shuso", "godo", "doshi", "inkin", "fukudo", "sangha"], "texte": "S'incline entre les deux coups de keisu." },
+        { "roles": ["fukudo", "sangha"], "texte": "En silence, mains en hokkai jō-in." }
       ] },
     { "id": "e42", "phase": "ceremonie", "moment": "Ji ho san shi",
       "actions": [
         { "roles": ["kokyo"], "texte": "Entonne le chant." },
         { "roles": ["doan"], "texte": "Ponctue le chant de coups normaux de keisu.", "sons": [{ "instrument": "keisu", "frappe": "ken" }] },
-        { "roles": ["inkin"], "texte": "Chante en suivant le kokyō ; cascade à la fin de la deuxième phrase.", "sons": [{ "instrument": "inkin", "frappe": "cascade", "quand": "à la fin de la deuxième phrase" }] },
+        { "roles": ["inkin"], "texte": "Chante en suivant le kokyō." },
+        { "roles": ["inkin"], "texte": "Cascade à la fin de la deuxième phrase.", "sons": [{ "instrument": "inkin", "frappe": "cascade", "quand": "à la fin de la deuxième phrase" }] },
         { "roles": ["jisha", "jikido", "shuso", "godo", "doshi"], "texte": "Chante en suivant le kokyō, mains en gasshō." },
         { "roles": ["fukudo", "sangha"], "texte": "Chante en suivant le kokyō, mains en hokkai jō-in." }
       ] },
@@ -323,7 +335,8 @@
     { "id": "e47", "phase": "ceremonie", "moment": "Salutations finales",
       "actions": [
         { "roles": ["doshi"], "texte": "Gasshō vers l'inkin." },
-        { "roles": ["inkin"], "texte": "Un coup, puis gasshō vers le dōshi.", "sons": [{ "instrument": "inkin", "coups": 1 }], "signal": { "role": "doshi", "texte": "sur le gasshō du dōshi" } }
+        { "roles": ["inkin"], "texte": "Un coup.", "sons": [{ "instrument": "inkin", "coups": 1 }], "signal": { "role": "doshi", "texte": "sur le gasshō du dōshi" } },
+        { "roles": ["inkin"], "texte": "Gasshō vers le dōshi." }
       ] },
     { "id": "e48", "phase": "fin", "moment": "Fin de la cérémonie",
       "actions": [ { "roles": ["*"], "texte": "On se souhaite une bonne soirée." } ] }
