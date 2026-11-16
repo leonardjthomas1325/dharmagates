@@ -223,6 +223,14 @@ body.mode-construire main.wrap{max-width:none}
 .p-item.p-phase{border-left:4px solid var(--ink);font-weight:700}
 .p-item.p-son{border-left:4px solid var(--seal);display:flex;flex-direction:column;gap:5px}
 .ps-nom{font-weight:700}
+.p-joue .ps-nom{display:flex;align-items:center;gap:6px}
+.motif{display:flex;flex-direction:column;gap:5px}
+.m-suite,.m-ajout{display:flex;flex-wrap:wrap;gap:4px;align-items:center}
+.m-coup{font-size:.8em;padding:.1em .5em;border-radius:6px;border:1px solid var(--accent);background:var(--accent-soft);color:var(--accent);cursor:pointer}
+.m-coup.m-gatsu{background:var(--surface);border-style:dashed}
+.m-coup.m-cascade{border-color:var(--seal);color:var(--seal);background:var(--surface)}
+.m-plus{font-size:.78em;padding:.1em .45em;border-radius:6px;cursor:pointer}
+.m-vide{font-size:.8em;color:var(--muted)}
 .p-item.p-option{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
 .ps-reglage{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .ps-coups{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:999px;background:var(--surface)}

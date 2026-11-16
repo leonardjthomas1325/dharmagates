@@ -205,7 +205,7 @@
       if (s.frappe && !c.frappes.some(f => f.id === s.frappe) && fr[s.frappe]) c.frappes.push(copie(fr[s.frappe]));
     }
   }
-  const sonPropre = s => { const o = {}; for (const k of ['instrument', 'coups', 'frappe', 'quand']) if (s[k] != null && s[k] !== '') o[k] = s[k]; return o; };
+  const sonPropre = s => { const o = {}; for (const k of ['instrument', 'coups', 'frappe', 'quand']) if (s[k] != null && s[k] !== '') o[k] = s[k]; if (s.motif && s.motif.length) o.motif = s.motif.slice(); return o; };
 
   // ---------- Glisser-déposer (souris, stylet ; au doigt par les poignées) ----------
   let enCours = null, ignorerClic = false, rafDefile = 0;
@@ -518,6 +518,45 @@
     maj();
     return el;
   }
+  // Brique « Joue du… » : on choisit l'instrument puis on compose un motif de coups (Ken, Gatsu, cascade).
+  const ARTICLE = { shokei: 'du shōkei', keisu: 'du keisu', inkin: 'de l’inkin', mokugyo: 'du mokugyo', moppan: 'du moppan' };
+  const COURT = { ken: 'Ken', gatsu: 'Gatsu', cascade: 'Cascade' };
+  const JOUE = { instrument: 'keisu', motif: ['ken', 'ken', 'gatsu'] };
+  function sonMotif(instrument, motif) {
+    const son = { instrument, motif: motif.slice() };
+    const frappes = motif.filter(m => m !== 'cascade').length;
+    if (frappes) son.coups = frappes;
+    const f = [...new Set(motif)]; if (f.length === 1) son.frappe = f[0];
+    return son;
+  }
+  const texteMotif = m => m.map(x => COURT[x] || x).join(', ');
+  function editeurMotif(motif, change) {
+    const puces = motif.length ? motif.map((m, k) => h('button', { type: 'button', class: 'm-coup m-' + m, title: 'Retirer ce coup', 'aria-label': 'Retirer le coup ' + (k + 1) + ' (' + COURT[m] + ')',
+      onclick: () => { const n = motif.slice(); n.splice(k, 1); change(n); } }, COURT[m])) : [h('span', { class: 'm-vide' }, 'aucun coup')];
+    return h('span', { class: 'motif' }, h('span', { class: 'm-suite' }, puces),
+      h('span', { class: 'm-ajout' }, ['ken', 'gatsu', 'cascade'].map(f => h('button', { type: 'button', class: 'm-plus', 'aria-label': 'Ajouter un coup ' + COURT[f], onclick: () => change(motif.concat(f)) }, '+ ' + COURT[f]))));
+  }
+  function carteJoue() {
+    const el = h('div', { class: 'p-item p-son p-joue', tabindex: '0', role: 'button' });
+    const charge = () => {
+      if (!JOUE.motif.length) return null;
+      const nomI = (SONS.find(i => i.id === JOUE.instrument) || {}).nom || JOUE.instrument;
+      return { type: 'son', libelle: 'Joue ' + ARTICLE[JOUE.instrument] + ' · ' + texteMotif(JOUE.motif),
+        item: { son: sonMotif(JOUE.instrument, JOUE.motif), texte: 'Joue ' + ARTICLE[JOUE.instrument] + ' : ' + texteMotif(JOUE.motif) + '.', nom: nomI } };
+    };
+    const peindre = () => {
+      const choix = h('select', { class: 'ps-frappe', 'aria-label': 'Instrument', onchange: ev => { JOUE.instrument = ev.target.value; } },
+        SONS.map(i => h('option', { value: i.id, selected: i.id === JOUE.instrument || null }, i.nom)));
+      remplace(el, h('span', { class: 'ps-nom' }, 'Joue ', choix),
+        editeurMotif(JOUE.motif, n => { JOUE.motif = n; peindre(); }));
+      el.title = 'Composez le motif, puis glissez dans une case ou sur une tuile.';
+    };
+    glissable(el, charge);
+    el.addEventListener('click', ev => { if (ev.target.closest('button,select')) return; const ch = charge(); if (ch) armer(ch, el); });
+    el.addEventListener('keydown', ev => { if ((ev.key === 'Enter' || ev.key === ' ') && ev.target === el) { ev.preventDefault(); const ch = charge(); if (ch) armer(ch, el); } });
+    peindre();
+    return el;
+  }
   // Geste à options (ex. Allumer : bougie, charbon, encens) : on choisit l'option sur l'étiquette avant de glisser.
   const CHOIX_GESTE = {};
   function carteGeste(g) {
@@ -543,12 +582,12 @@
         blocs: [itemPalette({ type: 'phase', libelle: 'Nouvelle phase', aide: 'Sépare la cérémonie en grandes parties' }, 'p-phase'),
           ...BLOCS.map(b => itemPalette({ type: 'bloc', item: b, libelle: b.nom, aide: b.etapes.length + ' étape(s)' }, 'p-bloc'))],
         gestes: GESTES.map(g => g.options ? carteGeste(g) : itemPalette({ type: 'geste', item: g, libelle: g.nom, aide: g.texte }, 'p-geste')),
-        sons: SONS.map(carteSon),
+        sons: [carteJoue(), ...SONS.map(carteSon)],
         roles: [...rolesCatalogue().filter(r => !presents.has(r.id)).map(r => itemPalette({ type: 'role', item: r, libelle: r.nom, aide: r.resume }, 'p-role')),
           itemPalette({ type: 'role', item: null, libelle: 'Nouveau rôle…' }, 'p-role')],
       };
       remplace(corps, h('p', { class: 'p-aide' },
-        { blocs: 'Glissez un bloc entre deux lignes : il ajoute une ou plusieurs étapes toutes faites.', gestes: 'Glissez un geste dans la case d’un rôle.', sons: 'Réglez le nombre de coups et la frappe sur l’étiquette, puis glissez-la dans une case, ou sur une tuile pour lui ajouter ce son.', roles: 'Glissez un rôle dans l’en-tête de la grille pour ajouter une colonne.' }[ongletPalette]),
+        { blocs: 'Glissez un bloc entre deux lignes : il ajoute une ou plusieurs étapes toutes faites.', gestes: 'Glissez un geste dans la case d’un rôle.', sons: '« Joue du… » : choisissez l’instrument, composez le motif (+ Ken, + Gatsu, + Cascade ; touchez un coup pour le retirer), puis glissez. Les étiquettes en dessous servent aux sons simples.', roles: 'Glissez un rôle dans l’en-tête de la grille pour ajouter une colonne.' }[ongletPalette]),
         h('div', { class: 'p-liste' }, listes[ongletPalette]));
     };
     const barre = h('div', { class: 'p-onglets', role: 'tablist' }, onglets.map(([id, nom]) => h('button', {
@@ -690,6 +729,11 @@
           (a.sons || []).map((so, k) => {
             const maj = fn => modifier(c => { const x = etape(s.etape).actions[s.index]; fn(x.sons[k]); assurerSons([x.sons[k]]); });
             const nomI = (c.instruments || []).find(i => i.id === so.instrument);
+            if (so.motif) return h('div', { class: 'i-son' },
+              h('b', null, nomI ? nomI.nom : so.instrument),
+              editeurMotif(so.motif, n => maj(x => { if (!n.length) { delete x.motif; delete x.coups; delete x.frappe; return; } const m = sonMotif(x.instrument, n); x.motif = m.motif; if (m.coups) x.coups = m.coups; else delete x.coups; if (m.frappe) x.frappe = m.frappe; else delete x.frappe; })),
+              h('button', { type: 'button', class: 'lien', onclick: () => modifier(c => { const x = etape(s.etape).actions[s.index]; x.sons.splice(k, 1); if (!x.sons.length) delete x.sons; }) }, 'retirer'),
+              so.quand ? h('small', null, so.quand) : null);
             return h('div', { class: 'i-son' },
               h('b', null, nomI ? nomI.nom : so.instrument),
               h('select', { 'aria-label': 'Nombre de coups', onchange: ev => maj(x => { const n = parseInt(ev.target.value, 10); if (n) x.coups = n; else delete x.coups; }) },
@@ -699,8 +743,9 @@
               h('button', { type: 'button', class: 'lien', onclick: () => modifier(c => { const x = etape(s.etape).actions[s.index]; x.sons.splice(k, 1); if (!x.sons.length) delete x.sons; }) }, 'retirer'),
               so.quand ? h('small', null, so.quand) : null);
           }),
-          h('select', { id: 'insp-ajout-son', onchange: ev => { const it = SONS.some(x => x.id === ev.target.value) && sonRegle(ev.target.value); if (it) modifier(c => { const x = etape(s.etape).actions[s.index]; const so = sonPropre(it.son); assurerSons([so]); (x.sons = x.sons || []).push(so); }); } },
-            h('option', { value: '' }, '+ Ajouter un son…'), SONS.map(x => h('option', { value: x.id }, x.nom)))),
+          h('select', { id: 'insp-ajout-son', onchange: ev => { const it = ev.target.value === 'motif' ? (JOUE.motif.length ? { son: sonMotif(JOUE.instrument, JOUE.motif) } : null) : SONS.some(x => x.id === ev.target.value) && sonRegle(ev.target.value); if (it) modifier(c => { const x = etape(s.etape).actions[s.index]; const so = sonPropre(it.son); assurerSons([so]); (x.sons = x.sons || []).push(so); }); } },
+            h('option', { value: '' }, '+ Ajouter un son…'), SONS.map(x => h('option', { value: x.id }, x.nom)),
+            h('option', { value: 'motif' }, 'Motif « Joue du… » de la palette'))),
         h('fieldset', { class: 'i-signal' }, h('legend', null, 'Signal (ce qui déclenche l’action)'),
           h('select', { id: 'insp-signal-role', onchange: ev => modifier(c => { const x = etape(s.etape).actions[s.index]; if (!ev.target.value) { delete x.signal; return; } x.signal = x.signal || { texte: 'sur le gasshō du ' + DG.nomRole(ev.target.value).toLowerCase() }; x.signal.role = ev.target.value; }) },
             h('option', { value: '' }, 'Aucun signal'), c.roles.map(r => h('option', { value: r.id, selected: a.signal && a.signal.role === r.id || null }, 'Donné par : ' + r.nom))),

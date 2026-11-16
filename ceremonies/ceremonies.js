@@ -90,6 +90,7 @@
   function texteSon(s) {
     const i = idx.instrument[s.instrument];
     let t = i ? i.nom : s.instrument;
+    if (s.motif && s.motif.length) return t + ' · ' + s.motif.map(m => (idx.frappe[m] ? idx.frappe[m].nom : m).replace(/ \(.*\)$/, '')).join(', ');
     if (s.coups) t += ' ×' + s.coups;
     if (s.frappe) t += ' · ' + (idx.frappe[s.frappe] ? idx.frappe[s.frappe].nom : s.frappe);
     return t;

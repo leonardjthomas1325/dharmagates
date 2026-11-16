@@ -20,7 +20,8 @@ frappes[]     { id, nom, description }          ex. ken, gatsu, cascade
 etapes[]      { id, phase, moment, minute?, actions[], variantes[]? }
   actions[]   { roles[], texte, sons[]?, signal?, optionnel? }
     roles     ids de rôles ; "*" = tous les rôles qui n'ont pas d'autre action à cette étape
-    sons[]    { instrument, coups?, frappe?, quand? }
+    sons[]    { instrument, coups?, frappe?, motif?, quand? }
+      motif     suite de frappes dans l’ordre, ex. ["ken", "ken", "gatsu"] (brique « Joue du… »)
     signal    { role, texte }                   déclencheur : « sur le gasshō du dōshi »
   variantes[] même forme qu'une action          version parallèle d'une étape
 ```
