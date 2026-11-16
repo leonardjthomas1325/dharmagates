@@ -174,7 +174,10 @@ button.lien{border:none;background:none;text-decoration:underline;color:var(--mu
 }
 
 /* ---------- En bref : le déroulé général, très simplement ---------- */
-.bref{max-width:720px}
+.bref{max-width:900px}
+.bref > section,.bref .temps{margin-bottom:34px}
+.bref .intro h2{margin-bottom:.2em}
+.bref-intro,.temps{max-width:720px}
 .bref-intro{font-size:1.08em;margin:0 0 22px}
 .temps{list-style:none;margin:0;padding:0;counter-reset:temps}
 .temps > li{counter-increment:temps;position:relative;padding:0 0 22px 58px}
@@ -183,11 +186,10 @@ button.lien{border:none;background:none;text-decoration:underline;color:var(--mu
 .temps > li::after{content:"";position:absolute;left:19px;top:44px;bottom:4px;width:2px;background:var(--line)}
 .temps > li:last-child::after{display:none}
 .temps .t-tete{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;padding-top:6px}
-.temps h2{font-size:1.3em;margin:0}
+.temps h3{font-size:1.25em;margin:0}
 .temps p{margin:.35em 0 0}
 .temps .t-moments{font-size:.85em;color:var(--muted)}
 .mots{margin-top:18px}
-.mots h2{font-size:1.3em}
 .mots dl{display:grid;grid-template-columns:max-content 1fr;gap:.35em 1.2em;margin:0}
 .mots dt{font-weight:700}
 .mots dd{margin:0}

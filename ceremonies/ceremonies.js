@@ -7,7 +7,7 @@
 
   // Textes de l'interface, regroupés pour pouvoir traduire plus tard.
   const T = {
-    vues: { bref: 'En bref', apercu: 'Aperçu', deroule: 'Déroulé', role: 'Rôles', instrument: 'Instruments', direct: 'En direct', construire: 'Construire' },
+    vues: { bref: 'En bref', deroule: 'Déroulé', role: 'Rôles', instrument: 'Instruments', direct: 'En direct', construire: 'Construire' },
     modele: 'modèle', importee: 'ma cérémonie',
     moment: 'Moment', minute: 'min', variante: 'Variante', optionnel: 'facultatif', signal: 'Signal',
     obligatoire: 'Rôle obligatoire', zazen: 'Pendant le zazen', ceremonie: 'Pendant la cérémonie',
@@ -128,36 +128,22 @@
   ];
   function vueBref() {
     const groupes = parPhase(cer.etapes);
+    const objets = cer.roles.filter(r => r.objets && r.objets.length);
     return h('div', { class: 'bref' },
-      h('p', { class: 'bref-intro' }, cer.titre + (cer.dureeIndicative ? ' · ' + cer.dureeIndicative.toLowerCase() : '') + '. ',
-        'La pratique suit toujours le même ordre, en ' + groupes.length + ' temps. Pas besoin de tout retenir : il suffit de faire comme les autres et de suivre les sons.'),
+      h('section', { class: 'intro' },
+        h('h2', null, cer.titre),
+        cer.resume ? h('p', { class: 'resume' }, cer.resume) : null,
+        h('p', { class: 'meta' }, [cer.dureeIndicative, cer.source].filter(Boolean).join(' · '))),
+      h('p', { class: 'bref-intro' }, 'La pratique suit toujours le même ordre, en ' + groupes.length + ' temps. Pas besoin de tout retenir : il suffit de faire comme les autres et de suivre les sons.'),
       h('ol', { class: 'temps' }, groupes.map(g => {
         const p = idx.phase[g.phase] || { nom: g.phase };
         const moments = [...new Set(g.etapes.map(e => e.moment))];
         const min = g.etapes.find(e => e.minute != null);
         return h('li', null,
-          h('div', { class: 't-tete' }, h('h2', null, p.nom), min ? h('span', { class: 'minute' }, (min.minute < 0 ? min.minute : '+' + min.minute) + ' min') : null),
+          h('div', { class: 't-tete' }, h('h3', null, p.nom), min ? h('span', { class: 'minute' }, (min.minute < 0 ? min.minute : '+' + min.minute) + ' min') : null),
           p.bref ? h('p', null, p.bref) : null,
           h('p', { class: 't-moments' }, moments.join(' · ')));
       })),
-      h('section', { class: 'mots' }, h('h2', null, 'Les mots à connaître'),
-        h('dl', null, MOTS.map(([m, d]) => [h('dt', null, m), h('dd', null, d)]))),
-      h('aside', { class: 'encart' },
-        h('p', null, 'Chaque dojo a ses usages : le vôtre peut faire un peu autrement. Pour le détail, voyez le ', h('a', { href: '#deroule' }, 'déroulé complet'), ', votre ', h('a', { href: '#role' }, 'rôle'), ' ou le ', h('a', { href: '#direct' }, 'mode en direct'), '.')));
-  }
-
-  // ---------- Vue : aperçu ----------
-  function vueApercu() {
-    const objets = cer.roles.filter(r => r.objets && r.objets.length);
-    return h('div', { class: 'apercu' },
-      h('section', { class: 'intro' },
-        h('h2', null, cer.titre),
-        cer.resume ? h('p', { class: 'resume' }, cer.resume) : null,
-        h('p', { class: 'meta' }, [cer.dureeIndicative, cer.source].filter(Boolean).join(' · ')),
-        h('aside', { class: 'encart' },
-          h('h3', null, 'Chaque dojo a ses usages'),
-          h('p', null, 'Les pratiques varient d’un dojo et d’une lignée à l’autre : le nom des rôles, la place des instruments, le nombre de coups, certains gestes. Ce module décrit en détail un exemple complet de cérémonie. Votre dojo peut faire un peu autrement : en cas de doute, suivez ses consignes.'),
-          h('p', null, 'Bientôt, vous pourrez adapter ce modèle à votre dojo et l’enregistrer dans un fichier, sans compte ni inscription.'))),
       h('section', null,
         h('h2', null, 'Les rôles'),
         h('ul', { class: 'cartes' }, cer.roles.map(r => h('li', null,
@@ -168,29 +154,8 @@
       objets.length ? h('section', null,
         h('h2', null, 'À préparer avant la pratique'),
         h('ul', { class: 'prepa' }, objets.map(r => h('li', null, h('b', null, r.nom + ' : '), r.objets.join(', ') + '.')))) : null,
-      h('section', { class: 'lignees' },
-        h('h2', null, 'Les noms changent selon les lignées'),
-        h('p', null, 'Une même fonction ne porte pas le même nom partout. Ce module sépare donc la fonction (qui joue la keisu, qui lance les chants…) du nom que lui donne chaque dojo.'),
-        tableLignees(),
-        h('ol', { class: 'notes' },
-          h('li', { id: 'n1' }, 'Sōtōshū Shūmuchō, ', h('i', null, 'Standard Observances of the Soto Zen School'), ' (Gyōji Kihan), trad. T. Griffith Foulk, vol. 1–2. ', h('a', { href: 'https://terebess.hu/zen/mesterek/Sotoshu-Gyoji-Kihan-vol1.pdf' }, 'PDF')),
-          h('li', { id: 'n2' }, 'Zen Sōtō Reims (Association zen internationale), « Les sons ». ', h('a', { href: 'https://www.zensotoreims.fr/pdfs/SONS.pdf' }, 'PDF')),
-          h('li', { id: 'n3' }, 'Zen Center of Los Angeles, ', h('i', null, 'Service Position Manual'), ' ; Austin Zen Center, ', h('i', null, 'Jiko Instructions'), '. ', h('a', { href: 'https://zcla.org/wp-content/uploads/MembersArea/Liturgy/documents/ServicePositionManual3.0.5.pdf' }, 'PDF'))))
-    );
-  }
-  function tableLignees() {
-    const lignes = [
-      ['Chante les titres et l’ekō', 'ino', 'ino', 'ino, kokyō', 'Kokyō'],
-      ['Keisu et shōkei', 'assistant de l’ino', '1er kyosakuman (souvent le shusso)', 'dōan', 'Dōan'],
-      ['Inkin', 'assistant de l’ino', 'doan', 'dōan, jikidō', 'Inkin'],
-      ['Mokugyo', 'non précisé', '2e kyosakuman', 'mokugyo, fukudō', 'Fukudo'],
-      ['Han ou moppan', 'selon les quartiers', '1er kyosakuman ou shusso', 'jikidō, fukudō', 'Jikidō'],
-      ['Présente l’encens', 'jisha et jikō', 'jisha', 'jisha, jikō', 'Jisha'],
-    ];
-    const sup = n => h('sup', null, h('a', { href: '#n' + n }, n));
-    return h('div', { class: 'defile' }, h('table', { class: 'tableau' },
-      h('thead', null, h('tr', null, h('th', null, 'Fonction'), h('th', null, 'Japon ', sup(1)), h('th', null, 'Reims (AZI) ', sup(2)), h('th', null, 'Centres américains ', sup(3)), h('th', null, 'Ce modèle'))),
-      h('tbody', null, lignes.map(l => h('tr', null, l.map((c, i) => h(i ? 'td' : 'th', null, c)))))));
+      h('section', { class: 'mots' }, h('h2', null, 'Les mots à connaître'),
+        h('dl', null, MOTS.map(([m, d]) => [h('dt', null, m), h('dd', null, d)]))));
   }
 
   // ---------- Vue : déroulé (matrice étapes × rôles) ----------
@@ -468,7 +433,8 @@
 
   // ---------- Navigation par l'adresse (#deroule, #role/doshi, #direct/inkin…) ----------
   function route() {
-    const [vue, arg] = (location.hash.slice(1) || 'bref').split('/');
+    let [vue, arg] = (location.hash.slice(1) || 'bref').split('/');
+    if (vue === 'apercu') vue = 'bref';   // ancienne adresse
     const v = T.vues[vue] ? vue : 'bref';
     onTouche = null;
     document.body.classList.toggle('mode-direct', v === 'direct');
@@ -481,7 +447,6 @@
     });
     const z = $('#vue');
     z.replaceChildren(
-      v === 'apercu' ? vueApercu() :
       v === 'deroule' ? vueDeroule() :
       v === 'role' ? vueRole(arg) :
       v === 'instrument' ? vueInstrument(arg) :
