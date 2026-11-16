@@ -10,7 +10,7 @@ langue        "fr" (structure prête pour d'autres langues)
 titre         nom affiché (obligatoire)
 resume, source, dureeIndicative   textes libres
 
-phases[]      { id, nom }                       grandes parties, dans l'ordre
+phases[]      { id, nom, bref? }                grandes parties, dans l'ordre ; bref = explication simple
 fonctions[]   { id, nom }                       ce que fait un rôle, indépendamment de son nom local
 roles[]       { id, nom, kanji?, fonctions[], resume, obligatoire?,
                 place: { zazen, ceremonie }, tenue?, objets[] }

@@ -7,8 +7,8 @@
 
   // Textes de l'interface, regroupés pour pouvoir traduire plus tard.
   const T = {
-    vues: { apercu: 'Aperçu', deroule: 'Déroulé', role: 'Rôles', instrument: 'Instruments', direct: 'En direct' },
-    modele: 'modèle', importee: 'importée',
+    vues: { bref: 'En bref', apercu: 'Aperçu', deroule: 'Déroulé', role: 'Rôles', instrument: 'Instruments', direct: 'En direct', construire: 'Construire' },
+    modele: 'modèle', importee: 'ma cérémonie',
     moment: 'Moment', minute: 'min', variante: 'Variante', optionnel: 'facultatif', signal: 'Signal',
     obligatoire: 'Rôle obligatoire', zazen: 'Pendant le zazen', ceremonie: 'Pendant la cérémonie',
     objets: 'À préparer', fonctions: 'Fonctions', autres: 'Voir aussi les autres rôles',
@@ -114,6 +114,36 @@
       if (!last || last.phase !== e.phase) out.push({ phase: e.phase, etapes: [e] }); else last.etapes.push(e);
     }
     return out;
+  }
+
+  // ---------- Vue : le déroulé en bref (la page la plus simple) ----------
+  const MOTS = [
+    ['Gasshō', 'les mains jointes devant le visage ; sert à saluer.'],
+    ['Shashu', 'les mains posées l\u2019une sur l\u2019autre contre la poitrine, pour marcher ou se tenir debout.'],
+    ['Zafu', 'le coussin rond sur lequel on s\u2019assoit.'],
+    ['Kinhin', 'la marche lente entre deux assises.'],
+    ['Kusen', 'l\u2019enseignement donné oralement pendant le zazen.'],
+    ['Sanpai', 'trois prosternations, front au sol.'],
+    ['Ekō', 'la dédicace récitée après le chant.'],
+  ];
+  function vueBref() {
+    const groupes = parPhase(cer.etapes);
+    return h('div', { class: 'bref' },
+      h('p', { class: 'bref-intro' }, cer.titre + (cer.dureeIndicative ? ' · ' + cer.dureeIndicative.toLowerCase() : '') + '. ',
+        'La pratique suit toujours le même ordre, en ' + groupes.length + ' temps. Pas besoin de tout retenir : il suffit de faire comme les autres et de suivre les sons.'),
+      h('ol', { class: 'temps' }, groupes.map(g => {
+        const p = idx.phase[g.phase] || { nom: g.phase };
+        const moments = [...new Set(g.etapes.map(e => e.moment))];
+        const min = g.etapes.find(e => e.minute != null);
+        return h('li', null,
+          h('div', { class: 't-tete' }, h('h2', null, p.nom), min ? h('span', { class: 'minute' }, (min.minute < 0 ? min.minute : '+' + min.minute) + ' min') : null),
+          p.bref ? h('p', null, p.bref) : null,
+          h('p', { class: 't-moments' }, moments.join(' · ')));
+      })),
+      h('section', { class: 'mots' }, h('h2', null, 'Les mots à connaître'),
+        h('dl', null, MOTS.map(([m, d]) => [h('dt', null, m), h('dd', null, d)]))),
+      h('aside', { class: 'encart' },
+        h('p', null, 'Chaque dojo a ses usages : le vôtre peut faire un peu autrement. Pour le détail, voyez le ', h('a', { href: '#deroule' }, 'déroulé complet'), ', votre ', h('a', { href: '#role' }, 'rôle'), ' ou le ', h('a', { href: '#direct' }, 'mode en direct'), '.')));
   }
 
   // ---------- Vue : aperçu ----------
@@ -438,10 +468,11 @@
 
   // ---------- Navigation par l'adresse (#deroule, #role/doshi, #direct/inkin…) ----------
   function route() {
-    const [vue, arg] = (location.hash.slice(1) || 'apercu').split('/');
-    const v = T.vues[vue] ? vue : 'apercu';
+    const [vue, arg] = (location.hash.slice(1) || 'bref').split('/');
+    const v = T.vues[vue] ? vue : 'bref';
     onTouche = null;
     document.body.classList.toggle('mode-direct', v === 'direct');
+    document.body.classList.toggle('mode-construire', v === 'construire');
     if (v !== 'direct') garderEcran(false);
     document.querySelectorAll('.onglets a').forEach(a => {
       const on = a.dataset.vue === v;
@@ -450,13 +481,32 @@
     });
     const z = $('#vue');
     z.replaceChildren(
+      v === 'apercu' ? vueApercu() :
       v === 'deroule' ? vueDeroule() :
       v === 'role' ? vueRole(arg) :
       v === 'instrument' ? vueInstrument(arg) :
-      v === 'direct' ? vueDirect(arg) : vueApercu());
+      v === 'direct' ? vueDirect(arg) :
+      v === 'construire' && window.DG_CONSTRUIRE ? window.DG_CONSTRUIRE(arg) : vueBref());
     document.title = T.vues[v] + ' · ' + cer.titre + ' · DharmaGates';
   }
   window.addEventListener('hashchange', () => { route(); if (!location.hash.startsWith('#direct')) $('.onglets').scrollIntoView({ block: 'nearest' }); });
+
+  // ---------- Ce que le constructeur (construire.js) utilise ----------
+  window.DG = {
+    T, h, remplace, lire, ecrire, valide, resoudre, nomRole, texteSon, message, route, propre,
+    MODELES,
+    get cer() { return cer; },
+    get idx() { return idx; },
+    estModele: c => !!(c && c._modele),
+    // Enregistre (ou remplace) une de « mes cérémonies » dans le navigateur et l'affiche.
+    mettre(c) {
+      imports = imports.filter(x => x.id !== c.id).concat([c]);
+      const ok = ecrire(CLE_IMPORTS, imports);
+      choisir(c.id);
+      return ok;
+    },
+    idLibre(base) { let id = base, n = 2; while (toutes().some(x => x.id === id)) id = base + '-' + n++; return id; },
+  };
 
   choisir(lire(CLE_COURANTE, null));
   if (cer) route(); else $('#vue').textContent = 'Aucune cérémonie à afficher.';

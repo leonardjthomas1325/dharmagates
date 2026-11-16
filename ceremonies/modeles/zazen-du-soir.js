@@ -11,12 +11,12 @@
   "source": "Usage d'un dojo sōtō européen (dojo de l'éditeur), d'après son tableau des étapes et des rôles.",
   "dureeIndicative": "Environ 1 h 15",
   "phases": [
-    { "id": "avant", "nom": "Avant le zazen" },
-    { "id": "zazen1", "nom": "Zazen, 1re période" },
-    { "id": "kinhin", "nom": "Kinhin" },
-    { "id": "zazen2", "nom": "Zazen, 2e période" },
-    { "id": "ceremonie", "nom": "Cérémonie" },
-    { "id": "fin", "nom": "Fin" }
+    { "id": "avant", "nom": "Avant le zazen" , "bref": "On arrive en silence et on laisse ses chaussures à l'entrée. On entre par la gauche de la porte, pied gauche en premier, on salue l'autel mains jointes et on rejoint sa place. Le moppan appelle au zazen : chacun s'assoit face au mur." },
+    { "id": "zazen1", "nom": "Zazen, 1re période" , "bref": "Première assise, immobile et silencieuse, d'environ trente minutes. Trois coups de petite cloche l'ouvrent, deux coups la ferment. Les responsables peuvent corriger les postures." },
+    { "id": "kinhin", "nom": "Kinhin" , "bref": "On se lève, on salue, puis on marche lentement en file, dans le sens des aiguilles d'une montre. Un coup de petite cloche y met fin et chacun revient à sa place d'un pas normal." },
+    { "id": "zazen2", "nom": "Zazen, 2e période" , "bref": "Deuxième assise. Le godō donne l'enseignement oral (kusen). On chante ensemble les quatre vœux, puis un coup de petite cloche clôt le zazen." },
+    { "id": "ceremonie", "nom": "Cérémonie" , "bref": "On se lève et on se tient debout. Le dōshi offre l'encens et se prosterne trois fois (sanpai) ; l'inkin marque chacun de ses gestes et tout le monde le suit. Puis on s'assoit pour chanter le Hannya Shingyō, l'ekō (la dédicace) et le Ji ho san shi. On termine debout par trois prosternations et les saluts." },
+    { "id": "fin", "nom": "Fin" , "bref": "On se salue et on se souhaite une bonne soirée." }
   ],
   "fonctions": [
     { "id": "officiant", "nom": "Officie et se prosterne" },
