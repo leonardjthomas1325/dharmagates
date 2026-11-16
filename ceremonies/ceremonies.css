@@ -221,7 +221,14 @@ body.mode-construire main.wrap{max-width:none}
 .p-item:active{cursor:grabbing}
 .p-item.p-bloc{border-left:4px solid var(--accent)}
 .p-item.p-phase{border-left:4px solid var(--ink);font-weight:700}
-.p-item.p-son{border-left:4px solid var(--seal)}
+.p-item.p-son{border-left:4px solid var(--seal);display:flex;flex-direction:column;gap:5px}
+.ps-nom{font-weight:700}
+.ps-reglage{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.ps-coups{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:999px;background:var(--surface)}
+.ps-pas{border:none;background:none;padding:.05em .55em;font-size:1em;line-height:1.4;cursor:pointer;color:var(--ink);border-radius:999px}
+.ps-pas:disabled{opacity:.35;cursor:default}
+.ps-nb{min-width:2.2em;text-align:center;font-variant-numeric:tabular-nums;font-size:.92em}
+.ps-frappe{font-size:.85em;padding:.15em .3em;border-radius:6px;cursor:pointer}
 .p-item.p-role{border-style:dashed}
 .p-item.arme{outline:3px solid var(--seal);outline-offset:1px}
 

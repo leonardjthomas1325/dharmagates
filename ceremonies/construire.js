@@ -25,20 +25,28 @@
     { id: 'kusen', nom: 'Kusen', texte: 'Donne le kusen.' },
     { id: 'libre', nom: 'Texte libre…', texte: 'Nouvelle action.' },
   ];
+  // Un instrument par étiquette ; on règle sur l'étiquette le nombre de coups et la frappe avant de la glisser.
   const SONS = [
-    { id: 'shokei1', nom: 'Shōkei ×1', son: { instrument: 'shokei', coups: 1 }, texte: 'Shōkei : un coup.' },
-    { id: 'shokei2', nom: 'Shōkei ×2', son: { instrument: 'shokei', coups: 2 }, texte: 'Shōkei : deux coups.' },
-    { id: 'shokei3', nom: 'Shōkei ×3', son: { instrument: 'shokei', coups: 3 }, texte: 'Shōkei : trois coups.' },
-    { id: 'shokei-gatsu', nom: 'Shōkei · Gatsu', son: { instrument: 'shokei', coups: 1, frappe: 'gatsu' }, texte: 'Un coup étouffé de shōkei.' },
-    { id: 'keisu-ken', nom: 'Keisu · Ken', son: { instrument: 'keisu', coups: 1, frappe: 'ken' }, texte: 'Un coup normal de keisu.' },
-    { id: 'keisu-gatsu', nom: 'Keisu · Gatsu', son: { instrument: 'keisu', coups: 1, frappe: 'gatsu' }, texte: 'Un coup étouffé de keisu.' },
-    { id: 'inkin1', nom: 'Inkin ×1', son: { instrument: 'inkin', coups: 1 }, texte: 'Un coup d’inkin.' },
-    { id: 'inkin2', nom: 'Inkin ×2', son: { instrument: 'inkin', coups: 2 }, texte: 'Deux coups d’inkin.' },
-    { id: 'inkin-gatsu', nom: 'Inkin · Gatsu', son: { instrument: 'inkin', coups: 1, frappe: 'gatsu' }, texte: 'Un coup étouffé d’inkin.' },
-    { id: 'inkin-cascade', nom: 'Inkin · cascade', son: { instrument: 'inkin', frappe: 'cascade' }, texte: 'Cascade d’inkin.' },
-    { id: 'mokugyo', nom: 'Mokugyo · rythme', son: { instrument: 'mokugyo' }, texte: 'Donne le rythme au mokugyo.' },
-    { id: 'moppan', nom: 'Moppan', son: { instrument: 'moppan' }, texte: 'Frappe le moppan.' },
+    { id: 'shokei', nom: 'Shōkei', cloche: true, coups: 1 },
+    { id: 'keisu', nom: 'Keisu', cloche: true, coups: 1 },
+    { id: 'inkin', nom: 'Inkin', cloche: true, coups: 1 },
+    { id: 'mokugyo', nom: 'Mokugyo', cloche: false, coups: 0 },
+    { id: 'moppan', nom: 'Moppan', cloche: false, coups: 0 },
   ];
+  const REGLAGES = {};   // id -> { coups, frappe } choisis dans la palette (0 coup = « en continu »)
+  for (const i of SONS) REGLAGES[i.id] = { coups: i.coups, frappe: '' };
+  const NOMBRES = ['', 'un coup', 'deux coups', 'trois coups', 'quatre coups', 'cinq coups', 'six coups', 'sept coups', 'huit coups', 'neuf coups'];
+  function sonRegle(id) {
+    const i = SONS.find(x => x.id === id), r = REGLAGES[id], son = { instrument: id };
+    if (r.frappe !== 'cascade' && r.coups) son.coups = r.coups;
+    if (r.frappe) son.frappe = r.frappe;
+    const fr = { ken: ' normal', gatsu: ' étouffé' }[r.frappe] || '';
+    const texte = r.frappe === 'cascade' ? 'Cascade de ' + i.nom.toLowerCase() + '.'
+      : r.coups ? i.nom + ' : ' + (NOMBRES[r.coups] || r.coups + ' coups') + (fr ? (r.coups > 1 ? fr + 's' : fr) : '') + '.'
+      : 'Joue le ' + i.nom.toLowerCase() + ' en continu.';
+    const libelle = i.nom + (r.frappe === 'cascade' ? ' · cascade' : (r.coups ? ' ×' + r.coups : '') + (r.frappe ? ' · ' + (r.frappe === 'ken' ? 'Ken' : 'Gatsu') : ''));
+    return { id, son, texte, nom: libelle };
+  }
   // Toutes les cloches (shōkei, keisu, inkin) se frappent en Ken ou en Gatsu ; la cascade est une série de coups.
   const FRAPPES = [{ id: 'ken', nom: 'Ken (normal)' }, { id: 'gatsu', nom: 'Gatsu (étouffé)' }, { id: 'cascade', nom: 'Cascade' }];
   // Dans un bloc, "f" désigne une fonction (on cherche le rôle qui la porte) et "*" tous les autres.
@@ -479,6 +487,34 @@
     el.addEventListener('click', () => armer(ch, el));
     return el;
   }
+  // Étiquette d'instrument : compteur de coups et frappe (Ken, Gatsu, cascade) réglables avant de glisser.
+  function carteSon(i) {
+    const r = REGLAGES[i.id];
+    const nom = h('span', { class: 'ps-nom' }, i.nom);
+    const nb = h('output', { class: 'ps-nb', 'aria-live': 'polite' });
+    const moins = h('button', { type: 'button', class: 'ps-pas', 'aria-label': 'Un coup de moins' }, '−');
+    const plus = h('button', { type: 'button', class: 'ps-pas', 'aria-label': 'Un coup de plus' }, '+');
+    const frappe = i.cloche ? h('select', { class: 'ps-frappe', 'aria-label': 'Frappe du ' + i.nom },
+      h('option', { value: '' }, 'frappe —'), FRAPPES.map(f => h('option', { value: f.id, selected: r.frappe === f.id || null }, f.id === 'cascade' ? 'Cascade' : f.id === 'ken' ? 'Ken' : 'Gatsu'))) : null;
+    const el = h('div', { class: 'p-item p-son', tabindex: '0', role: 'button' }, nom,
+      h('span', { class: 'ps-reglage' }, h('span', { class: 'ps-coups' }, moins, nb, plus), frappe));
+    const maj = () => {
+      const casc = r.frappe === 'cascade';
+      nb.textContent = casc ? '∞' : r.coups ? '×' + r.coups : i.cloche ? '×?' : '∞';
+      nb.title = casc ? 'cascade : série de coups' : r.coups ? '' : 'en continu';
+      moins.disabled = casc || r.coups <= (i.cloche ? 1 : 0); plus.disabled = casc || r.coups >= 9;
+      el.title = sonRegle(i.id).texte + ' Glissez dans une case, ou touchez puis touchez une case.';
+    };
+    moins.addEventListener('click', () => { r.coups = Math.max(i.cloche ? 1 : 0, r.coups - 1); maj(); });
+    plus.addEventListener('click', () => { r.coups = Math.min(9, r.coups + 1); maj(); });
+    if (frappe) frappe.addEventListener('change', () => { r.frappe = frappe.value; maj(); });
+    const charge = () => { const it = sonRegle(i.id); return { type: 'son', item: it, libelle: it.nom }; };
+    glissable(el, charge);
+    el.addEventListener('click', ev => { if (ev.target.closest('button,select,output')) return; armer(charge(), el); });
+    el.addEventListener('keydown', ev => { if ((ev.key === 'Enter' || ev.key === ' ') && ev.target === el) { ev.preventDefault(); armer(charge(), el); } });
+    maj();
+    return el;
+  }
   function peindrePalette(z) {
     const onglets = [['blocs', 'Blocs'], ['gestes', 'Gestes'], ['sons', 'Sons'], ['roles', 'Rôles']];
     const corps = h('div', { class: 'p-corps' });
@@ -488,12 +524,12 @@
         blocs: [itemPalette({ type: 'phase', libelle: 'Nouvelle phase', aide: 'Sépare la cérémonie en grandes parties' }, 'p-phase'),
           ...BLOCS.map(b => itemPalette({ type: 'bloc', item: b, libelle: b.nom, aide: b.etapes.length + ' étape(s)' }, 'p-bloc'))],
         gestes: GESTES.map(g => itemPalette({ type: 'geste', item: g, libelle: g.nom, aide: g.texte }, 'p-geste')),
-        sons: SONS.map(s => itemPalette({ type: 'son', item: s, libelle: s.nom, aide: 'Sur une case vide : nouvelle action. Sur une tuile : ajoute le son.' }, 'p-son')),
+        sons: SONS.map(carteSon),
         roles: [...rolesCatalogue().filter(r => !presents.has(r.id)).map(r => itemPalette({ type: 'role', item: r, libelle: r.nom, aide: r.resume }, 'p-role')),
           itemPalette({ type: 'role', item: null, libelle: 'Nouveau rôle…' }, 'p-role')],
       };
       remplace(corps, h('p', { class: 'p-aide' },
-        { blocs: 'Glissez un bloc entre deux lignes : il ajoute une ou plusieurs étapes toutes faites.', gestes: 'Glissez un geste dans la case d’un rôle.', sons: 'Glissez un son dans une case, ou sur une tuile pour lui ajouter ce son. Toutes les cloches se frappent en Ken ou en Gatsu : la frappe et le nombre de coups se changent en touchant la tuile.', roles: 'Glissez un rôle dans l’en-tête de la grille pour ajouter une colonne.' }[ongletPalette]),
+        { blocs: 'Glissez un bloc entre deux lignes : il ajoute une ou plusieurs étapes toutes faites.', gestes: 'Glissez un geste dans la case d’un rôle.', sons: 'Réglez le nombre de coups et la frappe sur l’étiquette, puis glissez-la dans une case, ou sur une tuile pour lui ajouter ce son.', roles: 'Glissez un rôle dans l’en-tête de la grille pour ajouter une colonne.' }[ongletPalette]),
         h('div', { class: 'p-liste' }, listes[ongletPalette]));
     };
     const barre = h('div', { class: 'p-onglets', role: 'tablist' }, onglets.map(([id, nom]) => h('button', {
@@ -644,7 +680,7 @@
               h('button', { type: 'button', class: 'lien', onclick: () => modifier(c => { const x = etape(s.etape).actions[s.index]; x.sons.splice(k, 1); if (!x.sons.length) delete x.sons; }) }, 'retirer'),
               so.quand ? h('small', null, so.quand) : null);
           }),
-          h('select', { id: 'insp-ajout-son', onchange: ev => { const it = SONS.find(x => x.id === ev.target.value); if (it) modifier(c => { const x = etape(s.etape).actions[s.index]; const so = sonPropre(it.son); assurerSons([so]); (x.sons = x.sons || []).push(so); }); } },
+          h('select', { id: 'insp-ajout-son', onchange: ev => { const it = SONS.some(x => x.id === ev.target.value) && sonRegle(ev.target.value); if (it) modifier(c => { const x = etape(s.etape).actions[s.index]; const so = sonPropre(it.son); assurerSons([so]); (x.sons = x.sons || []).push(so); }); } },
             h('option', { value: '' }, '+ Ajouter un son…'), SONS.map(x => h('option', { value: x.id }, x.nom)))),
         h('fieldset', { class: 'i-signal' }, h('legend', null, 'Signal (ce qui déclenche l’action)'),
           h('select', { id: 'insp-signal-role', onchange: ev => modifier(c => { const x = etape(s.etape).actions[s.index]; if (!ev.target.value) { delete x.signal; return; } x.signal = x.signal || { texte: 'sur le gasshō du ' + DG.nomRole(ev.target.value).toLowerCase() }; x.signal.role = ev.target.value; }) },
