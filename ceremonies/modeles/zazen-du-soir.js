@@ -104,19 +104,19 @@
     {
       "id": "shokei", "nom": "Shōkei", "kanji": "小鏧", "son": "../hannya-shingyo/shokei-12cm.mp3",
       "description": "Petite cloche en forme de bol, posée sur un coussin.",
-      "technique": "Ouvre et ferme les périodes de zazen et de kinhin ; pendant la cérémonie, demande l'assise et accompagne le mantra du Hannya Shingyō.",
+      "technique": "Ouvre et ferme les périodes de zazen et de kinhin ; pendant la cérémonie, demande l'assise et accompagne le mantra du Hannya Shingyō. Comme toutes les cloches, se frappe en Ken (coup normal) ou en Gatsu (coup étouffé).",
       "source": "Glossaire sotozen.com ; tableau du dojo"
     },
     {
       "id": "keisu", "nom": "Keisu", "kanji": "鏧子", "son": "../hannya-shingyo/keisu-39cm.mp3",
       "description": "Grande cloche en forme de bol (daikei), posée sur un coussin, frappée au maillet.",
-      "technique": "Deux frappes : Ken, le coup normal qu'on laisse résonner, et Gatsu, le coup étouffé.",
+      "technique": "Comme toutes les cloches, deux frappes : Ken, le coup normal qu'on laisse résonner, et Gatsu, le coup étouffé.",
       "source": "Glossaire sotozen.com ; tableau du dojo"
     },
     {
       "id": "inkin", "nom": "Inkin", "kanji": "引鏧",
       "description": "Petite cloche en bol montée sur un manche, qu'on tient à la main.",
-      "technique": "Un coup à chaque geste du dōshi qu'il faut marquer ; la cascade est une série de coups rapprochés.",
+      "technique": "Un coup à chaque geste du dōshi qu'il faut marquer ; la cascade est une série de coups rapprochés. Comme toutes les cloches, se frappe en Ken (coup normal) ou en Gatsu (coup étouffé).",
       "source": "Glossaire sotozen.com ; tableau du dojo"
     },
     {

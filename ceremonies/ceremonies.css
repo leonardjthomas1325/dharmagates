@@ -315,3 +315,5 @@ body.mode-construire main.wrap{padding-top:12px}
 body.mode-construire .onglets{margin:12px 0 14px}
 .bref{margin-bottom:40px}
 @media (max-width:560px){.onglets{flex-wrap:wrap;overflow:visible}}
+.i-son select{width:auto;padding:.25em .4em;font-size:.88em}
+.i-son small{flex-basis:100%}

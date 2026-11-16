@@ -29,14 +29,18 @@
     { id: 'shokei1', nom: 'Shōkei ×1', son: { instrument: 'shokei', coups: 1 }, texte: 'Shōkei : un coup.' },
     { id: 'shokei2', nom: 'Shōkei ×2', son: { instrument: 'shokei', coups: 2 }, texte: 'Shōkei : deux coups.' },
     { id: 'shokei3', nom: 'Shōkei ×3', son: { instrument: 'shokei', coups: 3 }, texte: 'Shōkei : trois coups.' },
+    { id: 'shokei-gatsu', nom: 'Shōkei · Gatsu', son: { instrument: 'shokei', coups: 1, frappe: 'gatsu' }, texte: 'Un coup étouffé de shōkei.' },
     { id: 'keisu-ken', nom: 'Keisu · Ken', son: { instrument: 'keisu', coups: 1, frappe: 'ken' }, texte: 'Un coup normal de keisu.' },
     { id: 'keisu-gatsu', nom: 'Keisu · Gatsu', son: { instrument: 'keisu', coups: 1, frappe: 'gatsu' }, texte: 'Un coup étouffé de keisu.' },
     { id: 'inkin1', nom: 'Inkin ×1', son: { instrument: 'inkin', coups: 1 }, texte: 'Un coup d’inkin.' },
     { id: 'inkin2', nom: 'Inkin ×2', son: { instrument: 'inkin', coups: 2 }, texte: 'Deux coups d’inkin.' },
+    { id: 'inkin-gatsu', nom: 'Inkin · Gatsu', son: { instrument: 'inkin', coups: 1, frappe: 'gatsu' }, texte: 'Un coup étouffé d’inkin.' },
     { id: 'inkin-cascade', nom: 'Inkin · cascade', son: { instrument: 'inkin', frappe: 'cascade' }, texte: 'Cascade d’inkin.' },
     { id: 'mokugyo', nom: 'Mokugyo · rythme', son: { instrument: 'mokugyo' }, texte: 'Donne le rythme au mokugyo.' },
     { id: 'moppan', nom: 'Moppan', son: { instrument: 'moppan' }, texte: 'Frappe le moppan.' },
   ];
+  // Toutes les cloches (shōkei, keisu, inkin) se frappent en Ken ou en Gatsu ; la cascade est une série de coups.
+  const FRAPPES = [{ id: 'ken', nom: 'Ken (normal)' }, { id: 'gatsu', nom: 'Gatsu (étouffé)' }, { id: 'cascade', nom: 'Cascade' }];
   // Dans un bloc, "f" désigne une fonction (on cherche le rôle qui la porte) et "*" tous les autres.
   const S = (instrument, coups, frappe, quand) => ({ instrument, coups, frappe, quand });
   const BLOCS = [
@@ -489,7 +493,7 @@
           itemPalette({ type: 'role', item: null, libelle: 'Nouveau rôle…' }, 'p-role')],
       };
       remplace(corps, h('p', { class: 'p-aide' },
-        { blocs: 'Glissez un bloc entre deux lignes : il ajoute une ou plusieurs étapes toutes faites.', gestes: 'Glissez un geste dans la case d’un rôle.', sons: 'Glissez un son dans une case, ou sur une tuile pour lui ajouter ce son.', roles: 'Glissez un rôle dans l’en-tête de la grille pour ajouter une colonne.' }[ongletPalette]),
+        { blocs: 'Glissez un bloc entre deux lignes : il ajoute une ou plusieurs étapes toutes faites.', gestes: 'Glissez un geste dans la case d’un rôle.', sons: 'Glissez un son dans une case, ou sur une tuile pour lui ajouter ce son. Toutes les cloches se frappent en Ken ou en Gatsu : la frappe et le nombre de coups se changent en touchant la tuile.', roles: 'Glissez un rôle dans l’en-tête de la grille pour ajouter une colonne.' }[ongletPalette]),
         h('div', { class: 'p-liste' }, listes[ongletPalette]));
     };
     const barre = h('div', { class: 'p-onglets', role: 'tablist' }, onglets.map(([id, nom]) => h('button', {
@@ -628,8 +632,18 @@
         cases('Qui le fait', [...c.roles.map(r => ({ id: r.id, nom: r.nom })), { id: '*', nom: 'Tous les autres rôles' }], a.roles,
           (c, id, on) => { const x = etape(s.etape).actions[s.index]; x.roles = on ? [...new Set([...x.roles, id])] : x.roles.filter(r => r !== id); if (!x.roles.length) x.roles = [id]; }),
         h('fieldset', { class: 'i-sons' }, h('legend', null, 'Sons'),
-          (a.sons || []).map((so, k) => h('div', { class: 'i-son' }, h('span', { class: 'son' }, DG.texteSon(so)), so.quand ? h('small', null, so.quand) : null,
-            h('button', { type: 'button', class: 'lien', onclick: () => modifier(c => { const x = etape(s.etape).actions[s.index]; x.sons.splice(k, 1); if (!x.sons.length) delete x.sons; }) }, 'retirer'))),
+          (a.sons || []).map((so, k) => {
+            const maj = fn => modifier(c => { const x = etape(s.etape).actions[s.index]; fn(x.sons[k]); assurerSons([x.sons[k]]); });
+            const nomI = (c.instruments || []).find(i => i.id === so.instrument);
+            return h('div', { class: 'i-son' },
+              h('b', null, nomI ? nomI.nom : so.instrument),
+              h('select', { 'aria-label': 'Nombre de coups', onchange: ev => maj(x => { const n = parseInt(ev.target.value, 10); if (n) x.coups = n; else delete x.coups; }) },
+                h('option', { value: '' }, 'coups : —'), [1, 2, 3, 4, 5, 6, 7].map(n => h('option', { value: n, selected: so.coups === n || null }, '×' + n))),
+              h('select', { 'aria-label': 'Frappe', onchange: ev => maj(x => { if (ev.target.value) x.frappe = ev.target.value; else delete x.frappe; }) },
+                h('option', { value: '' }, 'frappe : —'), FRAPPES.map(f => h('option', { value: f.id, selected: so.frappe === f.id || null }, f.nom))),
+              h('button', { type: 'button', class: 'lien', onclick: () => modifier(c => { const x = etape(s.etape).actions[s.index]; x.sons.splice(k, 1); if (!x.sons.length) delete x.sons; }) }, 'retirer'),
+              so.quand ? h('small', null, so.quand) : null);
+          }),
           h('select', { id: 'insp-ajout-son', onchange: ev => { const it = SONS.find(x => x.id === ev.target.value); if (it) modifier(c => { const x = etape(s.etape).actions[s.index]; const so = sonPropre(it.son); assurerSons([so]); (x.sons = x.sons || []).push(so); }); } },
             h('option', { value: '' }, '+ Ajouter un son…'), SONS.map(x => h('option', { value: x.id }, x.nom)))),
         h('fieldset', { class: 'i-signal' }, h('legend', null, 'Signal (ce qui déclenche l’action)'),
