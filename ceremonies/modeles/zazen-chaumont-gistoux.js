@@ -1568,7 +1568,7 @@
      ],
      "texte": "Salue en gasshō",
      "verbe": "saluer",
-     "maniere": "en gasshō",
+     "maniere": "mains en gasshō",
      "condition": "au-besoin",
      "ref": "GK p. 6-9, 43, 55"
     },
@@ -1984,7 +1984,7 @@
      ],
      "texte": "Salue en gasshō",
      "verbe": "saluer",
-     "maniere": "en gasshō",
+     "maniere": "mains en gasshō",
      "condition": "au-besoin",
      "ref": "GK p. 6-9, 43, 55"
     },
@@ -2809,7 +2809,7 @@
      ],
      "texte": "Revient en gasshō au premier coup de shōkei (après « gya tei gya tei »)",
      "verbe": "gassho",
-     "maniere": "en gasshō",
+     "maniere": "mains en gasshō",
      "signal": {
       "texte": "au premier coup de shōkei (après « gya tei gya tei »)"
      }
@@ -3082,7 +3082,7 @@
      ],
      "texte": "S'incline en gasshō entre les deux coups de shōkei",
      "verbe": "saluer",
-     "maniere": "en gasshō",
+     "maniere": "mains en gasshō",
      "signal": {
       "texte": "entre les deux coups de shōkei"
      }
@@ -3409,7 +3409,7 @@
      "texte": "Fait une salutation en shashu vers le doshi",
      "verbe": "saluer",
      "cible": "personnes:doshi",
-     "maniere": "en shashu"
+     "maniere": "mains en shashu"
     },
     {
      "roles": [
@@ -3418,7 +3418,7 @@
      "texte": "Fait une salutation en shashu vers la sangha",
      "verbe": "saluer",
      "cible": "personnes:sangha",
-     "maniere": "en shashu"
+     "maniere": "mains en shashu"
     },
     {
      "roles": [

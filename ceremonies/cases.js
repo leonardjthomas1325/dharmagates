@@ -100,8 +100,7 @@
     { id: 'moppan', nom: 'le moppan', instrument: true, re: /moppan/i },
   ];
   const MANIERES = [
-    ['mains en gasshō', /mains en gassh[ōo]/i], ['mains en shashu', /mains en shashu/i], ['mains en hokkai jō in', /mains en hokkai j[ōo] in/i],
-    ['en gasshō', /(?<!mains )en gassh[ōo]/i], ['en shashu', /(?<!mains )en shashu/i],
+    ['mains en gasshō', /(?:mains )?en gassh[ōo]/i], ['mains en shashu', /(?:mains )?en shashu/i], ['mains en hokkai jō in', /mains en hokkai j[ōo] in/i],
     ['en silence', /en silence/i], ['en seiza', /en seiza/i], ['immobile', /immobile/i], ['lentement', /lentement/i],
     ['debout', /\bdebout\b/i], ['assis', /\bassis\b/i], ['seul', /\bseul\b/i],
     ['en dernier', /en dernier/i], ['pied droit en premier', /pied droit en premier/i], ['pied gauche en premier', /pied gauche en premier/i],
