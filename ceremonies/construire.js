@@ -355,7 +355,7 @@
         // Un objet posé sur une tuile devient sa cible ; un lieu devient le « où » si la cible est déjà prise.
         const a0 = etape(t.etape).actions[t.action], v = a0 && CASES.verbe(a0.verbe), l = ch.ref.split(':')[0];
         if (!v) { DG.message('Choisissez d’abord une action pour cette tuile (touchez-la, puis « Action »).'); return; }
-        const enCible = l in v.prep && !(l === 'lieux' && a0.cible && !a0.cible.startsWith('lieux:')) && !(v.id === 'jouer');
+        const enCible = (l in v.prep || l === 'personnes') && !(l === 'lieux' && a0.cible && !a0.cible.startsWith('lieux:')) && !(v.id === 'jouer');
         if (!enCible && l !== 'lieux') { DG.message('« ' + v.nom + ' » ne se combine pas avec « ' + ch.libelle + ' ».'); return; }
         modifier(c => { const a = etape(t.etape).actions[t.action]; if (enCible) a.cible = ch.ref; else a.lieu = ch.ref; a.texte = CASES.phrase(c, a); a.auto = true; }, { garderInspecteur: true });
         selApres({ type: 'action', etape: t.etape, index: t.action });
@@ -568,12 +568,16 @@
   }
   // Carte d'action : le verbe, et la liste des objets ou cibles qui lui vont. On choisit, puis on glisse.
   const CHOIX_ACTION = {};
+  // Une seule liste pour l'objet, la cible et « vers qui » : ce que l'action prévoit, puis « vers… » une personne ou un lieu.
   function groupesCibles(v, selection) {
-    return Object.keys(v.prep).map(l => h('optgroup', { label: CASES.NOMS_LISTES[l] },
-      CASES.liste(c, l).filter(x => !!x.instrument === !!v.instruments).map(x => h('option', { value: l + ':' + x.id, selected: selection === l + ':' + x.id || null }, x.nom))));
+    const groupe = (l, nom, garde) => { const xs = CASES.liste(c, l).filter(garde); return xs.length ? h('optgroup', { label: nom },
+      xs.map(x => h('option', { value: l + ':' + x.id, selected: selection === l + ':' + x.id || null }, x.nom))) : null; };
+    const prevus = Object.keys(v.prep).map(l => groupe(l, CASES.NOMS_LISTES[l], x => !!x.instrument === !!v.instruments));
+    if (v.instruments) return prevus;
+    return prevus.concat(['personnes', 'lieux'].filter(l => !(l in v.prep)).map(l => groupe(l, 'Vers… (' + CASES.NOMS_LISTES[l].toLowerCase() + ')', x => l === 'personnes' || x.nom !== x.ou)));
   }
   function carteAction(v) {
-    const aCibles = Object.keys(v.prep).length > 0;
+    const aCibles = true;
     const choix = aCibles ? h('select', { class: 'ps-frappe', 'aria-label': v.nom + ' : quoi ou vers qui ?' }, h('option', { value: '' }, '—'), groupesCibles(v, CHOIX_ACTION[v.id])) : null;
     const el = h('div', { class: 'p-item p-geste p-option', tabindex: '0', role: 'button' }, h('span', { class: 'ps-nom' }, v.nom), choix);
     const cases = () => ({ verbe: v.id, ...(CHOIX_ACTION[v.id] ? { cible: CHOIX_ACTION[v.id] } : {}) });
@@ -813,14 +817,14 @@
         if (!val) { delete x.verbe; delete x.cible; delete x.auto; return; }
         x.verbe = val;
         const nv = CASES.verbe(val), cib = CASES.element(c, x.cible);
-        if (cib && (!(cib.liste in nv.prep) || !!cib.item.instrument !== !!nv.instruments)) delete x.cible;
+        if (cib && ((!(cib.liste in nv.prep) && (cib.liste === 'objets' || nv.instruments)) || !!cib.item.instrument !== !!nv.instruments)) delete x.cible;
       })),
-      v && Object.keys(v.prep).length ? liste('insp-cible', v.instruments ? 'Instrument' : 'Objet ou cible', [h('option', { value: '' }, '—'), groupesCibles(v, a.cible)], val => maj((x, c) => {
+      v ? liste('insp-cible', v.instruments ? 'Instrument' : 'Objet, cible ou vers qui', [h('option', { value: '' }, '—'), groupesCibles(v, a.cible)], val => maj((x, c) => {
         if (val) x.cible = val; else delete x.cible;
+        delete x.vers;
         if (v.instruments && val) { const ins = val.split(':')[1]; if (x.sons && x.sons.length) x.sons.forEach(so => { so.instrument = ins; }); else x.sons = [{ instrument: ins, coups: 1 }]; assurerSons(x.sons); }
       })) : null,
       v ? liste('insp-lieu', 'Où (repère dans le dojo)', [h('option', { value: '' }, '—'), CASES.liste(c, 'lieux').map(x => h('option', { value: 'lieux:' + x.id, selected: a.lieu === 'lieux:' + x.id || null }, x.ou || x.nom))], val => maj(x => { if (val) x.lieu = val; else delete x.lieu; })) : null,
-      v ? liste('insp-vers', 'Vers qui', [h('option', { value: '' }, '—'), ['personnes', 'lieux'].map(l => { const xs = CASES.liste(c, l).filter(x => (l === 'personnes' || x.nom !== x.ou)); return xs.length ? h('optgroup', { label: CASES.NOMS_LISTES[l] }, xs.map(x => h('option', { value: l + ':' + x.id, selected: a.vers === l + ':' + x.id || null }, x.nom))) : null; })], val => maj(x => { if (val) x.vers = val; else delete x.vers; })) : null,
       v ? manieres(a, maj) : null,
       v && v.id !== 'jouer' ? champ('Nombre de fois', a.nombre, ap((x, val) => { const n = parseInt(val, 10); if (n > 0) x.nombre = n; else delete x.nombre; }), { type: 'number' }) : null,
       liste('insp-condition', 'Condition', [h('option', { value: '' }, 'Aucune'), (c.conditions || []).concat(CASES.CONDITIONS).map(x => h('option', { value: x.id, selected: a.condition === x.id || null }, x.nom))], val => modifier(c => { const x = etape(s.etape).actions[s.index]; if (val) x.condition = val; else delete x.condition; })),
