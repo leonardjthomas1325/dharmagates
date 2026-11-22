@@ -868,31 +868,72 @@
       v && !a.auto ? h('button', { type: 'button', class: 'lien', onclick: () => maj(() => {}) }, 'Refaire la phrase à partir des cases') : null,
       v && !a.auto ? h('p', { class: 'i-note' }, 'La phrase vient du tableau. Elle sera réécrite si vous changez une case.') : null);
   }
-  // Signal d'une action : le repère (« quand exactement ») se choisit dans une liste, ou s'écrit ; puis qui le donne.
+  // Signal d'une action : le repère (« quand exactement ») se choisit dans une liste, s'écrit, ou se construit
+  // avec des cases comme une action (quand + qui ou quoi + action + objet + nombre) ; puis qui le donne.
   let repereLibre = null;   // action dont on écrit le repère à la main
+  let repereCases = null;   // action dont on construit le repère avec des cases
   function signal(s, a, ap) {
     const cle = s.etape + ':' + s.index, t = a.signal ? a.signal.texte : '';
     const connus = CASES.REPERES.flatMap(g => g[1]);
     const dici = [...new Set(c.etapes.flatMap(e => e.actions.map(x => x.signal && x.signal.texte)).filter(x => x && !connus.includes(x)))].sort((x, y) => x.localeCompare(y, 'fr'));
-    const libre = repereLibre === cle || (!!a.signal && !t);
-    const opt = x => h('option', { value: x, selected: !libre && t === x || null }, x);
-    const ecrire = (x, v) => { if (v) { x.signal = x.signal || {}; x.signal.texte = v; } else delete x.signal; if (x.auto) x.texte = CASES.phrase(c, x); };
+    const k = a.signal && a.signal.cases;
+    const construit = repereCases === cle || (!!k && repereLibre !== cle);
+    const libre = !construit && (repereLibre === cle || (!!a.signal && !t));
+    const opt = x => h('option', { value: x, selected: !libre && !construit && t === x || null }, x);
+    const ici = c => etape(s.etape).actions[s.index];
+    const refaire = (c, x) => { if (x.auto) x.texte = CASES.phrase(c, x); };
+    const ecrire = (c, x, v) => { if (v) { x.signal = { ...(x.signal && x.signal.role ? { role: x.signal.role } : {}), texte: v }; } else delete x.signal; refaire(c, x); };
+    // Une case du repère a changé : on refait son texte, et « donné par » suit le sujet quand c'est un rôle.
+    const majCases = fn => { ajoutOuvert = null; modifier(c => {
+      const x = ici(c); x.signal = x.signal || { texte: '' }; const kk = x.signal.cases = x.signal.cases || { lien: 'quand' };
+      fn(kk, c);
+      const suj = CASES.element(c, kk.sujet);
+      if (suj && suj.item.instrument) { delete kk.verbe; delete kk.cible; }
+      const v = CASES.verbe(kk.verbe, c), cib = CASES.element(c, kk.cible);
+      if (cib && v && cib.liste === 'objets' && !(cib.liste in v.prep)) delete kk.cible;
+      x.signal.texte = CASES.repere(c, kk);
+      if (suj && suj.liste === 'personnes' && c.roles.some(r => r.id === suj.item.id)) x.signal.role = suj.item.id;
+      refaire(c, x);
+    }); };
+    const champListe = (id, etiquette, enfants, change) => h('label', { class: 'i-champ', for: id }, h('span', null, etiquette), h('select', { id, onchange: ev => change(ev.target.value) }, enfants));
+    const cases = () => {
+      const kk = k || { lien: 'quand' }, suj = CASES.element(c, kk.sujet), instr = !!(suj && suj.item.instrument), v = CASES.verbe(kk.verbe, c);
+      const groupe = (l, nom, garde) => h('optgroup', { label: nom }, CASES.liste(c, l).filter(garde).map(x => h('option', { value: l + ':' + x.id, selected: kk.sujet === l + ':' + x.id || null }, x.nom)));
+      return h('div', { class: 'i-repere' },
+        champListe('insp-rep-lien', 'Quand', CASES.LIENS.map(l => h('option', { value: l.id, selected: (kk.lien || 'quand') === l.id || null }, l.nom)), val => majCases(x => { x.lien = val; })),
+        avecAjout('rep-sujet', champListe('insp-rep-sujet', 'Qui ou quoi', [h('option', { value: '' }, '—'), groupe('personnes', 'Personnes', () => true), groupe('objets', 'Instruments', x => x.instrument)],
+          val => majCases(x => { if (val) x.sujet = val; else delete x.sujet; })),
+          () => formAjout('ajout-rep-sujet', 'ex. le tenzo', nom => majCases((x, c) => { x.sujet = ajouterElement(c, 'personnes', nom); }))),
+        instr ? h('p', { class: 'i-note' }, 'Un instrument « sonne » : indiquez seulement le nombre de fois.') : avecAjout('rep-verbe', champListe('insp-rep-verbe', 'Action', [h('option', { value: '' }, '—'), CASES.verbes(c).filter(x => !x.instruments).map(x => h('option', { value: x.id, selected: kk.verbe === x.id || null }, x.nom))],
+          val => majCases(x => { if (val) x.verbe = val; else delete x.verbe; })),
+          () => formAjout('ajout-rep-verbe', 'comme dans la phrase, ex. balaie', nom => majCases((x, c) => { x.verbe = ajouterVerbe(c, nom); }))),
+        !instr && v ? avecAjout('rep-cible', champListe('insp-rep-cible', 'Objet, cible ou vers qui', [h('option', { value: '' }, '—'), groupesCibles(v, kk.cible)],
+          val => majCases(x => { if (val) x.cible = val; else delete x.cible; })),
+          () => formAjout('ajout-rep-cible', 'ex. la boîte à encens', (nom, l) => majCases((x, c) => { x.cible = ajouterElement(c, l, nom); }),
+            h('select', { 'aria-label': 'Type d’élément' }, h('option', { value: 'objets' }, 'Objet'), h('option', { value: 'personnes' }, 'Personne'), h('option', { value: 'lieux' }, 'Lieu')))) : null,
+        champListe('insp-rep-nombre', 'Nombre de fois', [h('option', { value: '' }, '—'), [1, 2, 3, 4, 5, 6, 7].map(n => h('option', { value: n, selected: kk.nombre === n || null }, String(n)))],
+          val => majCases(x => { const n = parseInt(val, 10); if (n > 0) x.nombre = n; else delete x.nombre; })),
+        h('p', { class: 'i-note i-apercu' }, t ? '↳ ' + t : 'Choisissez « qui ou quoi », puis l’action.'));
+    };
     return h('fieldset', { class: 'i-signal' }, h('legend', null, 'Signal (ce qui déclenche l’action)'),
       h('label', { class: 'i-champ', for: 'insp-signal-repere' }, h('span', null, 'Repère : quand exactement'),
         h('select', { id: 'insp-signal-repere', onchange: ev => {
           const v = ev.target.value;
-          if (v === '__libre__') { repereLibre = cle; peindreInspecteur(); const z = document.getElementById('insp-signal-texte'); if (z) z.focus(); return; }
-          repereLibre = null;
-          modifier(c => ecrire(etape(s.etape).actions[s.index], v));
+          if (v === '__libre__') { repereLibre = cle; repereCases = null; peindreInspecteur(); const z = document.getElementById('insp-signal-texte'); if (z) z.focus(); return; }
+          if (v === '__cases__') { repereCases = cle; repereLibre = null; peindreInspecteur(); return; }
+          repereLibre = null; repereCases = null;
+          modifier(c => ecrire(c, ici(c), v));
         } },
           h('option', { value: '' }, 'Aucun signal'),
+          h('option', { value: '__cases__', selected: construit || null }, 'Construire le repère avec des cases…'),
           CASES.REPERES.map(g => h('optgroup', { label: g[0] }, g[1].map(opt))),
           dici.length ? h('optgroup', { label: 'Dans cette cérémonie' }, dici.map(opt)) : null,
           h('option', { value: '__libre__', selected: libre || null }, 'Autre : écrire le repère…'))),
+      construit ? cases() : null,
       libre ? h('label', { class: 'i-champ', for: 'insp-signal-texte' }, h('span', null, 'Votre repère'),
-        h('input', { type: 'text', id: 'insp-signal-texte', value: t, placeholder: 'ex. quand le tenzo entre', onchange: ev => { const v = ev.target.value.trim(); repereLibre = null; modifier(c => ecrire(etape(s.etape).actions[s.index], v)); } })) : null,
+        h('input', { type: 'text', id: 'insp-signal-texte', value: t, placeholder: 'ex. quand le tenzo entre', onchange: ev => { const v = ev.target.value.trim(); repereLibre = null; modifier(c => ecrire(c, ici(c), v)); } })) : null,
       a.signal ? h('label', { class: 'i-champ', for: 'insp-signal-role' }, h('span', null, 'Donné par'),
-        h('select', { id: 'insp-signal-role', onchange: ev => modifier(c => { const x = etape(s.etape).actions[s.index]; if (!x.signal) return; if (ev.target.value) x.signal.role = ev.target.value; else delete x.signal.role; }) },
+        h('select', { id: 'insp-signal-role', onchange: ev => modifier(c => { const x = ici(c); if (!x.signal) return; if (ev.target.value) x.signal.role = ev.target.value; else delete x.signal.role; }) },
           h('option', { value: '' }, '—'), c.roles.map(r => h('option', { value: r.id, selected: a.signal.role === r.id || null }, r.nom)))) : null);
   }
   function peindreInspecteur() {

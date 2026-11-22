@@ -40,6 +40,7 @@ etapes[]      { id, phase, moment, minute?, option?, actions[], variantes[]? }
       serie     série libre de coups, ex. "7 5 3" ; continu : joué pendant toute l'étape
       motif     suite de frappes dans l’ordre, ex. ["ken", "ken", "gatsu"] (brique « Joue du… »)
     signal    { role, texte }                   repère dans le temps : « sur le gasshō du doshi »
+      cases   { lien, sujet, verbe, cible, nombre }   repère construit comme une action : « quand le doshi salue son zafu »
   variantes[] même forme qu'une action          version parallèle d'une étape
 ```
 

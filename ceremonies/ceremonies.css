@@ -302,6 +302,8 @@ body.mode-arme .b-case{background:var(--accent-soft)}
 .i-ou{color:var(--muted);font-size:.85em;margin:0 0 8px}
 .i-champ{display:block;margin:0 0 12px}
 .i-liste{margin:0 0 12px}
+.i-repere{border-left:3px solid var(--line);padding-left:10px;margin:0 0 12px}
+.i-apercu{color:var(--ink)}
 .il-ligne{display:flex;align-items:flex-end;gap:6px}
 .il-ligne .i-champ{flex:1;min-width:0;margin:0}
 .il-plus{flex:0 0 auto;width:2.2em;height:2.2em;font:inherit;font-size:1em;line-height:1;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;cursor:pointer}

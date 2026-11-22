@@ -179,6 +179,23 @@
     return majuscule(contracte(t));
   }
 
+  // Le repère d'un signal, construit comme une action : lien (« quand ») + qui ou quoi + action + objet + nombre.
+  //   k = { lien, sujet: "personnes:doshi" | "objets:inkin", verbe, cible, nombre }
+  //   → « quand le doshi salue son zafu », « quand l'inkin sonne deux fois »
+  const LIENS = [{ id: 'quand', nom: 'quand' }, { id: 'des-que', nom: 'dès que' }, { id: 'apres-que', nom: 'après que' }, { id: 'pendant-que', nom: 'pendant que' }];
+  const FOIS = ['', 'une', 'deux', 'trois', 'quatre', 'cinq', 'six', 'sept'];
+  function repere(c, k) {
+    if (!k) return '';
+    const lien = (LIENS.find(l => l.id === k.lien) || LIENS[0]).nom, suj = element(c, k.sujet);
+    if (!suj) return '';
+    let t = lien + ' ' + suj.item.nom;
+    if (suj.item.instrument) t += ' sonne';
+    else if (verbe(k.verbe, c)) { const ph = phrase(c, { verbe: k.verbe, cible: k.cible }); t += ' ' + ph.charAt(0).toLowerCase() + ph.slice(1); }
+    else return '';
+    if (k.nombre) t += ' ' + (FOIS[k.nombre] || k.nombre) + ' fois';
+    return contracte(t).replace(/\bque (?=[aeiouhéèêàâîôûAEIOUH])/g, 'qu’');
+  }
+
   // ---------- D'une case de tableur à des actions ----------
   const NOMBRES = { un: 1, une: 1, deux: 2, trois: 3, quatre: 4, cinq: 5, six: 6, sept: 7 };
   // Début de fragment → action. L'ordre compte.
@@ -313,7 +330,7 @@
     return out;
   }
 
-  const api = { VERBES, verbes, utiliser, LIEUX, PERSONNES, OBJETS, MANIERES, CONDITIONS, REPERES, LISTES, NOMS_LISTES, liste, element, verbe, condition, phrase, texteSons, analyser, majuscule };
+  const api = { VERBES, verbes, utiliser, LIENS, repere, LIEUX, PERSONNES, OBJETS, MANIERES, CONDITIONS, REPERES, LISTES, NOMS_LISTES, liste, element, verbe, condition, phrase, texteSons, analyser, majuscule };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   racine.DG_CASES = api;
 })(typeof window !== 'undefined' ? window : globalThis);
