@@ -728,6 +728,20 @@
     return h('fieldset', { class: 'i-cases' }, h('legend', null, etiquette), options.map(o => h('label', null,
       h('input', { type: 'checkbox', checked: coches.includes(o.id) || null, onchange: ev => modifier(c => appliquer(c, o.id, ev.target.checked), {}) }), ' ' + o.nom)));
   }
+  // Plusieurs manières à la fois (« mains en gasshō », « pied droit en premier »…) : cases à cocher, plus un ajout libre.
+  function manieres(a, maj) {
+    const choisies = (a.maniere || '').split(/\s*,\s*/).filter(Boolean);
+    const connues = CASES.MANIERES.map(m => m[0]);
+    const toutes = [...new Set([...choisies, ...connues])];
+    const ecrire = l => x => { if (l.length) x.maniere = l.join(', '); else delete x.maniere; };
+    const champ = h('input', { type: 'text', id: 'insp-maniere-ajout', placeholder: 'autre manière…', 'aria-label': 'Ajouter une manière' });
+    const ajouter = () => { const t = champ.value.trim().replace(/,/g, ' '); if (t && !choisies.includes(t)) maj(ecrire([...choisies, t])); };
+    champ.addEventListener('keydown', ev => { if (ev.key === 'Enter') { ev.preventDefault(); ajouter(); } });
+    return h('fieldset', { class: 'i-cases i-manieres' }, h('legend', null, 'Manière (plusieurs possibles)'),
+      toutes.map((m, k) => h('label', null, h('input', { type: 'checkbox', id: 'insp-man-' + k, checked: choisies.includes(m) || null,
+        onchange: ev => maj(ecrire(ev.target.checked ? [...choisies, m] : choisies.filter(x => x !== m))) }), ' ' + m)),
+      h('div', { class: 'p-ajout' }, champ, h('button', { type: 'button', onclick: ajouter }, 'Ajouter')));
+  }
   // Les cases de la phrase : action, objet ou cible, où, manière, nombre, condition, référence.
   function casesAction(s, a) {
     const v = CASES.verbe(a.verbe);
@@ -746,7 +760,7 @@
         if (v.instruments && val) { const ins = val.split(':')[1]; if (x.sons && x.sons.length) x.sons.forEach(so => { so.instrument = ins; }); else x.sons = [{ instrument: ins, coups: 1 }]; assurerSons(x.sons); }
       })) : null,
       v ? liste('insp-lieu', 'Où (repère dans le dojo)', [h('option', { value: '' }, '—'), CASES.liste(c, 'lieux').map(x => h('option', { value: 'lieux:' + x.id, selected: a.lieu === 'lieux:' + x.id || null }, x.ou || x.nom))], val => maj(x => { if (val) x.lieu = val; else delete x.lieu; })) : null,
-      v ? liste('insp-maniere', 'Manière', [h('option', { value: '' }, '—'), [...new Set([...(a.maniere ? [a.maniere] : []), ...CASES.MANIERES.map(m => m[0])])].map(m => h('option', { value: m, selected: a.maniere === m || null }, m))], val => maj(x => { if (val) x.maniere = val; else delete x.maniere; })) : null,
+      v ? manieres(a, maj) : null,
       v && v.id !== 'jouer' ? champ('Nombre de fois', a.nombre, ap((x, val) => { const n = parseInt(val, 10); if (n > 0) x.nombre = n; else delete x.nombre; }), { type: 'number' }) : null,
       liste('insp-condition', 'Condition', [h('option', { value: '' }, 'Aucune'), (c.conditions || []).concat(CASES.CONDITIONS).map(x => h('option', { value: x.id, selected: a.condition === x.id || null }, x.nom))], val => modifier(c => { const x = etape(s.etape).actions[s.index]; if (val) x.condition = val; else delete x.condition; })),
       champ('Référence (ex. GK p. 519)', a.ref, (c, val) => { const x = etape(s.etape).actions[s.index]; if (x) { if (val) x.ref = val; else delete x.ref; } }),

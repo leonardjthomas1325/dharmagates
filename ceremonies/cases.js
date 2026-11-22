@@ -105,7 +105,7 @@
     ['en silence', /en silence/i], ['en seiza', /en seiza/i], ['immobile', /immobile/i], ['lentement', /lentement/i],
     ['debout', /\bdebout\b/i], ['assis', /\bassis\b/i], ['seul', /\bseul\b/i],
     ['en dernier', /en dernier/i], ['pied droit en premier', /pied droit en premier/i], ['pied gauche en premier', /pied gauche en premier/i],
-    ['par la droite', /par la droite/i], ['en suivant le kokyo', /en suivant le kokyo/i], ['en suivant le doshi', /en suivant le doshi/i],
+    ['par la droite', /par la droite/i], ['par la gauche', /par la gauche(?! de)/i], ['par le pied droit', /par le pied droit/i], ['par le pied gauche', /par le pied gauche/i], ['en suivant le kokyo', /en suivant le kokyo/i], ['en suivant le doshi', /en suivant le doshi/i],
     ['kyosaku tenu vertical', /kyosaku tenu vertical/i], ['à vitesse normale', /vitesse « ?normale ?»|vitesse normale/i],
   ];
   // si : la condition dépend du choix « Qui officie ? » (remplie à la conversion).
