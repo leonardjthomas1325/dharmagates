@@ -25,10 +25,11 @@ glossaire[]   { terme, categorie, definition }
 etapes[]      { id, phase, moment, minute?, option?, actions[], variantes[]? }
     option    id d'une option ; absent = tronc commun
   actions[]   { roles[], texte, sons[]?, signal?, optionnel?,
-                verbe?, cible?, lieu?, maniere?, nombre?, condition?, ref?, si?, auto? }
+                verbe?, cible?, lieu?, vers?, maniere?, nombre?, condition?, ref?, si?, auto? }
     verbe     l'action (id de cases.js : allumer, gassho, jouer…) ; absent = texte libre
     cible     l'objet ou la cible, sous la forme "liste:id" ("objets:bougie", "personnes:doshi", "lieux:autel")
     lieu      repère dans le dojo, "lieux:id"
+    vers      vers qui (ou vers quoi) le geste est fait, "liste:id" ("personnes:doshi", "lieux:autel")
     maniere   texte court ("mains en shashu") ; nombre : nombre de fois
     condition id d'une condition ("au-besoin"…) ; ref : référence ("GK p. 519")
     si        { choix, est | pas } : l'action ne s'affiche que pour cette valeur du choix

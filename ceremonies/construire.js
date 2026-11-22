@@ -760,6 +760,7 @@
         if (v.instruments && val) { const ins = val.split(':')[1]; if (x.sons && x.sons.length) x.sons.forEach(so => { so.instrument = ins; }); else x.sons = [{ instrument: ins, coups: 1 }]; assurerSons(x.sons); }
       })) : null,
       v ? liste('insp-lieu', 'Où (repère dans le dojo)', [h('option', { value: '' }, '—'), CASES.liste(c, 'lieux').map(x => h('option', { value: 'lieux:' + x.id, selected: a.lieu === 'lieux:' + x.id || null }, x.ou || x.nom))], val => maj(x => { if (val) x.lieu = val; else delete x.lieu; })) : null,
+      v ? liste('insp-vers', 'Vers qui', [h('option', { value: '' }, '—'), ['personnes', 'lieux'].map(l => { const xs = CASES.liste(c, l).filter(x => (l === 'personnes' || x.nom !== x.ou)); return xs.length ? h('optgroup', { label: CASES.NOMS_LISTES[l] }, xs.map(x => h('option', { value: l + ':' + x.id, selected: a.vers === l + ':' + x.id || null }, x.nom))) : null; })], val => maj(x => { if (val) x.vers = val; else delete x.vers; })) : null,
       v ? manieres(a, maj) : null,
       v && v.id !== 'jouer' ? champ('Nombre de fois', a.nombre, ap((x, val) => { const n = parseInt(val, 10); if (n > 0) x.nombre = n; else delete x.nombre; }), { type: 'number' }) : null,
       liste('insp-condition', 'Condition', [h('option', { value: '' }, 'Aucune'), (c.conditions || []).concat(CASES.CONDITIONS).map(x => h('option', { value: x.id, selected: a.condition === x.id || null }, x.nom))], val => modifier(c => { const x = etape(s.etape).actions[s.index]; if (val) x.condition = val; else delete x.condition; })),

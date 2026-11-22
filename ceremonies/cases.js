@@ -162,6 +162,8 @@
     if (v.id === 'jouer') { const d = texteSons(c, a.sons); if (d) t += ' : ' + d; }
     const lieu = element(c, a.lieu);
     if (lieu) t += ' ' + (lieu.item.ou || 'à ' + lieu.item.nom);
+    const vers = element(c, a.vers);
+    if (vers) t += ' vers ' + vers.item.nom;
     if (a.maniere) t += ', ' + a.maniere;
     if (a.signal && a.signal.texte) t += ', ' + a.signal.texte;
     return majuscule(contracte(t));
@@ -249,7 +251,10 @@
     trouves.sort((x, y) => x.pos - y.pos);
     const cible = trouves.find(t => t.ref.split(':')[0] in v.prep && !t.item.instrument);
     if (cible) a.cible = cible.ref;
-    const lieu = trouves.find(t => t !== cible && t.ref.startsWith('lieux:'));
+    // « vers le doshi », « face au godo » : vers qui le geste est fait (si ce n'est pas déjà la cible).
+    const vers = trouves.find(t => t !== cible && !t.item.instrument && (t.ref.startsWith('personnes:') || t.item.nom !== t.item.ou) && /(?:\bvers|\bface (?:à|au|aux)|\ben direction (?:de|du|des))\s+(?:l['’]|le |la |les )?$/i.test(nu.slice(0, t.pos).replace(/(?:l['’]|le |la |les |au |aux |du |des )$/i, m => /^(au|aux|du|des) $/i.test(m) ? 'à ' : m)));
+    if (vers) a.vers = vers.ref;
+    const lieu = trouves.find(t => t !== cible && t !== vers && t.ref.startsWith('lieux:'));
     if (lieu) a.lieu = lieu.ref;
     const sansPar = texte.replace(/\([^()]*\)/g, ' ');
     const man = MANIERES.map(m => [m[0], sansPar.search(m[1])]).filter(m => m[1] >= 0).sort((x, y) => x[1] - y[1]).map(m => m[0]);
