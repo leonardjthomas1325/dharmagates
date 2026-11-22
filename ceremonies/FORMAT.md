@@ -20,6 +20,8 @@ options[]     { id, nom, description, exclut[]? }   ex. A, B, C ; exclut = optio
 formules[]    { id, nom, options[] }            combinaisons toutes faites (« Courte », « Complète »)
 choix[]       { id, nom, defaut, valeurs[{ id, nom }] }   ex. « Qui officie ? »
 lieux[], personnes[], objets[]   { id, nom, ou? }   éléments ajoutés aux listes de cases.js
+verbes[]      { id, nom, forme }               actions ajoutées (forme = le mot dans la phrase : « balaie »)
+conditions[]  { id, nom }                      conditions ajoutées (« s'il y a un kusen »)
 glossaire[]   { terme, categorie, definition }
 
 etapes[]      { id, phase, moment, minute?, option?, actions[], variantes[]? }

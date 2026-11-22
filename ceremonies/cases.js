@@ -136,7 +136,12 @@
     const e = liste(c, nomListe).find(x => x.id === id);
     return e ? { liste: nomListe, item: e } : null;
   }
-  const verbe = id => VERBES.find(v => v.id === id) || null;
+  // Les actions : le catalogue, plus celles que la cérémonie a ajoutées (c.verbes).
+  // « courante » = la cérémonie affichée, pour les appels qui ne la passent pas.
+  let courante = null;
+  const utiliser = c => { courante = c || null; };
+  const verbes = c => VERBES.concat((((c || courante) || {}).verbes || []).filter(v => v && v.id && !VERBES.some(x => x.id === v.id)).map(v => ({ prep: { objets: '' }, ...v })));
+  const verbe = (id, c) => verbes(c).find(v => v.id === id) || null;
   const condition = (c, id) => ((c && c.conditions) || []).concat(CONDITIONS).find(x => x.id === id) || null;
 
   // ---------- De cases à phrase ----------
@@ -156,7 +161,7 @@
   }
   // Fabrique la phrase affichée à partir des cases d'une action.
   function phrase(c, a) {
-    const v = verbe(a.verbe);
+    const v = verbe(a.verbe, c);
     if (!v) return a.texte || '';
     let t = v.forme;
     // Une seule case pour l'objet, la cible ou « vers qui » : si l'action ne prévoit pas ce type de cible, on écrit « vers … ».
@@ -308,7 +313,7 @@
     return out;
   }
 
-  const api = { VERBES, LIEUX, PERSONNES, OBJETS, MANIERES, CONDITIONS, REPERES, LISTES, NOMS_LISTES, liste, element, verbe, condition, phrase, texteSons, analyser, majuscule };
+  const api = { VERBES, verbes, utiliser, LIEUX, PERSONNES, OBJETS, MANIERES, CONDITIONS, REPERES, LISTES, NOMS_LISTES, liste, element, verbe, condition, phrase, texteSons, analyser, majuscule };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   racine.DG_CASES = api;
 })(typeof window !== 'undefined' ? window : globalThis);

@@ -301,6 +301,12 @@ body.mode-arme .b-case{background:var(--accent-soft)}
 .i-fermer{border:none;background:none;font-size:1.2em}
 .i-ou{color:var(--muted);font-size:.85em;margin:0 0 8px}
 .i-champ{display:block;margin:0 0 12px}
+.i-liste{margin:0 0 12px}
+.il-ligne{display:flex;align-items:flex-end;gap:6px}
+.il-ligne .i-champ{flex:1;min-width:0;margin:0}
+.il-plus{flex:0 0 auto;width:2.2em;height:2.2em;font:inherit;font-size:1em;line-height:1;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;cursor:pointer}
+.il-plus.actif{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.i-liste .p-ajout select{flex:0 0 auto;width:auto;font:inherit;font-size:.88em;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:.3em .4em}
 .i-champ > span{display:block;font-size:.82em;color:var(--muted);margin-bottom:3px}
 .i-champ input,.i-champ textarea,.i-champ select,.inspecteur select{width:100%;font:inherit;font-size:.95em;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:.45em .6em}
 .i-champ textarea{resize:vertical}

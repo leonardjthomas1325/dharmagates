@@ -590,13 +590,45 @@
     maj();
     return el;
   }
+  // ---------- Ajouter un élément à une liste ----------
+  const slug = nom => nom.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || nouvelId('x');
+  let ajoutOuvert = null;   // la liste de l'inspecteur dont le « + » est ouvert
+  // Le champ d'ajout : un texte, parfois un petit choix devant, et le bouton « Ajouter ».
+  function formAjout(id, exemple, ajouter, devant) {
+    const champ = h('input', { type: 'text', id, placeholder: exemple, 'aria-label': 'Nouvel élément' });
+    const go = () => { const nom = champ.value.trim(); if (nom) ajouter(nom, devant ? devant.value : null); };
+    champ.addEventListener('keydown', ev => { if (ev.key === 'Enter') { ev.preventDefault(); go(); } });
+    return h('div', { class: 'p-ajout' }, devant || null, champ, h('button', { type: 'button', onclick: go }, 'Ajouter'));
+  }
+  // Une liste de l'inspecteur avec son « + » : le champ d'ajout s'ouvre dessous.
+  function avecAjout(cle, champListe, form) {
+    const ouvert = ajoutOuvert === cle;
+    return h('div', { class: 'i-liste' },
+      h('div', { class: 'il-ligne' }, champListe,
+        h('button', { type: 'button', class: 'il-plus' + (ouvert ? ' actif' : ''), id: 'plus-' + cle, title: 'Ajouter un élément à cette liste', 'aria-label': 'Ajouter un élément à cette liste', 'aria-expanded': ouvert ? 'true' : 'false',
+          onclick: () => { ajoutOuvert = ouvert ? null : cle; peindreInspecteur(); const z = document.getElementById('ajout-' + cle); if (z) z.focus(); } }, '+')),
+      ouvert ? form() : null);
+  }
+  // Ajoute une action (verbe) à la cérémonie et renvoie son id. « forme » = le mot tel qu'il s'écrit dans la phrase.
+  function ajouterVerbe(c, forme) {
+    const f = forme.charAt(0).toLowerCase() + forme.slice(1), id = slug(f);
+    if (!CASES.verbe(id, c)) (c.verbes = c.verbes || []).push({ id, nom: CASES.majuscule(f), forme: f, prep: { objets: '' } });
+    return id;
+  }
+  // Ajoute un élément à une liste de cases (lieux, personnes, objets) et renvoie sa référence « liste:id ».
+  function ajouterElement(c, l, nom, plus) {
+    const id = slug(nom);
+    if (!CASES.liste(c, l).some(x => x.id === id)) (c[l] = c[l] || []).push({ id, nom, ...(plus || {}) });
+    return l + ':' + id;
+  }
+
   // Onglet Objets : trois listes (lieux, personnes, objets). On pose un élément sur une tuile ; on peut en ajouter.
   function sectionObjets(l) {
     const champ = h('input', { type: 'text', id: 'ajout-' + l, placeholder: { lieux: 'ex. près de la fenêtre', personnes: 'ex. le tenzo', objets: 'ex. la boîte à encens' }[l], 'aria-label': 'Ajouter à la liste ' + CASES.NOMS_LISTES[l] });
     const ajouter = () => {
       const nom = champ.value.trim();
       if (!nom) return;
-      const id = nom.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || nouvelId('x');
+      const id = slug(nom);
       if (CASES.liste(c, l).some(x => x.id === id)) { DG.message('« ' + nom + ' » est déjà dans la liste.'); return; }
       modifier(c => { (c[l] = c[l] || []).push({ id, nom }); });
     };
@@ -659,7 +691,8 @@
       const listes = {
         blocs: () => [itemPalette({ type: 'phase', libelle: 'Nouvelle phase', aide: 'Sépare la cérémonie en grandes parties' }, 'p-phase'),
           ...BLOCS.map(b => itemPalette({ type: 'bloc', item: b, libelle: b.nom, aide: b.etapes.length + ' étape(s)' }, 'p-bloc'))],
-        actions: () => [...CASES.VERBES.filter(v => !v.instruments).map(carteAction),
+        actions: () => [...CASES.verbes(c).filter(v => !v.instruments).map(carteAction),
+          formAjout('ajout-action', 'nouvelle action, ex. balaie', nom => modifier(c => { ajouterVerbe(c, nom); })),
           h('h3', { class: 'p-sous' }, 'Jouer'), carteJoue(), ...SONS.map(carteSon),
           itemPalette({ type: 'geste', item: LIBRE, libelle: LIBRE.nom, aide: 'Une action écrite à la main' }, 'p-geste')],
         objets: () => ['lieux', 'personnes', 'objets'].map(sectionObjets),
@@ -808,26 +841,29 @@
   }
   // Les cases de la phrase : action, objet ou cible, où, manière, nombre, condition, référence.
   function casesAction(s, a) {
-    const v = CASES.verbe(a.verbe);
+    const v = CASES.verbe(a.verbe, c);
     const maj = fn => modifier(c => { const x = etape(s.etape).actions[s.index]; if (!x) return; fn(x, c); if (x.verbe) { x.texte = CASES.phrase(c, x); x.auto = true; } });
     const ap = fn => (c, val) => { const x = etape(s.etape).actions[s.index]; if (!x) return; fn(x, val); if (x.verbe) { x.texte = CASES.phrase(c, x); x.auto = true; } };
     const liste = (id, etiquette, enfants, change) => h('label', { class: 'i-champ', for: id }, h('span', null, etiquette), h('select', { id, onchange: ev => change(ev.target.value) }, enfants));
+    // Après un ajout : on referme le « + » et l'élément ajouté est choisi pour cette action.
+    const ajoute = fn => { ajoutOuvert = null; maj(fn); };
+    const typeCible = () => h('select', { 'aria-label': 'Type d’élément' }, h('option', { value: 'objets' }, 'Objet'), h('option', { value: 'personnes' }, 'Personne'), h('option', { value: 'lieux' }, 'Lieu'));
     return h('fieldset', { class: 'i-phrase' }, h('legend', null, 'Les cases de la phrase'),
-      liste('insp-verbe', 'Action', [h('option', { value: '' }, 'Texte libre (pas de cases)'), CASES.VERBES.map(x => h('option', { value: x.id, selected: a.verbe === x.id || null }, x.nom))], val => maj((x, c) => {
+      avecAjout('verbe', liste('insp-verbe', 'Action', [h('option', { value: '' }, 'Texte libre (pas de cases)'), CASES.verbes(c).map(x => h('option', { value: x.id, selected: a.verbe === x.id || null }, x.nom))], val => maj((x, c) => {
         if (!val) { delete x.verbe; delete x.cible; delete x.auto; return; }
         x.verbe = val;
-        const nv = CASES.verbe(val), cib = CASES.element(c, x.cible);
+        const nv = CASES.verbe(val, c), cib = CASES.element(c, x.cible);
         if (cib && ((!(cib.liste in nv.prep) && (cib.liste === 'objets' || nv.instruments)) || !!cib.item.instrument !== !!nv.instruments)) delete x.cible;
-      })),
-      v ? liste('insp-cible', v.instruments ? 'Instrument' : 'Objet, cible ou vers qui', [h('option', { value: '' }, '—'), groupesCibles(v, a.cible)], val => maj((x, c) => {
+      })), () => formAjout('ajout-verbe', 'comme dans la phrase, ex. balaie', nom => ajoute((x, c) => { x.verbe = ajouterVerbe(c, nom); }))),
+      v ? (v.instruments ? (cle, champListe) => champListe : avecAjout)('cible', liste('insp-cible', v.instruments ? 'Instrument' : 'Objet, cible ou vers qui', [h('option', { value: '' }, '—'), groupesCibles(v, a.cible)], val => maj((x, c) => {
         if (val) x.cible = val; else delete x.cible;
         delete x.vers;
         if (v.instruments && val) { const ins = val.split(':')[1]; if (x.sons && x.sons.length) x.sons.forEach(so => { so.instrument = ins; }); else x.sons = [{ instrument: ins, coups: 1 }]; assurerSons(x.sons); }
-      })) : null,
-      v ? liste('insp-lieu', 'Où (repère dans le dojo)', [h('option', { value: '' }, '—'), CASES.liste(c, 'lieux').map(x => h('option', { value: 'lieux:' + x.id, selected: a.lieu === 'lieux:' + x.id || null }, x.ou || x.nom))], val => maj(x => { if (val) x.lieu = val; else delete x.lieu; })) : null,
+      })), () => formAjout('ajout-cible', 'ex. la boîte à encens', (nom, l) => ajoute((x, c) => { x.cible = ajouterElement(c, l, nom); }), typeCible())) : null,
+      v ? avecAjout('lieu', liste('insp-lieu', 'Où (repère dans le dojo)', [h('option', { value: '' }, '—'), CASES.liste(c, 'lieux').map(x => h('option', { value: 'lieux:' + x.id, selected: a.lieu === 'lieux:' + x.id || null }, x.ou || x.nom))], val => maj(x => { if (val) x.lieu = val; else delete x.lieu; })), () => formAjout('ajout-lieu', 'ex. près de la fenêtre', nom => ajoute((x, c) => { x.lieu = ajouterElement(c, 'lieux', nom, { ou: nom }); }))) : null,
       v ? manieres(a, maj) : null,
       v && v.id !== 'jouer' ? champ('Nombre de fois', a.nombre, ap((x, val) => { const n = parseInt(val, 10); if (n > 0) x.nombre = n; else delete x.nombre; }), { type: 'number' }) : null,
-      liste('insp-condition', 'Condition', [h('option', { value: '' }, 'Aucune'), (c.conditions || []).concat(CASES.CONDITIONS).map(x => h('option', { value: x.id, selected: a.condition === x.id || null }, x.nom))], val => modifier(c => { const x = etape(s.etape).actions[s.index]; if (val) x.condition = val; else delete x.condition; })),
+      avecAjout('condition', liste('insp-condition', 'Condition', [h('option', { value: '' }, 'Aucune'), (c.conditions || []).concat(CASES.CONDITIONS).map(x => h('option', { value: x.id, selected: a.condition === x.id || null }, x.nom))], val => modifier(c => { const x = etape(s.etape).actions[s.index]; if (val) x.condition = val; else delete x.condition; })), () => formAjout('ajout-condition', 'ex. s’il y a un kusen', nom => { ajoutOuvert = null; modifier(c => { const x = etape(s.etape).actions[s.index], id = slug(nom); if (!CASES.condition(c, id)) (c.conditions = c.conditions || []).push({ id, nom }); x.condition = id; }); })),
       champ('Référence (ex. GK p. 519)', a.ref, (c, val) => { const x = etape(s.etape).actions[s.index]; if (x) { if (val) x.ref = val; else delete x.ref; } }),
       v && !a.auto ? h('button', { type: 'button', class: 'lien', onclick: () => maj(() => {}) }, 'Refaire la phrase à partir des cases') : null,
       v && !a.auto ? h('p', { class: 'i-note' }, 'La phrase vient du tableau. Elle sera réécrite si vous changez une case.') : null);
@@ -910,11 +946,19 @@
       corps = [
         champ('Moment', e.moment, ap((x, v) => { x.moment = v; })),
         champ('Minute indicative (facultatif)', e.minute, ap((x, v) => { const n = parseInt(v, 10); if (isNaN(n)) delete x.minute; else x.minute = n; }), { type: 'number' }),
-        h('label', { class: 'i-champ', for: 'insp-phase' }, h('span', null, 'Phase'),
+        avecAjout('phase', h('label', { class: 'i-champ', for: 'insp-phase' }, h('span', null, 'Phase'),
           h('select', { id: 'insp-phase', onchange: ev => modifier(c => { etape(s.etape).phase = ev.target.value; }) }, c.phases.map(p => h('option', { value: p.id, selected: p.id === e.phase || null }, p.nom)))),
-        (c.options || []).length ? h('label', { class: 'i-champ', for: 'insp-option' }, h('span', null, 'Option'),
+          () => formAjout('ajout-phase', 'ex. Repas', nom => { ajoutOuvert = null; modifier(c => { const x = etape(s.etape), pid = nouvelId('p'); c.phases.splice(c.phases.findIndex(p => p.id === x.phase) + 1, 0, { id: pid, nom }); x.phase = pid; }); })),
+        avecAjout('option', h('label', { class: 'i-champ', for: 'insp-option' }, h('span', null, 'Option'),
           h('select', { id: 'insp-option', onchange: ev => modifier(c => { const x = etape(s.etape); if (ev.target.value) x.option = ev.target.value; else delete x.option; }) },
-            h('option', { value: '' }, 'Tronc commun'), c.options.map(o => h('option', { value: o.id, selected: e.option === o.id || null }, o.nom + (o.description ? ' : ' + o.description : ''))))) : null,
+            h('option', { value: '' }, 'Tronc commun'), (c.options || []).map(o => h('option', { value: o.id, selected: e.option === o.id || null }, o.nom + (o.description ? ' : ' + o.description : ''))))),
+          () => formAjout('ajout-option', 'ce que contient l’option', nom => { ajoutOuvert = null; modifier(c => {
+            c.options = c.options || [];
+            const lettre = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').find(l => !c.options.some(o => o.id === l)) || nouvelId('o');
+            c.options.push({ id: lettre, nom: 'Option ' + lettre, description: nom });
+            if (!(c.formules || []).length) c.formules = [{ id: 'tronc', nom: 'Tronc commun', options: [] }];
+            etape(s.etape).option = lettre;
+          }); })),
         h('fieldset', { class: 'i-variantes' }, h('legend', null, 'Variantes (une autre façon de faire)'),
           (e.variantes || []).map((v, k) => h('div', { class: 'i-variante' },
             champ('Variante ' + (k + 1), v.texte, ap((x, val) => { x.variantes[k].texte = val; }), { long: true, lignes: 2 }),

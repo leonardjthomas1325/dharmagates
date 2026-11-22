@@ -66,6 +66,7 @@
     cer = toutes().find(c => c.id === id) || MODELES[0] || imports[0];
     if (!cer) return;
     ecrire(CLE_COURANTE, cer.id);
+    if (CASES && CASES.utiliser) CASES.utiliser(cer);
     idx = { role: {}, instrument: {}, phase: {}, frappe: {}, fonction: {} };
     (cer.roles || []).forEach(r => idx.role[r.id] = r);
     (cer.instruments || []).forEach(i => idx.instrument[i.id] = i);
