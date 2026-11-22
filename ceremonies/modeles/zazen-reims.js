@@ -12,7 +12,8 @@
   const S = (instrument, d) => ({ instrument, ...(d || {}) });
   // Une action « jouer » : rôle, instrument, texte, sons, autres cases.
   const J = (role, instrument, texte, sons, cases) => A(role, texte, { verbe: 'jouer', cible: 'objets:' + instrument, sons: liste(sons), ...(cases || {}) });
-  const quand = texte => ({ signal: { texte } });
+  // Le signal : ce qui déclenche l'action (« quand… »), et le rôle qui le donne.
+  const quand = (texte, role) => ({ signal: role ? { role, texte } : { texte } });
   // Choix du lecteur : ce que fait le doshi pendant le sutra, et quel ekō est récité.
   const seiza = { si: { choix: 'doshi-sutra', est: 'seiza' } }, debout = { si: { choix: 'doshi-sutra', est: 'debout' } };
   const simple = { si: { choix: 'eko', est: 'simple' } }, patriarches = { si: { choix: 'eko', est: 'patriarches' } };
@@ -23,7 +24,7 @@
   // Les sons de la clochette pendant un sanpai : les mêmes au début et à la fin de la cérémonie.
   const sanpaiClochette = () => J('clochette', 'inkin', 'Clochette : un tchin au gasshō du 1er pai, un au gasshō du 2e pai, puis deux au 3e pai (au gasshō, puis quand le doshi plie les genoux)', [
     S('inkin', { coups: 1, quand: 'au gasshō du 1er pai' }), S('inkin', { coups: 1, quand: 'au gasshō du 2e pai' }),
-    S('inkin', { coups: 2, quand: 'au 3e pai : au gasshō, puis quand le doshi plie les genoux' })]);
+    S('inkin', { coups: 2, quand: 'au 3e pai : au gasshō, puis quand le doshi plie les genoux' })], quand('au gasshō de chaque pai du doshi, puis quand il plie les genoux', 'doshi'));
 
   const etapes = [
     // ----- Avant le zazen -----
@@ -40,30 +41,30 @@
       A('doshi', 'Gasshō vers la sangha', { verbe: 'gassho', cible: 'personnes:sangha' }),
       A('doshi', 'S’assoit', { verbe: 's-asseoir' }),
       J('shuso', 'shokei', 'Cloche du shusso : trois coups, quand le godo salue son zafu, quand il salue la sangha, puis quand il s’assoit', [
-        S('shokei', { coups: 1, quand: 'quand le godo salue son zafu' }), S('shokei', { coups: 1, quand: 'quand le godo salue la sangha' }), S('shokei', { coups: 1, quand: 'quand le godo s’assoit' })]),
-      A('*', 'Zazen', { verbe: 'zazen' }),
+        S('shokei', { coups: 1, quand: 'quand le godo salue son zafu' }), S('shokei', { coups: 1, quand: 'quand le godo salue la sangha' }), S('shokei', { coups: 1, quand: 'quand le godo s’assoit' })], quand('quand le godo salue son zafu, quand il salue la sangha, puis quand il s’assoit', 'doshi')),
+      A('*', 'Zazen', { verbe: 'zazen', ...quand('aux trois coups de la cloche du shusso', 'shuso') }),
     ], { minute: 0 }),
     E('p2', 'Kin hin', [
       J('shuso', 'shokei', 'Cloche du shusso : deux coups', S('shokei', { coups: 2 })),
-      A('*', 'Kin hin', { verbe: 'kinhin' }),
+      A('*', 'Kin hin', { verbe: 'kinhin', ...quand('quand la cloche du shusso sonne deux fois', 'shuso') }),
     ], { option: 'A' }),
     E('p2', 'Fin du kin hin', [
       J('shuso', 'shokei', 'Cloche du shusso : un coup', S('shokei', { coups: 1 })),
-      A('*', 'Retourne à sa place', { verbe: 'aller', cible: 'lieux:sa-place' }),
+      A('*', 'Retourne à sa place', { verbe: 'aller', cible: 'lieux:sa-place', ...quand('quand la cloche du shusso sonne une fois', 'shuso') }),
     ], { option: 'A' }),
     E('p2', 'Reprise du zazen', [
-      J('shuso', 'shokei', 'Cloche du shusso : trois coups (shijo), une fois la sangha et le godo installés et le calme revenu', S('shokei', { coups: 3 }), quand('une fois la sangha et le godo installés')),
-      A('*', 'Zazen', { verbe: 'zazen' }),
+      J('shuso', 'shokei', 'Cloche du shusso : trois coups (shijo), une fois la sangha et le godo installés et le calme revenu', S('shokei', { coups: 3 }), quand('une fois la sangha et le godo installés', 'doshi')),
+      A('*', 'Zazen', { verbe: 'zazen', ...quand('aux trois coups de la cloche du shusso', 'shuso') }),
     ], { option: 'A' }),
     E('p2', 'Fin du zazen', [
-      J('shuso', 'shokei', 'Cloche du shusso : un seul coup', S('shokei', { coups: 1 })),
+      J('shuso', 'shokei', 'Cloche du shusso : un seul coup', S('shokei', { coups: 1 }), quand('quand le godo décide de la fin du zazen', 'doshi')),
     ]),
 
     // ----- Cérémonie : entrée et sanpai -----
     E('p3', 'Appel à la cérémonie', [
       J('clochette', 'inkin', 'Clochette : deux tchin. « Levez-vous et alignez-vous pour la cérémonie »', S('inkin', { coups: 2 })),
-      A('*', 'Se lève', { verbe: 'se-lever' }),
-      A('*', 'Reste debout, alignée de chaque côté, mains en shashu', { verbe: 'rester', maniere: 'debout, ' + SHASHU }),
+      A('*', 'Se lève', { verbe: 'se-lever', ...quand('quand la clochette sonne deux fois', 'clochette') }),
+      A('*', 'Reste debout, alignée de chaque côté, mains en shashu', { verbe: 'rester', maniere: 'debout, ' + SHASHU, ...quand('quand la clochette sonne deux fois', 'clochette') }),
     ]),
     E('p3', 'Mise en place', [
       A('doshi', 'Se place devant le tatami', { verbe: 'aller', cible: 'lieux:devant-tatami' }),
@@ -77,21 +78,21 @@
       A('jisha', 'Apporte au doshi sa boîte à shoko, devant l’autel', { verbe: 'donner', cible: 'objets:boite-shoko', lieu: 'lieux:devant-autel', condition: 'ceremonie-non-ordinaire', optionnel: true }),
       A('doshi', 'Offre l’encens et le shoko', { verbe: 'offrir', cible: 'objets:encens' }),
       A('doshi', 'Gasshō', { verbe: 'gassho' }),
-      J('clochette', 'inkin', 'Clochette : un tchin au gasshō après l’offrande', S('inkin', { coups: 1 }), quand('au gasshō après l’offrande')),
+      J('clochette', 'inkin', 'Clochette : un tchin au gasshō après l’offrande', S('inkin', { coups: 1 }), quand('au gasshō après l’offrande', 'doshi')),
     ]),
     E('p3', 'Retour au tatami', [
       A('doshi', 'Redescend vers le tatami, mains en gasshō', { verbe: 'aller', cible: 'lieux:tatami', maniere: GASSHO }),
       A('shuso', 'Redescend avec le doshi, mains en gasshō', { verbe: 'accompagner', cible: 'personnes:doshi', maniere: GASSHO }),
       A('doshi', 'Monte sur le tatami du pied gauche', { verbe: 'aller', cible: 'lieux:tatami', maniere: 'par le pied gauche' }),
       J('clochette', 'inkin', 'Clochette : un tchin au milieu du tatami, un à l’angle du tatami, un quand le doshi monte sur le tatami', [
-        S('inkin', { coups: 1, quand: 'au milieu du tatami' }), S('inkin', { coups: 1, quand: 'à l’angle du tatami' }), S('inkin', { coups: 1, quand: 'quand le doshi monte sur le tatami' })]),
+        S('inkin', { coups: 1, quand: 'au milieu du tatami' }), S('inkin', { coups: 1, quand: 'à l’angle du tatami' }), S('inkin', { coups: 1, quand: 'quand le doshi monte sur le tatami' })], quand('au milieu du tatami, à l’angle du tatami, puis quand le doshi monte sur le tatami', 'doshi')),
     ]),
     E('p3', 'Ouverture du zagu', [
       A('doshi', 'Déplie son zagu, tourné vers la droite', { verbe: 'deplier', cible: 'objets:zagu' }),
-      J('clochette', 'inkin', 'Clochette : cascade pendant le dépliage du zagu', S('inkin', { frappe: 'cascade' }), quand('pendant le dépliage du zagu')),
+      J('clochette', 'inkin', 'Clochette : cascade pendant le dépliage du zagu', S('inkin', { frappe: 'cascade' }), quand('pendant le dépliage du zagu', 'doshi')),
     ]),
     E('p3', 'Sanpai', [
-      A(['doshi', '*'], 'Se prosterne trois fois (sanpai)', { verbe: 'se-prosterner', nombre: 3 }),
+      A(['doshi', '*'], 'Se prosterne trois fois (sanpai)', { verbe: 'se-prosterner', nombre: 3, ...quand('aux tchin de la clochette', 'clochette') }),
       sanpaiClochette(),
     ]),
     E('p3', 'Shoko du doshi', [
@@ -102,35 +103,35 @@
       A('doshi', 'Monte seul à l’autel', { verbe: 'aller', cible: 'lieux:autel', maniere: 'seul' }),
       A('doshi', 'Offre le shoko', { verbe: 'offrir', cible: 'objets:shoko' }),
       A('doshi', 'Gasshō vers le Bouddha de l’autel', { verbe: 'gassho', cible: 'personnes:bouddha' }),
-      J('kyosaku1', 'daikei', 'Grande cloche (dai keisu) : un coup normal (ken) au gasshō après l’offrande du shoko', S('daikei', { frappe: 'ken', coups: 1 }), quand('au gasshō après l’offrande du shoko')),
+      J('kyosaku1', 'daikei', 'Grande cloche (dai keisu) : un coup normal (ken) au gasshō après l’offrande du shoko', S('daikei', { frappe: 'ken', coups: 1 }), quand('au gasshō après l’offrande du shoko', 'doshi')),
     ]),
     E('p3', 'La sangha s’assoit', [
       A('doshi', 'Se retourne', { verbe: 'se-tourner' }),
       A('doshi', 'Redescend le long du tatami', { verbe: 'aller', cible: 'lieux:tatami' }),
-      J('clochette', 'inkin', 'Clochette : deux tchin, pour que la sangha s’assoie en seiza', S('inkin', { coups: 2 }), quand('quand le doshi redescend')),
-      A('*', 'S’assoit en seiza, mains en hokkai jō in', { verbe: 's-asseoir', maniere: 'en seiza, ' + HOKKAI }),
+      J('clochette', 'inkin', 'Clochette : deux tchin, pour que la sangha s’assoie en seiza', S('inkin', { coups: 2 }), quand('quand le doshi redescend', 'doshi')),
+      A('*', 'S’assoit en seiza, mains en hokkai jō in', { verbe: 's-asseoir', maniere: 'en seiza, ' + HOKKAI, ...quand('quand la clochette sonne deux fois', 'clochette') }),
     ]),
     E('p3', 'Sanpai du doshi', [
       A('doshi', 'Se prosterne trois fois sur le tatami', { verbe: 'se-prosterner', nombre: 3, lieu: 'lieux:sur-tatami' }),
-      J('kyosaku1', 'daikei', 'Grande cloche (dai keisu) : ken au gasshō du 1er pai, ken au gasshō du 2e pai, gatsu au gasshō du 3e pai. Le gatsu demande à l’ino d’entonner le titre du premier sutra', S('daikei', { motif: ['ken', 'ken', 'gatsu'], coups: 3 })),
+      J('kyosaku1', 'daikei', 'Grande cloche (dai keisu) : ken au gasshō du 1er pai, ken au gasshō du 2e pai, gatsu au gasshō du 3e pai. Le gatsu demande à l’ino d’entonner le titre du premier sutra', S('daikei', { motif: ['ken', 'ken', 'gatsu'], coups: 3 }), quand('au gasshō de chacun des trois pai du doshi', 'doshi')),
     ]),
 
     // ----- Les chants -----
     E('p4', 'Hannya shingyo : le titre', [
-      J('kyosaku2', 'mokugyo', 'Mokugyo : un coup, juste après le gatsu et avant que l’ino entonne le titre', S('mokugyo', { coups: 1 }), quand('juste après le gatsu')),
-      A('ino', 'Entonne le titre de l’Hannya shingyo, mains en gasshō', { verbe: 'entonner', cible: 'objets:sutra-coeur', maniere: GASSHO }),
+      J('kyosaku2', 'mokugyo', 'Mokugyo : un coup, juste après le gatsu et avant que l’ino entonne le titre', S('mokugyo', { coups: 1 }), quand('juste après le gatsu', 'kyosaku1')),
+      A('ino', 'Entonne le titre de l’Hannya shingyo, mains en gasshō', { verbe: 'entonner', cible: 'objets:sutra-coeur', maniere: GASSHO, ...quand('après le gatsu de la grande cloche et le coup de mokugyo', 'kyosaku2') }),
       A('doshi', 'S’assoit en seiza', { verbe: 's-asseoir', maniere: 'en seiza', ...seiza }),
       A('doshi', 'Se lève', { verbe: 'se-lever', ...debout }),
     ]),
     E('p4', 'Hannya shingyo : le chant', [
-      J('kyosaku1', 'daikei', 'Grande cloche (dai keisu) : un coup normal (ken), pour que la sangha chante avec l’ino', S('daikei', { frappe: 'ken', coups: 1 })),
-      A('*', 'Chante avec l’ino, mains en hokkai jō in', { verbe: 'chanter', cible: 'objets:sutra-coeur', maniere: 'en suivant l’ino, ' + HOKKAI }),
-      J('kyosaku2', 'mokugyo', 'Mokugyo : démarre progressivement, puis garde son rythme, calé sur l’ino', S('mokugyo', { continu: true })),
+      J('kyosaku1', 'daikei', 'Grande cloche (dai keisu) : un coup normal (ken), pour que la sangha chante avec l’ino', S('daikei', { frappe: 'ken', coups: 1 }), quand('après le titre entonné par l’ino', 'ino')),
+      A('*', 'Chante avec l’ino, mains en hokkai jō in', { verbe: 'chanter', cible: 'objets:sutra-coeur', maniere: 'en suivant l’ino, ' + HOKKAI, ...quand('au coup de la grande cloche', 'kyosaku1') }),
+      J('kyosaku2', 'mokugyo', 'Mokugyo : démarre progressivement, puis garde son rythme, calé sur l’ino', S('mokugyo', { continu: true }), quand('quand la sangha commence à chanter', 'ino')),
     ]),
     E('p4', 'Hannya shingyo : à « go »', [
       J('kyosaku1', 'daikei', 'Grande cloche (dai keisu) : un coup normal (ken) à « go »', S('daikei', { frappe: 'ken', coups: 1 }), quand('à « go »')),
-      A('ino', 'Met les mains en hokkai jō in', { verbe: 'rester', maniere: HOKKAI }),
-      A('doshi', 'Va à l’autel', { verbe: 'aller', cible: 'lieux:autel', ...debout }),
+      A('ino', 'Met les mains en hokkai jō in', { verbe: 'rester', maniere: HOKKAI, ...quand('au coup de la grande cloche à « go »', 'kyosaku1') }),
+      A('doshi', 'Va à l’autel', { verbe: 'aller', cible: 'lieux:autel', ...quand('au coup de la grande cloche à « go »', 'kyosaku1'), ...debout }),
       A('doshi', 'Offre le shoko', { verbe: 'offrir', cible: 'objets:shoko', ...debout }),
       A('doshi', 'Gasshō', { verbe: 'gassho', ...debout }),
       A('doshi', 'Redescend faire sanpai', { verbe: 'se-prosterner', nombre: 3, ...debout }),
@@ -140,89 +141,89 @@
     ], { option: 'B' }),
     E('p4', 'Hannya shingyo : à « ko (shin mu…) »', [
       J('kyosaku1', 'daikei', 'Grande cloche (dai keisu) : un coup normal (ken) à « ko (shin mu…) »', S('daikei', { frappe: 'ken', coups: 1 }), quand('à « ko (shin mu…) »')),
-      A('doshi', 'Met les mains en gasshō', { verbe: 'rester', maniere: GASSHO, ...seiza }),
-      A('doshi', 'Remonte à l’autel', { verbe: 'aller', cible: 'lieux:autel', ...debout }),
+      A('doshi', 'Met les mains en gasshō', { verbe: 'rester', maniere: GASSHO, ...quand('au coup de la grande cloche à « ko (shin mu…) »', 'kyosaku1'), ...seiza }),
+      A('doshi', 'Remonte à l’autel', { verbe: 'aller', cible: 'lieux:autel', ...quand('au coup de la grande cloche à « ko (shin mu…) »', 'kyosaku1'), ...debout }),
       A('doshi', 'Offre le shoko', { verbe: 'offrir', cible: 'objets:shoko', ...debout }),
     ]),
     E('p4', 'Hannya shingyo : à « ko (toku a…) »', [
       J('kyosaku1', 'daikei', 'Grande cloche (dai keisu) : un coup normal (ken) à « ko (toku a…) »', S('daikei', { frappe: 'ken', coups: 1 }), { ...quand('à « ko (toku a…) »'), ...seiza }),
-      A('doshi', 'Remet les mains en hokkai jō in', { verbe: 'rester', maniere: HOKKAI, ...seiza }),
+      A('doshi', 'Remet les mains en hokkai jō in', { verbe: 'rester', maniere: HOKKAI, ...quand('au coup de la grande cloche à « ko (toku a…) »', 'kyosaku1'), ...seiza }),
       A('doshi', 'Gasshō après l’offrande', { verbe: 'gassho', ...debout }),
-      J('kyosaku1', 'daikei', 'Grande cloche (dai keisu) : un coup normal (ken) au gasshō du doshi après l’offrande', S('daikei', { frappe: 'ken', coups: 1 }), { ...quand('au gasshō du doshi après l’offrande'), ...debout }),
+      J('kyosaku1', 'daikei', 'Grande cloche (dai keisu) : un coup normal (ken) au gasshō du doshi après l’offrande', S('daikei', { frappe: 'ken', coups: 1 }), { ...quand('au gasshō du doshi après l’offrande', 'doshi'), ...debout }),
       A('doshi', 'Redescend sur le tatami', { verbe: 'aller', cible: 'lieux:tatami', ...debout }),
       A('doshi', 'Reste debout', { verbe: 'rester', maniere: 'debout', ...debout }),
     ]),
     E('p4', 'Hannya shingyo : la fin', [
       J('kyosaku1', 'shokei', 'Petite cloche (sho keisu) : un coup après « gya tei, gya tei », un coup à « bo ji sowa ka »', [
         S('shokei', { coups: 1, quand: 'après « gya tei, gya tei »' }), S('shokei', { coups: 1, quand: 'à « bo ji sowa ka »' })]),
-      A('ino', 'Met les mains en gasshō au premier coup de sho keisu', { verbe: 'rester', maniere: GASSHO, ...quand('au premier coup de sho keisu') }),
+      A('ino', 'Met les mains en gasshō au premier coup de sho keisu', { verbe: 'rester', maniere: GASSHO, ...quand('au premier coup de sho keisu', 'kyosaku1') }),
     ]),
     E('p4', 'Quatre Vœux : le titre', [
       J('kyosaku1', 'daikei', 'Grande cloche (dai keisu) : gatsu, pour que l’ino entonne le Shigu seigan mon', S('daikei', { frappe: 'gatsu', coups: 1 })),
-      A('ino', 'Entonne les Quatre Vœux (Shigu seigan mon)', { verbe: 'entonner', cible: 'objets:quatre-voeux' }),
+      A('ino', 'Entonne les Quatre Vœux (Shigu seigan mon)', { verbe: 'entonner', cible: 'objets:quatre-voeux', ...quand('au gatsu de la grande cloche', 'kyosaku1') }),
     ]),
     E('p4', 'Quatre Vœux : le chant', [
-      A('*', 'Chante les Quatre Vœux, mains en gasshō', { verbe: 'chanter', cible: 'objets:quatre-voeux', maniere: GASSHO }),
+      A('*', 'Chante les Quatre Vœux, mains en gasshō', { verbe: 'chanter', cible: 'objets:quatre-voeux', maniere: GASSHO, ...quand('après le titre entonné par l’ino', 'ino') }),
       J('kyosaku1', 'daikei', 'Grande cloche (dai keisu) : un coup normal (ken) à chaque vœu', S('daikei', { frappe: 'ken', coups: 4 }), quand('à chaque vœu')),
     ]),
     E('p4', 'Ekō', [
       J('kyosaku1', 'daikei', 'Grande cloche (dai keisu) : gatsu, pour que l’ino chante l’ekō', S('daikei', { frappe: 'gatsu', coups: 1 })),
-      A('ino', 'Chante seul l’ekō, mains en gasshō', { verbe: 'reciter', cible: 'objets:eko', maniere: 'seul, ' + GASSHO }),
+      A('ino', 'Chante seul l’ekō, mains en gasshō', { verbe: 'reciter', cible: 'objets:eko', maniere: 'seul, ' + GASSHO, ...quand('au gatsu de la grande cloche', 'kyosaku1') }),
       // Ekō simple
       J('kyosaku1', 'shokei', 'Petite cloche (sho keisu) : un coup pour que la sangha se prosterne, un coup pour qu’elle se redresse', [
         S('shokei', { coups: 1, quand: 'pour que la sangha se prosterne' }), S('shokei', { coups: 1, quand: 'pour qu’elle se redresse' })], simple),
-      A('*', 'Se prosterne en gasshoteizu au premier coup de sho keisu', { verbe: 'se-prosterner', ...quand('au premier coup de sho keisu'), ...simple }),
-      A('*', 'Se redresse en gasshō au second coup, en restant en seiza, puis remet les mains en hokkai jō in', { verbe: 'rester', maniere: 'en seiza, ' + GASSHO, ...quand('au second coup de sho keisu'), ...simple }),
+      A('*', 'Se prosterne en gasshoteizu au premier coup de sho keisu', { verbe: 'se-prosterner', ...quand('au premier coup de sho keisu', 'kyosaku1'), ...simple }),
+      A('*', 'Se redresse en gasshō au second coup, en restant en seiza, puis remet les mains en hokkai jō in', { verbe: 'rester', maniere: 'en seiza, ' + GASSHO, ...quand('au second coup de sho keisu', 'kyosaku1'), ...simple }),
       // Ekō des Patriarches
       A('*', 'Garde les mains en gasshō pendant tout l’ekō des Patriarches', { verbe: 'rester', maniere: GASSHO, ...patriarches }),
       J('kyosaku1', 'daikei', 'Grande cloche (dai keisu) : coup amorti (nakkei) au début de chacun des sept premiers Patriarches, puis avant et après Keizan Jokin', [
         S('daikei', { frappe: 'nakkei', coups: 7, quand: 'au début de chacun des sept premiers Patriarches' }), S('daikei', { frappe: 'nakkei', coups: 2, quand: 'avant et après Keizan Jokin' })], patriarches),
       J('kyosaku1', 'shokei', 'Petite cloche (sho keisu) : un coup à la fin de « Keizan Jokin daisho », la sangha se prosterne ; un coup à « mukui », elle se redresse en seiza', [
         S('shokei', { coups: 1, quand: 'à la fin de « Keizan Jokin daisho »' }), S('shokei', { coups: 1, quand: 'à « mukui »' })], patriarches),
-      A('*', 'Se prosterne en gasshoteizu au premier coup de sho keisu, se redresse en seiza à « mukui »', { verbe: 'se-prosterner', ...quand('au premier coup de sho keisu'), ...patriarches }),
+      A('*', 'Se prosterne en gasshoteizu au premier coup de sho keisu, se redresse en seiza à « mukui »', { verbe: 'se-prosterner', ...quand('au premier coup de sho keisu', 'kyosaku1'), ...patriarches }),
       A('doshi', 'Se lève au tout début de l’énumération', { verbe: 'se-lever', ...quand('au tout début de l’énumération'), ...patriarches }),
       A('doshi', 'Offre le shoko', { verbe: 'offrir', cible: 'objets:shoko', ...patriarches }),
       A('doshi', 'Fait un pai à Shakamuni (la tête au sol à l’énoncé du nom), puis un pai pour Bashumitta, Nagyaharajuna, Bashubanzu, Bodaidaruma, Daikan Eno, Tozan Ryokai, Toshi Gisei et Eihei Dogen. À Eihei Dogen, reste prosterné jusqu’à « mukui »', { verbe: 'se-prosterner', nombre: 9, ...patriarches }),
     ]),
     E('p4', 'Ji ho san shi', [
-      A('*', 'Chante le Ji ho san shi, mains en gasshō', { verbe: 'chanter', cible: 'objets:ji-ho', maniere: GASSHO }),
+      A('*', 'Chante le Ji ho san shi, mains en gasshō', { verbe: 'chanter', cible: 'objets:ji-ho', maniere: GASSHO, ...quand('après l’ekō chanté par l’ino', 'ino') }),
       J('kyosaku1', 'daikei', 'Grande cloche (dai keisu) : un coup normal (ken) au début de chacun des trois versets. Les trois coups annoncent à la sangha que la cérémonie va se terminer', S('daikei', { frappe: 'ken', coups: 3 }), quand('au début de chaque verset')),
       A('doshi', 'Monte à l’autel pendant les versets', { verbe: 'aller', cible: 'lieux:autel', ...quand('pendant les versets') }),
       A('doshi', 'Offre le shoko', { verbe: 'offrir', cible: 'objets:shoko' }),
-      A('clochette', 'Se lève en même temps que le doshi', { verbe: 'se-lever', ...quand('en même temps que le doshi') }),
+      A('clochette', 'Se lève en même temps que le doshi', { verbe: 'se-lever', ...quand('en même temps que le doshi', 'doshi') }),
     ]),
 
     // ----- Fin de la cérémonie -----
     E('p5', 'La sangha se lève', [
       A('doshi', 'Gasshō après l’offrande, à la fin du dernier verset', { verbe: 'gassho', ...quand('à la fin du dernier verset') }),
-      J('clochette', 'inkin', 'Clochette : un tchin au gasshō après l’offrande du shoko', S('inkin', { coups: 1 }), quand('au gasshō après l’offrande du shoko')),
-      A('*', 'Se lève', { verbe: 'se-lever' }),
+      J('clochette', 'inkin', 'Clochette : un tchin au gasshō après l’offrande du shoko', S('inkin', { coups: 1 }), quand('au gasshō après l’offrande du shoko', 'doshi')),
+      A('*', 'Se lève', { verbe: 'se-lever', ...quand('au tchin de la clochette', 'clochette') }),
     ]),
     E('p5', 'Retour du doshi', [
       A('doshi', 'Se retourne', { verbe: 'se-tourner' }),
       A('doshi', 'Redescend le long du tatami', { verbe: 'aller', cible: 'lieux:tatami' }),
-      J('clochette', 'inkin', 'Clochette : cascade rapide dès que le doshi se retourne. Elle doit se terminer quand le doshi monte sur le tatami', S('inkin', { frappe: 'cascade' }), quand('dès que le doshi se retourne')),
+      J('clochette', 'inkin', 'Clochette : cascade rapide dès que le doshi se retourne. Elle doit se terminer quand le doshi monte sur le tatami', S('inkin', { frappe: 'cascade' }), quand('dès que le doshi se retourne', 'doshi')),
     ]),
     E('p5', 'Sanpai final', [
-      A(['doshi', '*'], 'Se prosterne trois fois (sanpai)', { verbe: 'se-prosterner', nombre: 3 }),
+      A(['doshi', '*'], 'Se prosterne trois fois (sanpai)', { verbe: 'se-prosterner', nombre: 3, ...quand('aux tchin de la clochette', 'clochette') }),
       sanpaiClochette(),
     ]),
     E('p5', 'Rangement du zagu', [
-      A(['doshi', '*'], 'Replie son zagu', { verbe: 'replier', cible: 'objets:zagu' }),
+      A(['doshi', '*'], 'Replie son zagu', { verbe: 'replier', cible: 'objets:zagu', ...quand('après le sanpai') }),
     ]),
     E('p5', 'Saluts', [
-      A(['doshi', '*'], 'Gasshō vers le Bouddha de l’autel', { verbe: 'gassho', cible: 'personnes:bouddha' }),
+      A(['doshi', '*'], 'Gasshō vers le Bouddha de l’autel', { verbe: 'gassho', cible: 'personnes:bouddha', ...quand('au tchin de la clochette', 'clochette') }),
       A('doshi', 'Gasshō vers la sangha', { verbe: 'gassho', cible: 'personnes:sangha' }),
-      A('*', 'Gasshō face au doshi', { verbe: 'gassho', cible: 'personnes:doshi' }),
+      A('*', 'Gasshō face au doshi', { verbe: 'gassho', cible: 'personnes:doshi', ...quand('au tchin de la clochette', 'clochette') }),
       J('clochette', 'inkin', 'Clochette : un tchin au gasshō face au Bouddha de l’autel, un tchin au gasshō face à la sangha', [
-        S('inkin', { coups: 1, quand: 'au gasshō face au Bouddha de l’autel' }), S('inkin', { coups: 1, quand: 'au gasshō face à la sangha' })]),
+        S('inkin', { coups: 1, quand: 'au gasshō face au Bouddha de l’autel' }), S('inkin', { coups: 1, quand: 'au gasshō face à la sangha' })], quand('au gasshō du doshi face au Bouddha de l’autel, puis face à la sangha', 'doshi')),
     ]),
     E('p5', 'Sortie du doshi', [
       A('clochette', 'Se place dans le gaitan, du côté de la sortie', { verbe: 'aller', cible: 'lieux:gaitan' }),
       A('doshi', 'Sort du dojo en passant la poutre', { verbe: 'aller', cible: 'lieux:poutre' }),
       A('doshi', 'Gasshō face à la clochette, dans le gaitan', { verbe: 'gassho', cible: 'personnes:clochette', lieu: 'lieux:gaitan' }),
       J('clochette', 'inkin', 'Clochette : un tchin quand le doshi passe la poutre, un tchin au gasshō face au doshi dans le gaitan', [
-        S('inkin', { coups: 1, quand: 'quand le doshi passe la poutre' }), S('inkin', { coups: 1, quand: 'au gasshō face au doshi' })]),
+        S('inkin', { coups: 1, quand: 'quand le doshi passe la poutre' }), S('inkin', { coups: 1, quand: 'au gasshō face au doshi' })], quand('quand le doshi passe la poutre, puis au gasshō face à face', 'doshi')),
     ]),
   ];
 
