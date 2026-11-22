@@ -104,7 +104,7 @@
   let selection = null;         // { type: 'action'|'etape'|'role'|'phase'|'ceremonie', ... }
   let arme = null;              // élément de palette « en main » (mode toucher-placer)
   let racine = null, grilleCadre = null, inspecteur = null, bandeau = null, corbeille = null;
-  let ongletPalette = 'blocs';   // blocs | actions | objets | roles
+  let ongletPalette = 'blocs';   // blocs | actions | objets | options | roles
 
   function etape(id) { return c.etapes.find(e => e.id === id); }
   function ordreRoles() { return c.roles.map(r => r.id); }
@@ -116,6 +116,10 @@
     c.etapes.forEach(e => { if (!ids.includes(e.phase)) e.phase = ids[0]; });
     const rang = new Map(ids.map((id, i) => [id, i]));
     c.etapes = c.etapes.map((e, i) => [e, i]).sort((a, b) => rang.get(a[0].phase) - rang.get(b[0].phase) || a[1] - b[1]).map(x => x[0]);
+    const opts = new Set((c.options || []).map(o => o.id));
+    (c.options || []).forEach(o => { if (o.exclut) { o.exclut = o.exclut.filter(x => opts.has(x) && x !== o.id); if (!o.exclut.length) delete o.exclut; } });
+    (c.formules || []).forEach(f => { f.options = (f.options || []).filter(x => opts.has(x)); });
+    c.etapes.forEach(e => { if (e.option && !opts.has(e.option)) delete e.option; });
     const roles = new Set(ordreRoles());
     for (const e of c.etapes) {
       e.actions = (e.actions || []).filter(a => { a.roles = a.roles.filter(r => r === '*' || roles.has(r)); return a.roles.length; });
@@ -266,6 +270,10 @@
       if (type === 'objet' && !tuile) return null;
       return { genre: 'case', etape: ligne.dataset.etape, role: ordreRoles()[i], el: cases[i], tuile, action: tuile ? +tuile.dataset.action : null };
     }
+    if (type === 'option') {
+      const ligne = el.closest('.b-ligne');
+      return ligne ? { genre: 'ligne', etape: ligne.dataset.etape, el: ligne } : null;
+    }
     if (type === 'bloc' || type === 'phase' || type === 'etape') {
       const z = el.closest('.b-ligne,.b-phase,.b-vide,.b-fin');
       if (!z) return null;
@@ -298,7 +306,7 @@
     const ligne = racine.querySelector('.repere');
     if (!t) { ligne.hidden = true; return; }
     if (t.genre === 'corbeille') { corbeille.classList.add('survol'); ligne.hidden = true; return; }
-    if (t.genre === 'case') { (t.tuile || t.el).classList.add('survol'); ligne.hidden = true; return; }
+    if (t.genre === 'case' || t.genre === 'ligne') { (t.tuile || t.el).classList.add('survol'); ligne.hidden = true; return; }
     const g = racine.querySelector('.grille').getBoundingClientRect(), r = t.ref.getBoundingClientRect();
     ligne.hidden = false;
     if (t.genre === 'insertion') {
@@ -322,6 +330,11 @@
       else if (ch.type === 'etape') modifier(c => { c.etapes = c.etapes.filter(e => e.id !== ch.etape); });
       else if (ch.type === 'col') supprimerRole(ch.role);
       else if (ch.type === 'phasex') supprimerPhase(ch.phase);
+      return;
+    }
+    if (t.genre === 'ligne') {
+      // Une option posée sur une étape : l'étape passe dans cette option (ou revient au tronc commun).
+      modifier(c => { const e = etape(t.etape); if (ch.option) e.option = ch.option; else delete e.option; }, { garderInspecteur: true });
       return;
     }
     if (t.genre === 'case') {
@@ -457,7 +470,7 @@
     el.classList.add('arme');
     document.body.classList.add('glisse-' + ch.type, 'mode-arme');
     bandeau.hidden = false;
-    remplace(bandeau, h('span', null, 'Touchez ', ch.type === 'bloc' || ch.type === 'phase' ? 'une ligne de la grille' : ch.type === 'role' ? 'l’en-tête des rôles' : ch.type === 'objet' ? 'une tuile de la grille' : 'une case de la grille',
+    remplace(bandeau, h('span', null, 'Touchez ', ch.type === 'bloc' || ch.type === 'phase' ? 'une ligne de la grille' : ch.type === 'role' ? 'l’en-tête des rôles' : ch.type === 'objet' ? 'une tuile de la grille' : ch.type === 'option' ? 'une étape de la grille' : 'une case de la grille',
       ' pour placer « ' + ch.libelle + ' ».'), h('button', { type: 'button', onclick: desarmer }, 'Annuler'));
   }
   function desarmer() {
@@ -588,8 +601,54 @@
       h('div', { class: 'p-liste p-puces' }, CASES.liste(c, l).map(x => itemPalette({ type: 'objet', ref: l + ':' + x.id, libelle: x.nom, aide: 'Glissez sur une tuile' }, 'p-objet' + (x.instrument ? ' p-instr' : '')))),
       h('div', { class: 'p-ajout' }, champ, h('button', { type: 'button', onclick: ajouter }, 'Ajouter')));
   }
+  // Onglet Options : créer, décrire, exclure, supprimer ; formules toutes faites. On pose une option sur une étape.
+  function sectionOptions() {
+    const opts = c.options || [], formules = c.formules || [];
+    const nb = id => c.etapes.filter(e => e.option === id).length;
+    const texte = (val, etiquette, change, place) => h('input', { type: 'text', value: val || '', 'aria-label': etiquette, placeholder: place || null, onchange: ev => change(ev.target.value.trim()) });
+    const cartes = opts.map(o => h('div', { class: 'p-opt' },
+      h('div', { class: 'po-tete' },
+        itemPalette({ type: 'option', option: o.id, libelle: o.nom, aide: 'Glissez sur une étape pour la mettre dans cette option' }, 'p-objet po-puce'),
+        h('small', null, nb(o.id) + ' étape' + (nb(o.id) > 1 ? 's' : '')),
+        h('button', { type: 'button', class: 'po-suppr', title: 'Supprimer ' + o.nom + ' (ses étapes reviennent au tronc commun)', 'aria-label': 'Supprimer ' + o.nom,
+          onclick: () => modifier(c => { c.options = c.options.filter(x => x.id !== o.id); }) }, '×')),
+      texte(o.description, 'Description de ' + o.nom, val => modifier(c => { const x = c.options.find(y => y.id === o.id); if (val) x.description = val; else delete x.description; }), 'Ce que contient l’option'),
+      opts.length > 1 ? h('div', { class: 'po-exclut' }, h('span', null, 'Jamais avec : '), opts.filter(x => x.id !== o.id).map(x => h('label', null,
+        h('input', { type: 'checkbox', checked: (o.exclut || []).includes(x.id) || null, onchange: ev => modifier(c => {
+          // L'exclusion vaut dans les deux sens.
+          const regle = (a, b) => { const y = c.options.find(z => z.id === a); const l = (y.exclut || []).filter(z => z !== b); if (ev.target.checked) l.push(b); if (l.length) y.exclut = l.sort(); else delete y.exclut; };
+          regle(o.id, x.id); regle(x.id, o.id);
+        }) }), ' ' + x.id))) : null));
+    const ajouterOption = () => modifier(c => {
+      c.options = c.options || [];
+      const lettre = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').find(l => !c.options.some(o => o.id === l)) || nouvelId('o');
+      c.options.push({ id: lettre, nom: 'Option ' + lettre });
+      if (!(c.formules || []).length) c.formules = [{ id: 'tronc', nom: 'Tronc commun', options: [] }];
+    });
+    const cartesFormules = formules.map(f => h('div', { class: 'p-opt' },
+      h('div', { class: 'po-tete' },
+        texte(f.nom, 'Nom de la formule', val => modifier(c => { if (val) c.formules.find(y => y.id === f.id).nom = val; })),
+        h('button', { type: 'button', class: 'po-suppr', title: 'Supprimer la formule', 'aria-label': 'Supprimer la formule ' + f.nom,
+          onclick: () => modifier(c => { c.formules = c.formules.filter(x => x.id !== f.id); }) }, '×')),
+      h('div', { class: 'po-exclut' }, opts.length ? opts.map(x => h('label', null,
+        h('input', { type: 'checkbox', checked: f.options.includes(x.id) || null, onchange: ev => modifier(c => {
+          const y = c.formules.find(z => z.id === f.id), ox = c.options.find(z => z.id === x.id);
+          y.options = y.options.filter(z => z !== x.id && !(ev.target.checked && (ox.exclut || []).includes(z)));
+          if (ev.target.checked) y.options.push(x.id);
+          y.options.sort();
+        }) }), ' ' + x.id)) : h('span', null, 'Tronc commun seul'))));
+    return [
+      h('section', { class: 'p-section' }, h('h3', null, 'Options'),
+        h('div', { class: 'p-liste p-puces' }, itemPalette({ type: 'option', option: '', libelle: 'Tronc commun', aide: 'Glissez sur une étape pour la sortir de son option' }, 'p-objet')),
+        h('div', { class: 'po-cartes' }, cartes),
+        h('button', { type: 'button', class: 'po-ajout', onclick: ajouterOption }, '+ Nouvelle option')),
+      opts.length ? h('section', { class: 'p-section' }, h('h3', null, 'Formules toutes faites'),
+        h('div', { class: 'po-cartes' }, cartesFormules),
+        h('button', { type: 'button', class: 'po-ajout', onclick: () => modifier(c => { (c.formules = c.formules || []).push({ id: nouvelId('f'), nom: 'Nouvelle formule', options: [] }); }) }, '+ Nouvelle formule')) : null,
+    ];
+  }
   function peindrePalette(z) {
-    const onglets = [['blocs', 'Blocs'], ['actions', 'Actions'], ['objets', 'Objets'], ['roles', 'Rôles']];
+    const onglets = [['blocs', 'Blocs'], ['actions', 'Actions'], ['objets', 'Objets'], ['options', 'Options'], ['roles', 'Rôles']];
     const corps = h('div', { class: 'p-corps' });
     const remplir = () => {
       const presents = new Set(ordreRoles());
@@ -600,12 +659,13 @@
           h('h3', { class: 'p-sous' }, 'Jouer'), carteJoue(), ...SONS.map(carteSon),
           itemPalette({ type: 'geste', item: LIBRE, libelle: LIBRE.nom, aide: 'Une action écrite à la main' }, 'p-geste')],
         objets: () => ['lieux', 'personnes', 'objets'].map(sectionObjets),
+        options: sectionOptions,
         roles: () => [...rolesCatalogue().filter(r => !presents.has(r.id)).map(r => itemPalette({ type: 'role', item: r, libelle: r.nom, aide: r.resume }, 'p-role')),
           itemPalette({ type: 'role', item: null, libelle: 'Nouveau rôle…' }, 'p-role')],
       };
       remplace(corps, h('p', { class: 'p-aide' },
-        { blocs: 'Glissez un bloc entre deux lignes : il ajoute une ou plusieurs étapes toutes faites.', actions: 'Choisissez l’action et, dans son menu, l’objet ou la cible. Glissez ensuite dans la case d’un rôle. « Jouer » : choisissez l’instrument et le motif (+ Ken, + Gatsu, + Cascade) ou une série comme 7 5 3.', objets: 'Glissez un lieu, une personne ou un objet sur une tuile pour compléter son action. Vous pouvez ajouter vos propres éléments.', roles: 'Glissez un rôle dans l’en-tête de la grille pour ajouter une colonne.' }[ongletPalette]),
-        h('div', { class: 'p-liste' + (ongletPalette === 'objets' ? ' p-sections' : '') }, listes[ongletPalette]()));
+        { blocs: 'Glissez un bloc entre deux lignes : il ajoute une ou plusieurs étapes toutes faites.', actions: 'Choisissez l’action et, dans son menu, l’objet ou la cible. Glissez ensuite dans la case d’un rôle. « Jouer » : choisissez l’instrument et le motif (+ Ken, + Gatsu, + Cascade) ou une série comme 7 5 3.', objets: 'Glissez un lieu, une personne ou un objet sur une tuile pour compléter son action. Vous pouvez ajouter vos propres éléments.', options: 'Une option est un groupe d’étapes qu’on ajoute ou non à la cérémonie. Créez une option, puis glissez-la sur les étapes qui en font partie.', roles: 'Glissez un rôle dans l’en-tête de la grille pour ajouter une colonne.' }[ongletPalette]),
+        h('div', { class: 'p-liste' + (ongletPalette === 'objets' || ongletPalette === 'options' ? ' p-sections' : '') }, listes[ongletPalette]()));
     };
     const barre = h('div', { class: 'p-onglets', role: 'tablist' }, onglets.map(([id, nom]) => h('button', {
       type: 'button', role: 'tab', 'aria-selected': id === ongletPalette ? 'true' : 'false', class: id === ongletPalette ? 'actif' : null,
