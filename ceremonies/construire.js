@@ -832,6 +832,33 @@
       v && !a.auto ? h('button', { type: 'button', class: 'lien', onclick: () => maj(() => {}) }, 'Refaire la phrase à partir des cases') : null,
       v && !a.auto ? h('p', { class: 'i-note' }, 'La phrase vient du tableau. Elle sera réécrite si vous changez une case.') : null);
   }
+  // Signal d'une action : le repère (« quand exactement ») se choisit dans une liste, ou s'écrit ; puis qui le donne.
+  let repereLibre = null;   // action dont on écrit le repère à la main
+  function signal(s, a, ap) {
+    const cle = s.etape + ':' + s.index, t = a.signal ? a.signal.texte : '';
+    const connus = CASES.REPERES.flatMap(g => g[1]);
+    const dici = [...new Set(c.etapes.flatMap(e => e.actions.map(x => x.signal && x.signal.texte)).filter(x => x && !connus.includes(x)))].sort((x, y) => x.localeCompare(y, 'fr'));
+    const libre = repereLibre === cle || (!!a.signal && !t);
+    const opt = x => h('option', { value: x, selected: !libre && t === x || null }, x);
+    const ecrire = (x, v) => { if (v) { x.signal = x.signal || {}; x.signal.texte = v; } else delete x.signal; if (x.auto) x.texte = CASES.phrase(c, x); };
+    return h('fieldset', { class: 'i-signal' }, h('legend', null, 'Signal (ce qui déclenche l’action)'),
+      h('label', { class: 'i-champ', for: 'insp-signal-repere' }, h('span', null, 'Repère : quand exactement'),
+        h('select', { id: 'insp-signal-repere', onchange: ev => {
+          const v = ev.target.value;
+          if (v === '__libre__') { repereLibre = cle; peindreInspecteur(); const z = document.getElementById('insp-signal-texte'); if (z) z.focus(); return; }
+          repereLibre = null;
+          modifier(c => ecrire(etape(s.etape).actions[s.index], v));
+        } },
+          h('option', { value: '' }, 'Aucun signal'),
+          CASES.REPERES.map(g => h('optgroup', { label: g[0] }, g[1].map(opt))),
+          dici.length ? h('optgroup', { label: 'Dans cette cérémonie' }, dici.map(opt)) : null,
+          h('option', { value: '__libre__', selected: libre || null }, 'Autre : écrire le repère…'))),
+      libre ? h('label', { class: 'i-champ', for: 'insp-signal-texte' }, h('span', null, 'Votre repère'),
+        h('input', { type: 'text', id: 'insp-signal-texte', value: t, placeholder: 'ex. quand le tenzo entre', onchange: ev => { const v = ev.target.value.trim(); repereLibre = null; modifier(c => ecrire(etape(s.etape).actions[s.index], v)); } })) : null,
+      a.signal ? h('label', { class: 'i-champ', for: 'insp-signal-role' }, h('span', null, 'Donné par'),
+        h('select', { id: 'insp-signal-role', onchange: ev => modifier(c => { const x = etape(s.etape).actions[s.index]; if (!x.signal) return; if (ev.target.value) x.signal.role = ev.target.value; else delete x.signal.role; }) },
+          h('option', { value: '' }, '—'), c.roles.map(r => h('option', { value: r.id, selected: a.signal.role === r.id || null }, r.nom)))) : null);
+  }
   function peindreInspecteur() {
     if (!inspecteur) return;
     const s = selection;
@@ -869,10 +896,7 @@
           h('select', { id: 'insp-ajout-son', onchange: ev => { const it = ev.target.value === 'motif' ? (JOUE.motif.length ? { son: sonMotif(JOUE.instrument, JOUE.motif) } : null) : SONS.some(x => x.id === ev.target.value) && sonRegle(ev.target.value); if (it) modifier(c => { const x = etape(s.etape).actions[s.index]; const so = sonPropre(it.son); assurerSons([so]); (x.sons = x.sons || []).push(so); }); } },
             h('option', { value: '' }, '+ Ajouter un son…'), SONS.map(x => h('option', { value: x.id }, x.nom)),
             h('option', { value: 'motif' }, 'Motif « Joue du… » de la palette'))),
-        h('fieldset', { class: 'i-signal' }, h('legend', null, 'Signal (ce qui déclenche l’action)'),
-          h('select', { id: 'insp-signal-role', onchange: ev => modifier(c => { const x = etape(s.etape).actions[s.index]; if (!ev.target.value) { delete x.signal; return; } x.signal = x.signal || { texte: 'sur le gasshō du ' + DG.nomRole(ev.target.value).toLowerCase() }; x.signal.role = ev.target.value; }) },
-            h('option', { value: '' }, 'Aucun signal'), c.roles.map(r => h('option', { value: r.id, selected: a.signal && a.signal.role === r.id || null }, 'Donné par : ' + r.nom))),
-          a.signal ? champ('Repère : quand exactement', a.signal.texte, ap((x, v) => { x.signal.texte = v; if (x.auto) x.texte = CASES.phrase(c, x); })) : null),
+        signal(s, a, ap),
         h('label', { class: 'i-case' }, h('input', { type: 'checkbox', checked: a.optionnel || null, onchange: ev => modifier(c => { const x = etape(s.etape).actions[s.index]; if (ev.target.checked) x.optionnel = true; else delete x.optionnel; }) }), ' Facultatif'),
         h('div', { class: 'i-boutons' },
           h('button', { type: 'button', onclick: () => { let k; modifier(c => { const ee = etape(s.etape); ee.actions.splice(s.index + 1, 0, copie(ee.actions[s.index])); k = s.index + 1; }, { garderInspecteur: true }); choisirSel({ type: 'action', etape: s.etape, index: k }); } }, 'Dupliquer'),

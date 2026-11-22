@@ -107,6 +107,12 @@
     ['par la droite', /par la droite/i], ['par la gauche', /par la gauche(?! de)/i], ['par le pied droit', /par le pied droit/i], ['par le pied gauche', /par le pied gauche/i], ['en suivant le kokyo', /en suivant le kokyo/i], ['en suivant le doshi', /en suivant le doshi/i],
     ['kyosaku tenu vertical', /kyosaku tenu vertical/i], ['à vitesse normale', /vitesse « ?normale ?»|vitesse normale/i],
   ];
+  // Repères du signal : « quand exactement » l'action se fait. Liste proposée dans Construire ; on peut aussi écrire le sien.
+  const REPERES = [
+    ['Gestes de l’officiant', ['sur le gasshō du doshi', 'au gasshō de chaque pai du doshi', 'quand le doshi plie les genoux', 'quand le doshi salue son zafu', 'quand le doshi salue la sangha', 'quand le doshi s’assoit', 'quand le doshi se lève', 'quand le doshi se retourne', 'quand le doshi monte à l’autel', 'quand le doshi redescend de l’autel', 'après l’offrande d’encens', 'quand le doshi déplie son zagu', 'quand le doshi entre dans le dojo', 'quand le doshi sort du dojo']],
+    ['Sons', ['au son du moppan', 'quand le shōkei sonne une fois', 'quand le shōkei sonne deux fois', 'quand le shōkei sonne trois fois', 'quand l’inkin sonne une fois', 'quand l’inkin sonne deux fois', 'pendant la cascade de l’inkin', 'au coup de daikei', 'au coup étouffé (gatsu) du daikei', 'après le coup de mokugyo']],
+    ['Chants', ['après le titre entonné', 'quand la sangha commence à chanter', 'à chaque verset', 'à la fin du chant', 'pendant l’ekō', 'à la fin de l’ekō']],
+  ];
   // si : la condition dépend du choix « Qui officie ? » (remplie à la conversion).
   const CONDITIONS = [
     { id: 'si-officie', nom: 'si c’est lui qui officie' },
@@ -302,7 +308,7 @@
     return out;
   }
 
-  const api = { VERBES, LIEUX, PERSONNES, OBJETS, MANIERES, CONDITIONS, LISTES, NOMS_LISTES, liste, element, verbe, condition, phrase, texteSons, analyser, majuscule };
+  const api = { VERBES, LIEUX, PERSONNES, OBJETS, MANIERES, CONDITIONS, REPERES, LISTES, NOMS_LISTES, liste, element, verbe, condition, phrase, texteSons, analyser, majuscule };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   racine.DG_CASES = api;
 })(typeof window !== 'undefined' ? window : globalThis);
