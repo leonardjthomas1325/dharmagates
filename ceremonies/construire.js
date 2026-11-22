@@ -1,5 +1,5 @@
 // Constructeur de cérémonie par glisser-déposer (onglet « Construire »).
-// On glisse des blocs, des gestes, des sons et des rôles depuis la palette vers la grille
+// On glisse des blocs, des actions, des objets et des rôles depuis la palette vers la grille
 // étapes × rôles ; on déplace les tuiles, les lignes et les colonnes ; on supprime en glissant
 // vers la corbeille. Au doigt : toucher un élément de la palette, puis toucher l'endroit voulu.
 // S'appuie sur window.DG, exposé par ceremonies.js (chargé juste après ce fichier).
@@ -7,31 +7,13 @@
   'use strict';
 
   // ---------- Catalogues de la palette ----------
-  const GESTES = [
-    { id: 'gassho', nom: 'Gasshō', texte: 'Gasshō.' },
-    { id: 'shashu', nom: 'Debout en shashu', texte: 'Debout, mains en shashu.' },
-    { id: 'gassho-assis', nom: 'Gasshō assis', texte: 'Gasshō assis.' },
-    { id: 'lever', nom: 'Se lever', texte: 'Se lève lentement.' },
-    { id: 'salut-zafu', nom: 'Salut au zafu', texte: 'Gasshō vers son zafu.' },
-    { id: 'salut-rang', nom: 'Salut au rang d’en face', texte: 'Gasshō vers le rang d’en face.' },
-    { id: 'zazen', nom: 'Zazen', texte: 'Zazen immobile, en silence.' },
-    { id: 'kinhin', nom: 'Kinhin', texte: 'Kinhin.' },
-    { id: 'seiza', nom: 'S’assoit en seiza', texte: 'S’assoit en seiza.' },
-    { id: 'sanpai', nom: 'Sanpai', texte: 'Trois fois gasshō puis prosternation (pai).' },
-    { id: 'suit', nom: 'Suit le dōshi', texte: 'Trois fois gasshō puis prosternation, en suivant le dōshi.' },
-    { id: 'chante', nom: 'Chante', texte: 'Chante en suivant le kokyō.' },
-    { id: 'encens', nom: 'Offre l’encens', texte: 'Fait l’offrande d’encens.' },
-    { id: 'zagu', nom: 'Déplie le zagu', texte: 'Déplie son zagu.' },
-    { id: 'allumer', nom: 'Allumer', texte: 'Allume la bougie.', options: [['bougie', 'la bougie', 'Allume la bougie.'], ['charbon', 'le charbon', 'Allume le charbon.'], ['encens', 'l’encens', 'Allume l’encens.']] },
-    { id: 'kyosaku', nom: 'Kyōsaku', texte: 'Offre le kyōsaku si on le demande.' },
-    { id: 'postures', nom: 'Corrige les postures', texte: 'Corrige les postures.' },
-    { id: 'kusen', nom: 'Kusen', texte: 'Donne le kusen.' },
-    { id: 'libre', nom: 'Texte libre…', texte: 'Nouvelle action.' },
-  ];
+  // Actions (verbes) et objets (lieux, personnes, objets, instruments) viennent de cases.js.
+  const CASES = window.DG_CASES;
+  const LIBRE = { id: 'libre', nom: 'Texte libre…', texte: 'Nouvelle action.' };
   // Un instrument par étiquette ; on règle sur l'étiquette le nombre de coups et la frappe avant de la glisser.
   const SONS = [
     { id: 'shokei', nom: 'Shōkei', cloche: true, coups: 1 },
-    { id: 'keisu', nom: 'Keisu', cloche: true, coups: 1 },
+    { id: 'daikei', nom: 'Daikei', cloche: true, coups: 1 },
     { id: 'inkin', nom: 'Inkin', cloche: true, coups: 1 },
     { id: 'mokugyo', nom: 'Mokugyo', cloche: false, coups: 0 },
     { id: 'moppan', nom: 'Moppan', cloche: false, coups: 0 },
@@ -50,7 +32,7 @@
     const libelle = i.nom + (r.frappe === 'cascade' ? ' · cascade' : (r.coups ? ' ×' + r.coups : '') + (r.frappe ? ' · ' + (r.frappe === 'ken' ? 'Ken' : 'Gatsu') : ''));
     return { id, son, texte, nom: libelle };
   }
-  // Toutes les cloches (shōkei, keisu, inkin) se frappent en Ken ou en Gatsu ; la cascade est une série de coups.
+  // Toutes les cloches (shōkei, daikei, inkin) se frappent en Ken ou en Gatsu ; la cascade est une série de coups.
   const FRAPPES = [{ id: 'ken', nom: 'Ken (normal)' }, { id: 'gatsu', nom: 'Gatsu (étouffé)' }, { id: 'cascade', nom: 'Cascade' }];
   // Dans un bloc, "f" désigne une fonction (on cherche le rôle qui la porte) et "*" tous les autres.
   const S = (instrument, coups, frappe, quand) => ({ instrument, coups, frappe, quand });
@@ -75,15 +57,15 @@
       { f: '*', texte: 'Trois fois gasshō puis prosternation, en suivant le dōshi.' }] }] },
     { id: 'chant', nom: 'Chant d’un sutra', etapes: [
       { moment: 'Chant', actions: [{ f: 'voix', texte: 'Annonce le titre du sutra.' }] },
-      { moment: 'Chant', actions: [{ f: 'keisu', texte: 'Un coup normal de keisu marque le début du chant.', sons: [S('keisu', 1, 'ken')], signal: { f: 'voix', texte: 'après l’annonce du kokyō' } }] },
+      { moment: 'Chant', actions: [{ f: 'daikei', texte: 'Un coup normal de daikei marque le début du chant.', sons: [S('daikei', 1, 'ken')], signal: { f: 'voix', texte: 'après l’annonce du kokyō' } }] },
       { moment: 'Chant', actions: [
         { f: 'voix', texte: 'Lance et mène le chant, mains en gasshō.' },
-        { f: 'keisu', texte: 'Ponctue le chant de coups normaux de keisu, puis un coup étouffé pour clore.', sons: [S('keisu', null, 'ken', 'pendant le chant'), S('keisu', 1, 'gatsu', 'pour clore')] },
+        { f: 'daikei', texte: 'Ponctue le chant de coups normaux de daikei, puis un coup étouffé pour clore.', sons: [S('daikei', null, 'ken', 'pendant le chant'), S('daikei', 1, 'gatsu', 'pour clore')] },
         { f: 'mokugyo', texte: 'Donne le rythme au mokugyo.', sons: [S('mokugyo', null, null, 'pendant tout le chant')] },
         { f: '*', texte: 'Chante en suivant le kokyō.' }] }] },
     { id: 'eko', nom: 'Ekō', etapes: [{ moment: 'Ekō', actions: [
       { f: 'voix', texte: 'Récite seul l’ekō (la dédicace).' },
-      { f: 'keisu', texte: 'Ponctue l’ekō de coups normaux de keisu.', sons: [S('keisu', null, 'ken')] },
+      { f: 'daikei', texte: 'Ponctue l’ekō de coups normaux de daikei.', sons: [S('daikei', null, 'ken')] },
       { f: '*', texte: 'En silence, mains en gasshō.' }] }] },
     { id: 'salutations', nom: 'Salutations finales', etapes: [
       { moment: 'Salutations finales', actions: [{ f: 'officiant', texte: 'Gasshō vers le Bouddha.' }, { f: 'inkin', texte: 'Un coup.', sons: [S('inkin', 1)], signal: { f: 'officiant', texte: 'sur le gasshō du dōshi' } }] },
@@ -122,7 +104,7 @@
   let selection = null;         // { type: 'action'|'etape'|'role'|'phase'|'ceremonie', ... }
   let arme = null;              // élément de palette « en main » (mode toucher-placer)
   let racine = null, grilleCadre = null, inspecteur = null, bandeau = null, corbeille = null;
-  let ongletPalette = 'blocs';
+  let ongletPalette = 'blocs';   // blocs | actions | objets | roles
 
   function etape(id) { return c.etapes.find(e => e.id === id); }
   function ordreRoles() { return c.roles.map(r => r.id); }
@@ -205,7 +187,7 @@
       if (s.frappe && !c.frappes.some(f => f.id === s.frappe) && fr[s.frappe]) c.frappes.push(copie(fr[s.frappe]));
     }
   }
-  const sonPropre = s => { const o = {}; for (const k of ['instrument', 'coups', 'frappe', 'quand']) if (s[k] != null && s[k] !== '') o[k] = s[k]; if (s.motif && s.motif.length) o.motif = s.motif.slice(); return o; };
+  const sonPropre = s => { const o = {}; for (const k of ['instrument', 'coups', 'frappe', 'quand', 'serie', 'continu']) if (s[k] != null && s[k] !== '') o[k] = s[k]; if (s.motif && s.motif.length) o.motif = s.motif.slice(); return o; };
 
   // ---------- Glisser-déposer (souris, stylet ; au doigt par les poignées) ----------
   let enCours = null, ignorerClic = false, rafDefile = 0;
@@ -274,13 +256,14 @@
     const el = document.elementFromPoint(x, y);
     if (!el || !racine || !racine.contains(el)) return null;
     if (el.closest('.corbeille')) return ['action', 'etape', 'col', 'phasex'].includes(type) ? { genre: 'corbeille' } : null;
-    if (type === 'geste' || type === 'son' || type === 'action') {
+    if (type === 'geste' || type === 'son' || type === 'action' || type === 'objet') {
       const ligne = el.closest('.b-ligne');
       if (!ligne) return null;
       const cases = [...ligne.querySelectorAll('.b-case')];
       const i = cases.findIndex(k => { const r = k.getBoundingClientRect(); return x >= r.left && x < r.right; });
       if (i < 0) return null;
-      const tuile = type === 'son' ? el.closest('.tuile') : null;
+      const tuile = type === 'son' || type === 'objet' ? el.closest('.tuile') : null;
+      if (type === 'objet' && !tuile) return null;
       return { genre: 'case', etape: ligne.dataset.etape, role: ordreRoles()[i], el: cases[i], tuile, action: tuile ? +tuile.dataset.action : null };
     }
     if (type === 'bloc' || type === 'phase' || type === 'etape') {
@@ -344,7 +327,7 @@
     if (t.genre === 'case') {
       if (ch.type === 'geste') {
         let idx;
-        modifier(c => { const e = etape(t.etape); e.actions.push({ roles: [t.role], texte: ch.item.texte }); idx = e.actions.length - 1; }, { garderInspecteur: true });
+        modifier(c => { const e = etape(t.etape); e.actions.push({ roles: [t.role], texte: ch.item.texte, ...(ch.item.cases ? { ...ch.item.cases, auto: true } : {}) }); idx = e.actions.length - 1; }, { garderInspecteur: true });
         selApres({ type: 'action', etape: t.etape, index: idx }, ch.item.id === 'libre');
       } else if (ch.type === 'son') {
         let idx = t.action;
@@ -352,9 +335,17 @@
           const e = etape(t.etape), s = sonPropre(ch.item.son);
           assurerSons([s]);
           if (idx != null && e.actions[idx]) (e.actions[idx].sons = e.actions[idx].sons || []).push(s);
-          else { e.actions.push({ roles: [t.role], texte: ch.item.texte, sons: [s] }); idx = e.actions.length - 1; }
+          else { const a = { roles: [t.role], texte: ch.item.texte, sons: [s], verbe: 'jouer', cible: 'objets:' + s.instrument, auto: true }; a.texte = CASES.phrase(c, a); e.actions.push(a); idx = e.actions.length - 1; }
         }, { garderInspecteur: true });
         selApres({ type: 'action', etape: t.etape, index: idx });
+      } else if (ch.type === 'objet') {
+        // Un objet posé sur une tuile devient sa cible ; un lieu devient le « où » si la cible est déjà prise.
+        const a0 = etape(t.etape).actions[t.action], v = a0 && CASES.verbe(a0.verbe), l = ch.ref.split(':')[0];
+        if (!v) { DG.message('Choisissez d’abord une action pour cette tuile (touchez-la, puis « Action »).'); return; }
+        const enCible = l in v.prep && !(l === 'lieux' && a0.cible && !a0.cible.startsWith('lieux:')) && !(v.id === 'jouer');
+        if (!enCible && l !== 'lieux') { DG.message('« ' + v.nom + ' » ne se combine pas avec « ' + ch.libelle + ' ».'); return; }
+        modifier(c => { const a = etape(t.etape).actions[t.action]; if (enCible) a.cible = ch.ref; else a.lieu = ch.ref; a.texte = CASES.phrase(c, a); a.auto = true; }, { garderInspecteur: true });
+        selApres({ type: 'action', etape: t.etape, index: t.action });
       } else if (ch.type === 'action') {
         let idx;
         modifier(c => {
@@ -466,7 +457,7 @@
     el.classList.add('arme');
     document.body.classList.add('glisse-' + ch.type, 'mode-arme');
     bandeau.hidden = false;
-    remplace(bandeau, h('span', null, 'Touchez ', ch.type === 'bloc' || ch.type === 'phase' ? 'une ligne de la grille' : ch.type === 'role' ? 'l’en-tête des rôles' : 'une case de la grille',
+    remplace(bandeau, h('span', null, 'Touchez ', ch.type === 'bloc' || ch.type === 'phase' ? 'une ligne de la grille' : ch.type === 'role' ? 'l’en-tête des rôles' : ch.type === 'objet' ? 'une tuile de la grille' : 'une case de la grille',
       ' pour placer « ' + ch.libelle + ' ».'), h('button', { type: 'button', onclick: desarmer }, 'Annuler'));
   }
   function desarmer() {
@@ -519,9 +510,9 @@
     return el;
   }
   // Brique « Joue du… » : on choisit l'instrument puis on compose un motif de coups (Ken, Gatsu, cascade).
-  const ARTICLE = { shokei: 'du shōkei', keisu: 'du keisu', inkin: 'de l’inkin', mokugyo: 'du mokugyo', moppan: 'du moppan' };
+  const ARTICLE = { shokei: 'du shōkei', daikei: 'du daikei', inkin: 'de l’inkin', mokugyo: 'du mokugyo', moppan: 'du moppan' };
   const COURT = { ken: 'Ken', gatsu: 'Gatsu', cascade: 'Cascade' };
-  const JOUE = { instrument: 'keisu', motif: ['ken', 'ken', 'gatsu'] };
+  const JOUE = { instrument: 'daikei', motif: ['ken', 'ken', 'gatsu'], serie: '' };
   function sonMotif(instrument, motif) {
     const son = { instrument, motif: motif.slice() };
     const frappes = motif.filter(m => m !== 'cascade').length;
@@ -539,6 +530,9 @@
   function carteJoue() {
     const el = h('div', { class: 'p-item p-son p-joue', tabindex: '0', role: 'button' });
     const charge = () => {
+      const nomI0 = (SONS.find(i => i.id === JOUE.instrument) || {}).nom || JOUE.instrument;
+      if (JOUE.serie.trim()) return { type: 'son', libelle: 'Joue ' + ARTICLE[JOUE.instrument] + ' · ' + JOUE.serie.trim(),
+        item: { son: { instrument: JOUE.instrument, serie: JOUE.serie.trim() }, texte: 'Joue ' + ARTICLE[JOUE.instrument] + ' : ' + JOUE.serie.trim() + '.', nom: nomI0 } };
       if (!JOUE.motif.length) return null;
       const nomI = (SONS.find(i => i.id === JOUE.instrument) || {}).nom || JOUE.instrument;
       return { type: 'son', libelle: 'Joue ' + ARTICLE[JOUE.instrument] + ' · ' + texteMotif(JOUE.motif),
@@ -548,47 +542,70 @@
       const choix = h('select', { class: 'ps-frappe', 'aria-label': 'Instrument', onchange: ev => { JOUE.instrument = ev.target.value; } },
         SONS.map(i => h('option', { value: i.id, selected: i.id === JOUE.instrument || null }, i.nom)));
       remplace(el, h('span', { class: 'ps-nom' }, 'Joue ', choix),
-        editeurMotif(JOUE.motif, n => { JOUE.motif = n; peindre(); }));
+        editeurMotif(JOUE.motif, n => { JOUE.motif = n; peindre(); }),
+        h('label', { class: 'ps-serie' }, 'ou série : ', h('input', { type: 'text', id: 'joue-serie', list: 'joue-series', placeholder: '7 5 3', value: JOUE.serie || null, size: '7', oninput: ev => { JOUE.serie = ev.target.value; } }),
+          h('datalist', { id: 'joue-series' }, h('option', { value: '7 5 3' }))));
       el.title = 'Composez le motif, puis glissez dans une case ou sur une tuile.';
     };
     glissable(el, charge);
-    el.addEventListener('click', ev => { if (ev.target.closest('button,select')) return; const ch = charge(); if (ch) armer(ch, el); });
+    el.addEventListener('click', ev => { if (ev.target.closest('button,select,input')) return; const ch = charge(); if (ch) armer(ch, el); });
     el.addEventListener('keydown', ev => { if ((ev.key === 'Enter' || ev.key === ' ') && ev.target === el) { ev.preventDefault(); const ch = charge(); if (ch) armer(ch, el); } });
     peindre();
     return el;
   }
-  // Geste à options (ex. Allumer : bougie, charbon, encens) : on choisit l'option sur l'étiquette avant de glisser.
-  const CHOIX_GESTE = {};
-  function carteGeste(g) {
-    const opt = () => g.options.find(o => o[0] === CHOIX_GESTE[g.id]) || g.options[0];
-    const choix = h('select', { class: 'ps-frappe', 'aria-label': g.nom + ' : quoi ?' },
-      g.options.map(o => h('option', { value: o[0], selected: opt()[0] === o[0] || null }, o[1])));
-    const el = h('div', { class: 'p-item p-geste p-option', tabindex: '0', role: 'button' }, h('span', { class: 'ps-nom' }, g.nom), choix);
-    const charge = () => { const o = opt(); return { type: 'geste', item: { id: g.id + '-' + o[0], texte: o[2] }, libelle: g.nom + ' ' + o[1] }; };
-    const maj = () => { el.title = opt()[2] + ' Glissez dans une case, ou touchez puis touchez une case.'; };
-    choix.addEventListener('change', () => { CHOIX_GESTE[g.id] = choix.value; maj(); });
+  // Carte d'action : le verbe, et la liste des objets ou cibles qui lui vont. On choisit, puis on glisse.
+  const CHOIX_ACTION = {};
+  function groupesCibles(v, selection) {
+    return Object.keys(v.prep).map(l => h('optgroup', { label: CASES.NOMS_LISTES[l] },
+      CASES.liste(c, l).filter(x => !!x.instrument === !!v.instruments).map(x => h('option', { value: l + ':' + x.id, selected: selection === l + ':' + x.id || null }, x.nom))));
+  }
+  function carteAction(v) {
+    const aCibles = Object.keys(v.prep).length > 0;
+    const choix = aCibles ? h('select', { class: 'ps-frappe', 'aria-label': v.nom + ' : quoi ou vers qui ?' }, h('option', { value: '' }, '—'), groupesCibles(v, CHOIX_ACTION[v.id])) : null;
+    const el = h('div', { class: 'p-item p-geste p-option', tabindex: '0', role: 'button' }, h('span', { class: 'ps-nom' }, v.nom), choix);
+    const cases = () => ({ verbe: v.id, ...(CHOIX_ACTION[v.id] ? { cible: CHOIX_ACTION[v.id] } : {}) });
+    const charge = () => { const k = cases(), t = CASES.phrase(c, k); return { type: 'geste', item: { id: v.id, texte: t, cases: k }, libelle: t }; };
+    const maj = () => { el.title = CASES.phrase(c, cases()) + '. Glissez dans une case, ou touchez puis touchez une case.'; };
+    if (choix) choix.addEventListener('change', () => { CHOIX_ACTION[v.id] = choix.value; maj(); });
     glissable(el, charge);
     el.addEventListener('click', ev => { if (ev.target.closest('select')) return; armer(charge(), el); });
     el.addEventListener('keydown', ev => { if ((ev.key === 'Enter' || ev.key === ' ') && ev.target === el) { ev.preventDefault(); armer(charge(), el); } });
     maj();
     return el;
   }
+  // Onglet Objets : trois listes (lieux, personnes, objets). On pose un élément sur une tuile ; on peut en ajouter.
+  function sectionObjets(l) {
+    const champ = h('input', { type: 'text', id: 'ajout-' + l, placeholder: { lieux: 'ex. près de la fenêtre', personnes: 'ex. le tenzo', objets: 'ex. la boîte à encens' }[l], 'aria-label': 'Ajouter à la liste ' + CASES.NOMS_LISTES[l] });
+    const ajouter = () => {
+      const nom = champ.value.trim();
+      if (!nom) return;
+      const id = nom.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || nouvelId('x');
+      if (CASES.liste(c, l).some(x => x.id === id)) { DG.message('« ' + nom + ' » est déjà dans la liste.'); return; }
+      modifier(c => { (c[l] = c[l] || []).push({ id, nom }); });
+    };
+    champ.addEventListener('keydown', ev => { if (ev.key === 'Enter') { ev.preventDefault(); ajouter(); } });
+    return h('section', { class: 'p-section' }, h('h3', null, CASES.NOMS_LISTES[l]),
+      h('div', { class: 'p-liste p-puces' }, CASES.liste(c, l).map(x => itemPalette({ type: 'objet', ref: l + ':' + x.id, libelle: x.nom, aide: 'Glissez sur une tuile' }, 'p-objet' + (x.instrument ? ' p-instr' : '')))),
+      h('div', { class: 'p-ajout' }, champ, h('button', { type: 'button', onclick: ajouter }, 'Ajouter')));
+  }
   function peindrePalette(z) {
-    const onglets = [['blocs', 'Blocs'], ['gestes', 'Gestes'], ['sons', 'Sons'], ['roles', 'Rôles']];
+    const onglets = [['blocs', 'Blocs'], ['actions', 'Actions'], ['objets', 'Objets'], ['roles', 'Rôles']];
     const corps = h('div', { class: 'p-corps' });
     const remplir = () => {
       const presents = new Set(ordreRoles());
       const listes = {
-        blocs: [itemPalette({ type: 'phase', libelle: 'Nouvelle phase', aide: 'Sépare la cérémonie en grandes parties' }, 'p-phase'),
+        blocs: () => [itemPalette({ type: 'phase', libelle: 'Nouvelle phase', aide: 'Sépare la cérémonie en grandes parties' }, 'p-phase'),
           ...BLOCS.map(b => itemPalette({ type: 'bloc', item: b, libelle: b.nom, aide: b.etapes.length + ' étape(s)' }, 'p-bloc'))],
-        gestes: GESTES.map(g => g.options ? carteGeste(g) : itemPalette({ type: 'geste', item: g, libelle: g.nom, aide: g.texte }, 'p-geste')),
-        sons: [carteJoue(), ...SONS.map(carteSon)],
-        roles: [...rolesCatalogue().filter(r => !presents.has(r.id)).map(r => itemPalette({ type: 'role', item: r, libelle: r.nom, aide: r.resume }, 'p-role')),
+        actions: () => [...CASES.VERBES.filter(v => !v.instruments).map(carteAction),
+          h('h3', { class: 'p-sous' }, 'Jouer'), carteJoue(), ...SONS.map(carteSon),
+          itemPalette({ type: 'geste', item: LIBRE, libelle: LIBRE.nom, aide: 'Une action écrite à la main' }, 'p-geste')],
+        objets: () => ['lieux', 'personnes', 'objets'].map(sectionObjets),
+        roles: () => [...rolesCatalogue().filter(r => !presents.has(r.id)).map(r => itemPalette({ type: 'role', item: r, libelle: r.nom, aide: r.resume }, 'p-role')),
           itemPalette({ type: 'role', item: null, libelle: 'Nouveau rôle…' }, 'p-role')],
       };
       remplace(corps, h('p', { class: 'p-aide' },
-        { blocs: 'Glissez un bloc entre deux lignes : il ajoute une ou plusieurs étapes toutes faites.', gestes: 'Glissez un geste dans la case d’un rôle.', sons: '« Joue du… » : choisissez l’instrument, composez le motif (+ Ken, + Gatsu, + Cascade ; touchez un coup pour le retirer), puis glissez. Les étiquettes en dessous servent aux sons simples.', roles: 'Glissez un rôle dans l’en-tête de la grille pour ajouter une colonne.' }[ongletPalette]),
-        h('div', { class: 'p-liste' }, listes[ongletPalette]));
+        { blocs: 'Glissez un bloc entre deux lignes : il ajoute une ou plusieurs étapes toutes faites.', actions: 'Choisissez l’action et, dans son menu, l’objet ou la cible. Glissez ensuite dans la case d’un rôle. « Jouer » : choisissez l’instrument et le motif (+ Ken, + Gatsu, + Cascade) ou une série comme 7 5 3.', objets: 'Glissez un lieu, une personne ou un objet sur une tuile pour compléter son action. Vous pouvez ajouter vos propres éléments.', roles: 'Glissez un rôle dans l’en-tête de la grille pour ajouter une colonne.' }[ongletPalette]),
+        h('div', { class: 'p-liste' + (ongletPalette === 'objets' ? ' p-sections' : '') }, listes[ongletPalette]()));
     };
     const barre = h('div', { class: 'p-onglets', role: 'tablist' }, onglets.map(([id, nom]) => h('button', {
       type: 'button', role: 'tab', 'aria-selected': id === ongletPalette ? 'true' : 'false', class: id === ongletPalette ? 'actif' : null,
@@ -663,6 +680,7 @@
           h('span', { class: 'poignee', title: 'Glisser pour déplacer l’étape', 'aria-hidden': 'true' }, '⋮⋮'),
           h('span', { class: 'm-texte' }, nouveau ? e.moment : h('span', { class: 'idem' }, '〃 ', e.moment)),
           e.minute != null ? h('span', { class: 'minute' }, e.minute + ' min') : null,
+          e.option ? h('span', { class: 'tag opt' }, 'Option ' + e.option) : null,
           e.variantes && e.variantes.length ? h('span', { class: 'tag' }, 'variante') : null);
         glissable(mom.querySelector('.poignee'), () => ({ type: 'etape', etape: e.id, libelle: e.moment }), { doigt: true });
         glissable(mom, () => ({ type: 'etape', etape: e.id, libelle: e.moment }));
@@ -710,6 +728,31 @@
     return h('fieldset', { class: 'i-cases' }, h('legend', null, etiquette), options.map(o => h('label', null,
       h('input', { type: 'checkbox', checked: coches.includes(o.id) || null, onchange: ev => modifier(c => appliquer(c, o.id, ev.target.checked), {}) }), ' ' + o.nom)));
   }
+  // Les cases de la phrase : action, objet ou cible, où, manière, nombre, condition, référence.
+  function casesAction(s, a) {
+    const v = CASES.verbe(a.verbe);
+    const maj = fn => modifier(c => { const x = etape(s.etape).actions[s.index]; if (!x) return; fn(x, c); if (x.verbe) { x.texte = CASES.phrase(c, x); x.auto = true; } });
+    const ap = fn => (c, val) => { const x = etape(s.etape).actions[s.index]; if (!x) return; fn(x, val); if (x.verbe) { x.texte = CASES.phrase(c, x); x.auto = true; } };
+    const liste = (id, etiquette, enfants, change) => h('label', { class: 'i-champ', for: id }, h('span', null, etiquette), h('select', { id, onchange: ev => change(ev.target.value) }, enfants));
+    return h('fieldset', { class: 'i-phrase' }, h('legend', null, 'Les cases de la phrase'),
+      liste('insp-verbe', 'Action', [h('option', { value: '' }, 'Texte libre (pas de cases)'), CASES.VERBES.map(x => h('option', { value: x.id, selected: a.verbe === x.id || null }, x.nom))], val => maj((x, c) => {
+        if (!val) { delete x.verbe; delete x.cible; delete x.auto; return; }
+        x.verbe = val;
+        const nv = CASES.verbe(val), cib = CASES.element(c, x.cible);
+        if (cib && (!(cib.liste in nv.prep) || !!cib.item.instrument !== !!nv.instruments)) delete x.cible;
+      })),
+      v && Object.keys(v.prep).length ? liste('insp-cible', v.instruments ? 'Instrument' : 'Objet ou cible', [h('option', { value: '' }, '—'), groupesCibles(v, a.cible)], val => maj((x, c) => {
+        if (val) x.cible = val; else delete x.cible;
+        if (v.instruments && val) { const ins = val.split(':')[1]; if (x.sons && x.sons.length) x.sons.forEach(so => { so.instrument = ins; }); else x.sons = [{ instrument: ins, coups: 1 }]; assurerSons(x.sons); }
+      })) : null,
+      v ? liste('insp-lieu', 'Où (repère dans le dojo)', [h('option', { value: '' }, '—'), CASES.liste(c, 'lieux').map(x => h('option', { value: 'lieux:' + x.id, selected: a.lieu === 'lieux:' + x.id || null }, x.ou || x.nom))], val => maj(x => { if (val) x.lieu = val; else delete x.lieu; })) : null,
+      v ? liste('insp-maniere', 'Manière', [h('option', { value: '' }, '—'), [...new Set([...(a.maniere ? [a.maniere] : []), ...CASES.MANIERES.map(m => m[0])])].map(m => h('option', { value: m, selected: a.maniere === m || null }, m))], val => maj(x => { if (val) x.maniere = val; else delete x.maniere; })) : null,
+      v && v.id !== 'jouer' ? champ('Nombre de fois', a.nombre, ap((x, val) => { const n = parseInt(val, 10); if (n > 0) x.nombre = n; else delete x.nombre; }), { type: 'number' }) : null,
+      liste('insp-condition', 'Condition', [h('option', { value: '' }, 'Aucune'), (c.conditions || []).concat(CASES.CONDITIONS).map(x => h('option', { value: x.id, selected: a.condition === x.id || null }, x.nom))], val => modifier(c => { const x = etape(s.etape).actions[s.index]; if (val) x.condition = val; else delete x.condition; })),
+      champ('Référence (ex. GK p. 519)', a.ref, (c, val) => { const x = etape(s.etape).actions[s.index]; if (x) { if (val) x.ref = val; else delete x.ref; } }),
+      v && !a.auto ? h('button', { type: 'button', class: 'lien', onclick: () => maj(() => {}) }, 'Refaire la phrase à partir des cases') : null,
+      v && !a.auto ? h('p', { class: 'i-note' }, 'La phrase vient du tableau. Elle sera réécrite si vous changez une case.') : null);
+  }
   function peindreInspecteur() {
     if (!inspecteur) return;
     const s = selection;
@@ -722,12 +765,13 @@
       const ap = (fn) => (c, v) => { const x = etape(s.etape).actions[s.index]; if (x) fn(x, v); };
       corps = [
         h('p', { class: 'i-ou' }, e.moment),
-        champ('Ce qui se fait', a.texte, ap((x, v) => { x.texte = v; }), { long: true }),
+        champ('Ce qui se fait', a.texte, ap((x, v) => { x.texte = v; delete x.auto; }), { long: true }),
+        casesAction(s, a),
         cases('Qui le fait', [...c.roles.map(r => ({ id: r.id, nom: r.nom })), { id: '*', nom: 'Tous les autres rôles' }], a.roles,
           (c, id, on) => { const x = etape(s.etape).actions[s.index]; x.roles = on ? [...new Set([...x.roles, id])] : x.roles.filter(r => r !== id); if (!x.roles.length) x.roles = [id]; }),
         h('fieldset', { class: 'i-sons' }, h('legend', null, 'Sons'),
           (a.sons || []).map((so, k) => {
-            const maj = fn => modifier(c => { const x = etape(s.etape).actions[s.index]; fn(x.sons[k]); assurerSons([x.sons[k]]); });
+            const maj = fn => modifier(c => { const x = etape(s.etape).actions[s.index]; fn(x.sons[k]); assurerSons([x.sons[k]]); if (x.auto && x.verbe) x.texte = CASES.phrase(c, x); });
             const nomI = (c.instruments || []).find(i => i.id === so.instrument);
             if (so.motif) return h('div', { class: 'i-son' },
               h('b', null, nomI ? nomI.nom : so.instrument),
@@ -749,7 +793,7 @@
         h('fieldset', { class: 'i-signal' }, h('legend', null, 'Signal (ce qui déclenche l’action)'),
           h('select', { id: 'insp-signal-role', onchange: ev => modifier(c => { const x = etape(s.etape).actions[s.index]; if (!ev.target.value) { delete x.signal; return; } x.signal = x.signal || { texte: 'sur le gasshō du ' + DG.nomRole(ev.target.value).toLowerCase() }; x.signal.role = ev.target.value; }) },
             h('option', { value: '' }, 'Aucun signal'), c.roles.map(r => h('option', { value: r.id, selected: a.signal && a.signal.role === r.id || null }, 'Donné par : ' + r.nom))),
-          a.signal ? champ('Quand exactement', a.signal.texte, ap((x, v) => { x.signal.texte = v; })) : null),
+          a.signal ? champ('Repère : quand exactement', a.signal.texte, ap((x, v) => { x.signal.texte = v; if (x.auto) x.texte = CASES.phrase(c, x); })) : null),
         h('label', { class: 'i-case' }, h('input', { type: 'checkbox', checked: a.optionnel || null, onchange: ev => modifier(c => { const x = etape(s.etape).actions[s.index]; if (ev.target.checked) x.optionnel = true; else delete x.optionnel; }) }), ' Facultatif'),
         h('div', { class: 'i-boutons' },
           h('button', { type: 'button', onclick: () => { let k; modifier(c => { const ee = etape(s.etape); ee.actions.splice(s.index + 1, 0, copie(ee.actions[s.index])); k = s.index + 1; }, { garderInspecteur: true }); choisirSel({ type: 'action', etape: s.etape, index: k }); } }, 'Dupliquer'),
@@ -765,6 +809,9 @@
         champ('Minute indicative (facultatif)', e.minute, ap((x, v) => { const n = parseInt(v, 10); if (isNaN(n)) delete x.minute; else x.minute = n; }), { type: 'number' }),
         h('label', { class: 'i-champ', for: 'insp-phase' }, h('span', null, 'Phase'),
           h('select', { id: 'insp-phase', onchange: ev => modifier(c => { etape(s.etape).phase = ev.target.value; }) }, c.phases.map(p => h('option', { value: p.id, selected: p.id === e.phase || null }, p.nom)))),
+        (c.options || []).length ? h('label', { class: 'i-champ', for: 'insp-option' }, h('span', null, 'Option'),
+          h('select', { id: 'insp-option', onchange: ev => modifier(c => { const x = etape(s.etape); if (ev.target.value) x.option = ev.target.value; else delete x.option; }) },
+            h('option', { value: '' }, 'Tronc commun'), c.options.map(o => h('option', { value: o.id, selected: e.option === o.id || null }, o.nom + (o.description ? ' : ' + o.description : ''))))) : null,
         h('fieldset', { class: 'i-variantes' }, h('legend', null, 'Variantes (une autre façon de faire)'),
           (e.variantes || []).map((v, k) => h('div', { class: 'i-variante' },
             champ('Variante ' + (k + 1), v.texte, ap((x, val) => { x.variantes[k].texte = val; }), { long: true, lignes: 2 }),
@@ -836,7 +883,7 @@
     const roles = rolesCatalogue();
     const pick = ids => ids.map(id => copie(roles.find(r => r.id === id))).filter(Boolean);
     const nv = {
-      format: 'dharmagates-ceremonie', version: 1, id: DG.idLibre('ma-ceremonie'), langue: 'fr', titre: 'Ma cérémonie',
+      format: 'dharmagates-ceremonie', version: 2, id: DG.idLibre('ma-ceremonie'), langue: 'fr', titre: 'Ma cérémonie',
       resume: '', source: '', phases: [{ id: 'p1', nom: 'Zazen' }, { id: 'p2', nom: 'Cérémonie' }],
       fonctions: copie(DG.MODELES[0] ? DG.MODELES[0].fonctions || [] : []),
       roles: pick(['shuso', 'doshi', 'inkin', 'kokyo', 'sangha']), instruments: [], frappes: [], etapes: [],

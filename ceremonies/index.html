@@ -45,7 +45,7 @@
     <label class="choix"><span>Cérémonie</span> <select id="choix-ceremonie"></select></label>
     <div class="outils">
       <button type="button" id="b-exporter" title="Enregistrer cette cérémonie dans un fichier sur votre appareil">Exporter</button>
-      <label class="bouton" title="Ouvrir un fichier de cérémonie exporté depuis ce module">Importer<input type="file" id="b-importer" accept=".json,application/json" hidden></label>
+      <label class="bouton" title="Ouvrir un fichier de cérémonie exporté depuis ce module, ou un tableau Excel (.xlsx) : une étape par ligne, un rôle par colonne">Importer<input type="file" id="b-importer" accept=".json,application/json,.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden></label>
       <button type="button" id="b-retirer" hidden>Retirer</button>
       <button type="button" id="b-imprimer">Imprimer</button>
     </div>
@@ -77,7 +77,9 @@
 </footer>
 
 <script src="../hannya-shingyo/dons.js"></script>
-<script src="modeles/zazen-du-soir.js"></script>
+<script src="cases.js"></script>
+<script src="excel.js"></script>
+<script src="modeles/zazen-chaumont-gistoux.js"></script>
 <script src="construire.js"></script>
 <script src="ceremonies.js"></script>
 </body>

@@ -18,11 +18,13 @@
     ecran: 'Garder l’écran allumé', ecouter: 'Écouter',
     joue: 'Joué par', sons: 'Les sons, dans l’ordre', frappes: 'Les frappes',
     importOk: 'Cérémonie importée : ', importKo: 'Ce fichier n’est pas une cérémonie DharmaGates lisible.',
+    importXlsxKo: 'Ce tableau Excel n’a pas la forme attendue : rôles en ligne 1, colonnes « Option », « phase » et « moment » en ligne 3, une étape par ligne.',
     retirerOk: 'Cérémonie retirée de ce navigateur.', stockageKo: 'Le navigateur n’a pas pu garder la cérémonie : exportez-la pour ne pas la perdre.',
   };
 
+  const CASES = window.DG_CASES || null;
   const MODELES = (window.DG_MODELES || []).map(c => ({ ...c, _modele: true }));
-  const CLE_IMPORTS = 'dg-ceremonies-importees', CLE_COURANTE = 'dg-ceremonie-courante', CLE_DIRECT = 'dg-ceremonie-direct';
+  const CLE_IMPORTS = 'dg-ceremonies-importees', CLE_COURANTE = 'dg-ceremonie-courante', CLE_DIRECT = 'dg-ceremonie-direct', CLE_OPTIONS = 'dg-ceremonie-options';
 
   // ---------- Stockage local (toujours protégé : navigation privée, stockage bloqué…) ----------
   const lire = (k, def) => { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : def; } catch (e) { return def; } };
@@ -30,6 +32,8 @@
 
   let imports = lire(CLE_IMPORTS, []).filter(valide);
   let cer = null;          // cérémonie affichée
+  let reglage = { options: [], choix: {} };   // options cochées et choix (« qui officie ? ») pour la cérémonie affichée
+  let etapesVues = null;
   let idx = {};            // index des rôles, instruments, phases, frappes par id
 
   // ---------- Petit utilitaire DOM (aucun contenu de fichier n'est injecté en HTML) ----------
@@ -68,7 +72,52 @@
     (cer.phases || []).forEach(p => idx.phase[p.id] = p);
     (cer.frappes || []).forEach(f => idx.frappe[f.id] = f);
     (cer.fonctions || []).forEach(f => idx.fonction[f.id] = f);
+    chargerReglage();
     remplirChoix();
+  }
+
+  // ---------- Options (A, B, C…) et choix : ce que le lecteur veut voir ----------
+  function chargerReglage() {
+    const r = lire(CLE_OPTIONS, {})[cer.id] || {}, ids = (cer.options || []).map(o => o.id);
+    reglage = { options: (r.options || (cer.options || []).filter(o => o.defaut).map(o => o.id)).filter(id => ids.includes(id)), choix: {} };
+    for (const ch of cer.choix || []) reglage.choix[ch.id] = r.choix && ch.valeurs.some(v => v.id === r.choix[ch.id]) ? r.choix[ch.id] : (ch.defaut || ch.valeurs[0].id);
+    etapesVues = null;
+  }
+  function reglerOptions(fn) {
+    fn(reglage); etapesVues = null;
+    const tout = lire(CLE_OPTIONS, {}); tout[cer.id] = reglage; ecrire(CLE_OPTIONS, tout);
+    route();
+  }
+  // Les étapes à montrer : le tronc commun, plus les options cochées ; les actions liées à un choix sont triées.
+  function etapes() {
+    if (etapesVues) return etapesVues;
+    const on = new Set(reglage.options);
+    const garde = a => !a.si || (a.si.est != null ? reglage.choix[a.si.choix] === a.si.est : reglage.choix[a.si.choix] !== a.si.pas);
+    etapesVues = cer.etapes.filter(e => !e.option || on.has(e.option)).map(e => e.actions.every(garde) ? e : { ...e, actions: e.actions.filter(garde) });
+    return etapesVues;
+  }
+  let optionsOuvertes = true;
+  function barreOptions() {
+    const opts = cer.options || [], choix = cer.choix || [];
+    if (!opts.length && !choix.length) return null;
+    const on = reglage.options, pareil = f => f.options.length === on.length && f.options.every(o => on.includes(o));
+    const resume = on.length ? 'tronc commun + ' + on.join(', ') : 'tronc commun seul';
+    return h('details', { class: 'options', open: optionsOuvertes || null, ontoggle: ev => { optionsOuvertes = ev.currentTarget.open; } },
+      h('summary', null, h('b', null, 'Options'), ' : ' + resume),
+      (cer.formules || []).length ? h('div', { class: 'o-formules' }, h('span', null, 'Formules : '),
+        cer.formules.map(f => h('button', { type: 'button', class: pareil(f) ? 'actif' : null, 'aria-pressed': pareil(f) ? 'true' : 'false',
+          title: f.options.length ? 'Options ' + f.options.join(', ') : 'Aucune option',
+          onclick: () => reglerOptions(r => { r.options = f.options.slice(); }) }, f.nom + (f.options.length ? ' (' + f.options.join(' + ') + ')' : '')))) : null,
+      opts.length ? h('ul', { class: 'o-liste' }, opts.map(o => h('li', null, h('label', null,
+        h('input', { type: 'checkbox', id: 'opt-' + o.id, checked: on.includes(o.id) || null, onchange: ev => reglerOptions(r => {
+          r.options = r.options.filter(x => x !== o.id && !(ev.target.checked && (o.exclut || []).includes(x)));
+          if (ev.target.checked) r.options.push(o.id);
+          r.options.sort();
+        }) }),
+        h('b', null, ' ' + o.nom), o.description ? ' : ' + o.description : '',
+        (o.exclut || []).length ? h('small', null, ' (à la place de l’option ' + o.exclut.join(', ') + ')') : null)))) : null,
+      choix.map(ch => h('label', { class: 'o-choix' }, ch.nom + ' ', h('select', { id: 'choix-' + ch.id, onchange: ev => reglerOptions(r => { r.choix[ch.id] = ev.target.value; }) },
+        ch.valeurs.map(v => h('option', { value: v.id, selected: reglage.choix[ch.id] === v.id || null }, v.nom))))));
   }
 
   // ---------- Qui fait quoi à une étape ----------
@@ -91,6 +140,8 @@
     const i = idx.instrument[s.instrument];
     let t = i ? i.nom : s.instrument;
     if (s.motif && s.motif.length) return t + ' · ' + s.motif.map(m => (idx.frappe[m] ? idx.frappe[m].nom : m).replace(/ \(.*\)$/, '')).join(', ');
+    if (s.serie) return t + ' · ' + s.serie;
+    if (s.continu) return t + ' · en continu';
     if (s.coups) t += ' ×' + s.coups;
     if (s.frappe) t += ' · ' + (idx.frappe[s.frappe] ? idx.frappe[s.frappe].nom : s.frappe);
     return t;
@@ -103,8 +154,10 @@
       opts.roles ? h('span', { class: 'qui' }, opts.roles + ' : ') : null,
       h('span', { class: 'quoi' }, a.texte),
       a.optionnel ? h('span', { class: 'tag' }, T.optionnel) : null,
+      a.condition && CASES && CASES.condition(cer, a.condition) ? h('span', { class: 'tag condition' }, CASES.condition(cer, a.condition).nom) : null,
       (a.sons && a.sons.length) ? h('span', { class: 'sons' }, puces(a)) : null,
-      a.signal ? h('span', { class: 'signal' }, '↳ ' + a.signal.texte) : null);
+      a.signal && !a.texte.toLowerCase().includes(a.signal.texte.toLowerCase()) ? h('span', { class: 'signal' }, '↳ ' + a.signal.texte) : null,
+      a.ref ? h('span', { class: 'ref', title: a.ref.replace(/^GK/, 'Gyōji kihan (trad. Foulk, 2008),') }, a.ref) : null);
   }
 
   // Regroupe les étapes par phase, en gardant l'ordre.
@@ -128,7 +181,7 @@
     ['Ekō', 'la dédicace récitée après le chant.'],
   ];
   function vueBref() {
-    const groupes = parPhase(cer.etapes);
+    const groupes = parPhase(etapes());
     const objets = cer.roles.filter(r => r.objets && r.objets.length);
     return h('div', { class: 'bref' },
       h('section', { class: 'intro' },
@@ -155,8 +208,12 @@
       objets.length ? h('section', null,
         h('h2', null, 'À préparer avant la pratique'),
         h('ul', { class: 'prepa' }, objets.map(r => h('li', null, h('b', null, r.nom + ' : '), r.objets.join(', ') + '.')))) : null,
-      h('section', { class: 'mots' }, h('h2', null, 'Les mots à connaître'),
-        h('dl', null, MOTS.map(([m, d]) => [h('dt', null, m), h('dd', null, d)]))));
+      (cer.glossaire || []).length
+        ? h('section', { class: 'mots glossaire' }, h('h2', null, 'Le vocabulaire'),
+          [...new Set(cer.glossaire.map(g => g.categorie || ''))].map(cat => [cat ? h('h3', null, cat) : null,
+            h('dl', null, cer.glossaire.filter(g => (g.categorie || '') === cat).map(g => [h('dt', null, g.terme), h('dd', null, g.definition)]))]))
+        : h('section', { class: 'mots' }, h('h2', null, 'Les mots à connaître'),
+          h('dl', null, MOTS.map(([m, d]) => [h('dt', null, m), h('dd', null, d)]))));
   }
 
   // ---------- Vue : déroulé (matrice étapes × rôles) ----------
@@ -166,7 +223,7 @@
       roles.map(r => h('th', { scope: 'col' }, h('a', { href: '#role/' + r.id }, r.nom), r.kanji ? h('span', { class: 'kanji', lang: 'ja' }, r.kanji) : null))));
     const tbody = h('tbody');
     let momentPrec = null;
-    for (const g of parPhase(cer.etapes)) {
+    for (const g of parPhase(etapes())) {
       tbody.append(h('tr', { class: 'phase' }, h('th', { colspan: roles.length + 1, scope: 'colgroup' }, h('span', null, nomPhase(g.phase)))));
       momentPrec = null;
       for (const e of g.etapes) {
@@ -174,7 +231,8 @@
         const nouveau = e.moment !== momentPrec; momentPrec = e.moment;
         const tr = h('tr', { class: nouveau ? 'debut' : 'suite' },
           h('th', { class: 'col-moment', scope: 'row' }, nouveau ? e.moment : h('span', { class: 'idem', 'aria-label': e.moment }, '〃'),
-            e.minute != null ? h('span', { class: 'minute' }, e.minute + ' ' + T.minute) : null));
+            e.minute != null ? h('span', { class: 'minute' }, e.minute + ' ' + T.minute) : null,
+            e.option ? h('span', { class: 'tag opt' }, 'Option ' + e.option) : null));
         // Fusionne les cases voisines qui partagent la même action, comme dans le tableur.
         for (let i = 0; i < roles.length;) {
           const acts = m.get(roles[i].id) || [];
@@ -219,7 +277,7 @@
     const zone = h('div');
     const remplir = () => {
       zone.replaceChildren(caseAutres(remplir));
-      for (const g of parPhase(cer.etapes)) {
+      for (const g of parPhase(etapes())) {
         const items = [];
         for (const e of g.etapes) {
           const m = resoudre(e);
@@ -257,7 +315,7 @@
     if (!insts.length) return h('p', null, 'Cette cérémonie ne décrit pas d’instrument.');
     const ins = idx.instrument[id] || insts[0];
     const lignes = [], joueurs = new Set();
-    for (const e of cer.etapes) {
+    for (const e of etapes()) {
       const m = resoudre(e);
       const vus = new Set();
       for (const [rid, acts] of m) for (const a of acts) {
@@ -317,23 +375,23 @@
     const etat = lire(CLE_DIRECT, {});
     const r = idx.role[roleId] || idx.role[etat.role] || cer.roles.find(x => x.id === 'sangha') || cer.roles[0];
     const pos = etat.ceremonie === cer.id ? etat : {};
-    let i = Math.min(Math.max(pos.i || 0, 0), cer.etapes.length - 1);
+    let i = Math.min(Math.max(pos.i || 0, 0), etapes().length - 1);
     const carte = h('div', { class: 'direct-carte', 'aria-live': 'polite' });
     const compteur = h('span', { class: 'compteur' });
     const bPrec = h('button', { type: 'button', class: 'nav', onclick: () => aller(-1) }, T.precedent);
     const bSuiv = h('button', { type: 'button', class: 'nav principal', onclick: () => aller(1) }, T.suivant);
 
-    function aller(d) { i = Math.min(Math.max(i + d, 0), cer.etapes.length - 1); peindre(); }
+    function aller(d) { i = Math.min(Math.max(i + d, 0), etapes().length - 1); peindre(); }
     function peindre() {
       ecrire(CLE_DIRECT, { ceremonie: cer.id, role: r.id, i });
-      const e = cer.etapes[i];
+      const e = etapes()[i];
       const m = resoudre(e);
       const miennes = m.get(r.id) || [];
       const vars = (e.variantes || []).filter(v => v.roles.includes(r.id));
       let ensuite = null;
-      for (let k = i + 1; k < cer.etapes.length; k++) {
-        const mm = resoudre(cer.etapes[k]).get(r.id);
-        if (mm && mm.length) { ensuite = { e: cer.etapes[k], a: mm[0] }; break; }
+      for (let k = i + 1; k < etapes().length; k++) {
+        const mm = resoudre(etapes()[k]).get(r.id);
+        if (mm && mm.length) { ensuite = { e: etapes()[k], a: mm[0] }; break; }
       }
       remplace(carte, 
         h('div', { class: 'ou' }, nomPhase(e.phase), e.minute != null ? h('span', { class: 'minute' }, e.minute + ' ' + T.minute) : null),
@@ -344,9 +402,9 @@
         vars.map(v => h('div', { class: 'variante' }, h('b', null, T.variante + ' : '), blocAction(v))),
         (voirAutres || !miennes.length) ? h('div', { class: 'autres' }, h('h3', null, T.pendant), autresActions(m, r.id)) : null,
         ensuite ? h('p', { class: 'ensuite' }, h('b', null, T.ensuite + ' (' + ensuite.e.moment + ') : '), ensuite.a.texte)
-          : (i === cer.etapes.length - 1 ? h('p', { class: 'ensuite' }, T.fini) : null));
-      compteur.textContent = T.etape + ' ' + (i + 1) + ' / ' + cer.etapes.length;
-      bPrec.disabled = i === 0; bSuiv.disabled = i === cer.etapes.length - 1;
+          : (i === etapes().length - 1 ? h('p', { class: 'ensuite' }, T.fini) : null));
+      compteur.textContent = T.etape + ' ' + (i + 1) + ' / ' + etapes().length;
+      bPrec.disabled = i === 0; bSuiv.disabled = i === etapes().length - 1;
     }
     // Clavier (flèches, espace) et balayage du doigt
     onTouche = ev => {
@@ -382,7 +440,7 @@
   function peindreImpression() {
     const z = $('#impression');
     remplace(z, h('h1', null, cer.titre), cer.source ? h('p', null, cer.source) : null);
-    for (const g of parPhase(cer.etapes)) {
+    for (const g of parPhase(etapes())) {
       z.append(h('h2', null, nomPhase(g.phase)));
       let momentPrec = null, ol = null;
       for (const e of g.etapes) {
@@ -414,9 +472,12 @@
   $('#b-importer').addEventListener('change', ev => {
     const f = ev.target.files[0]; ev.target.value = '';
     if (!f) return;
-    f.text().then(txt => {
-      let c; try { c = JSON.parse(txt); } catch (e) { c = null; }
-      if (!valide(c)) { message(T.importKo); return; }
+    const tableur = /\.xlsx$/i.test(f.name) && window.DG_EXCEL;
+    const lecture = tableur
+      ? f.arrayBuffer().then(b => window.DG_EXCEL.lire(b)).then(cl => window.DG_EXCEL.convertir(cl, { id: 'tableau-' + Date.now().toString(36), titre: f.name.replace(/\.xlsx$/i, ''), source: 'Importé du tableau Excel « ' + f.name + ' ».' })).catch(() => null)
+      : f.text().then(txt => { try { return JSON.parse(txt); } catch (e) { return null; } });
+    lecture.then(c => {
+      if (!valide(c)) { message(tableur ? T.importXlsxKo : T.importKo); return; }
       // Un import ne remplace jamais un modèle : on lui donne un autre identifiant si besoin.
       if (MODELES.some(x => x.id === c.id)) c.id = c.id + '-importee';
       imports = imports.filter(x => x.id !== c.id).concat([c]);
@@ -447,7 +508,7 @@
       if (on) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
     });
     const z = $('#vue');
-    z.replaceChildren(
+    remplace(z, v === 'construire' ? null : barreOptions(),
       v === 'deroule' ? vueDeroule() :
       v === 'role' ? vueRole(arg) :
       v === 'instrument' ? vueInstrument(arg) :
@@ -459,7 +520,7 @@
 
   // ---------- Ce que le constructeur (construire.js) utilise ----------
   window.DG = {
-    T, h, remplace, lire, ecrire, valide, resoudre, nomRole, texteSon, message, route, propre,
+    T, h, remplace, lire, ecrire, valide, resoudre, nomRole, texteSon, message, route, propre, CASES,
     MODELES,
     get cer() { return cer; },
     get idx() { return idx; },

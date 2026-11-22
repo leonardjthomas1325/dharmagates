@@ -333,3 +333,42 @@ body.mode-construire .onglets{margin:12px 0 14px}
 @media (max-width:560px){.onglets{flex-wrap:wrap;overflow:visible}}
 .i-son select{width:auto;padding:.25em .4em;font-size:.88em}
 .i-son small{flex-basis:100%}
+
+/* ---------- Options (A, B, C…), conditions, références ---------- */
+.options{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:0 0 18px;font-size:.95em}
+.options summary{cursor:pointer}
+.options[open] summary{margin-bottom:8px}
+.o-formules{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-bottom:8px}
+.o-formules button{font:inherit;font-size:.92em;padding:.3em .8em;border-radius:999px;border:1px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer}
+.o-formules button.actif{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.o-liste{list-style:none;margin:0 0 6px;padding:0;display:grid;gap:4px}
+.o-liste label{display:block;cursor:pointer;line-height:1.4}
+.o-liste small{color:var(--muted)}
+.o-choix{display:inline-flex;align-items:center;gap:.4em;margin-top:4px}
+.o-choix select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:.25em .5em}
+.tag.opt{border-color:var(--accent);color:var(--accent)}
+.tag.condition{font-style:italic}
+.ref{display:inline-block;font-size:.72em;color:var(--muted);margin-left:.5em;white-space:nowrap;border-bottom:1px dotted var(--muted);cursor:help}
+.glossaire h3{font-family:var(--f-body);font-size:.85em;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:16px 0 6px}
+body.mode-direct .options{margin-bottom:10px}
+@media print{.options{display:none}}
+
+/* ---------- Construire : actions et objets ---------- */
+.p-sous{font-family:var(--f-body);font-size:.8em;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:10px 0 2px}
+.p-item.p-option select{max-width:100%;min-width:0;flex:1 1 90px}
+.p-sections{gap:12px}
+.p-section h3{font-family:var(--f-body);font-size:.8em;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:0 0 4px}
+.p-liste.p-puces{flex-direction:row;flex-wrap:wrap;gap:5px}
+.p-liste.p-puces .p-item{width:auto;padding:.25em .65em;font-size:.88em;border-radius:999px}
+.p-item.p-instr{border-style:dashed}
+.p-ajout{display:flex;gap:5px;margin-top:6px}
+.p-ajout input{flex:1;min-width:0;font:inherit;font-size:.88em;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:.3em .5em}
+.p-ajout button{font:inherit;font-size:.88em;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;padding:.3em .6em;cursor:pointer}
+.ps-serie{display:flex;align-items:center;gap:.3em;font-size:.85em;color:var(--muted);width:100%}
+.ps-serie input{font:inherit;width:6em;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:.15em .4em}
+body.glisse-objet .tuile{outline:2px dashed var(--accent);outline-offset:-2px}
+.i-phrase{border:1px solid var(--line);border-radius:8px;padding:8px 10px;margin:0 0 12px}
+.i-phrase legend{font-size:.82em;color:var(--muted);padding:0 4px}
+@media (max-width:860px){.p-sections{flex-direction:column;overflow-x:visible}.p-liste.p-puces{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px}.p-liste.p-puces .p-item{flex:0 0 auto}}
+.b-moment .tag.opt{margin-left:.4em}
+@media (max-width:860px){.p-liste{align-items:flex-start}.p-sous{align-self:center;margin:0 4px}}
