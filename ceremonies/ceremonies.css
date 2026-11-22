@@ -302,8 +302,22 @@ body.mode-arme .b-case{background:var(--accent-soft)}
 .i-ou{color:var(--muted);font-size:.85em;margin:0 0 8px}
 .i-champ{display:block;margin:0 0 12px}
 .i-liste{margin:0 0 12px}
-.i-repere{border-left:3px solid var(--line);padding-left:10px;margin:0 0 12px}
-.i-apercu{color:var(--ink)}
+.i-phrase{border:0;padding:0;margin:0}
+.i-pli{border:1px solid var(--line);border-radius:8px;margin:0 0 8px;padding:0 10px}
+.i-pli > summary{cursor:pointer;padding:8px 0;font-size:.92em;display:flex;gap:.5em;align-items:baseline;list-style:none}
+.i-pli > summary::-webkit-details-marker{display:none}
+.i-pli > summary::before{content:'▸';color:var(--muted);flex:0 0 auto}
+.i-pli[open] > summary::before{content:'▾'}
+.i-pli > summary b{flex:0 0 auto}
+.ipl-resume{color:var(--muted);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.i-pli[open]{padding-bottom:10px}
+.i-pli fieldset.i-cases{border:0;padding:0;margin:0}
+.i-pastilles{margin:0 0 12px}
+.ip-nom{display:block;font-size:.82em;color:var(--muted);margin-bottom:3px}
+.ip-liste{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px}
+.puce{font:inherit;font-size:.88em;text-align:left;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:14px;padding:.25em .7em;cursor:pointer}
+.puce span{color:var(--muted)}
+.i-pastilles .p-ajout{margin-top:6px}
 .il-ligne{display:flex;align-items:flex-end;gap:6px}
 .il-ligne .i-champ{flex:1;min-width:0;margin:0}
 .il-plus{flex:0 0 auto;width:2.2em;height:2.2em;font:inherit;font-size:1em;line-height:1;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;cursor:pointer}

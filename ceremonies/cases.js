@@ -107,12 +107,6 @@
     ['par la droite', /par la droite/i], ['par la gauche', /par la gauche(?! de)/i], ['par le pied droit', /par le pied droit/i], ['par le pied gauche', /par le pied gauche/i], ['en suivant le kokyo', /en suivant le kokyo/i], ['en suivant le doshi', /en suivant le doshi/i],
     ['kyosaku tenu vertical', /kyosaku tenu vertical/i], ['à vitesse normale', /vitesse « ?normale ?»|vitesse normale/i],
   ];
-  // Repères du signal : « quand exactement » l'action se fait. Liste proposée dans Construire ; on peut aussi écrire le sien.
-  const REPERES = [
-    ['Gestes de l’officiant', ['sur le gasshō du doshi', 'au gasshō de chaque pai du doshi', 'quand le doshi plie les genoux', 'quand le doshi salue son zafu', 'quand le doshi salue la sangha', 'quand le doshi s’assoit', 'quand le doshi se lève', 'quand le doshi se retourne', 'quand le doshi monte à l’autel', 'quand le doshi redescend de l’autel', 'après l’offrande d’encens', 'quand le doshi déplie son zagu', 'quand le doshi entre dans le dojo', 'quand le doshi sort du dojo']],
-    ['Sons', ['au son du moppan', 'quand le shōkei sonne une fois', 'quand le shōkei sonne deux fois', 'quand le shōkei sonne trois fois', 'quand l’inkin sonne une fois', 'quand l’inkin sonne deux fois', 'pendant la cascade de l’inkin', 'au coup de daikei', 'au coup étouffé (gatsu) du daikei', 'après le coup de mokugyo']],
-    ['Chants', ['après le titre entonné', 'quand la sangha commence à chanter', 'à chaque verset', 'à la fin du chant', 'pendant l’ekō', 'à la fin de l’ekō']],
-  ];
   // si : la condition dépend du choix « Qui officie ? » (remplie à la conversion).
   const CONDITIONS = [
     { id: 'si-officie', nom: 'si c’est lui qui officie' },
@@ -179,21 +173,29 @@
     return majuscule(contracte(t));
   }
 
-  // Le repère d'un signal, construit comme une action : lien (« quand ») + qui ou quoi + action + objet + nombre.
-  //   k = { lien, sujet: "personnes:doshi" | "objets:inkin", verbe, cible, nombre }
-  //   → « quand le doshi salue son zafu », « quand l'inkin sonne deux fois »
-  const LIENS = [{ id: 'quand', nom: 'quand' }, { id: 'des-que', nom: 'dès que' }, { id: 'apres-que', nom: 'après que' }, { id: 'pendant-que', nom: 'pendant que' }];
-  const FOIS = ['', 'une', 'deux', 'trois', 'quatre', 'cinq', 'six', 'sept'];
-  function repere(c, k) {
-    if (!k) return '';
-    const lien = (LIENS.find(l => l.id === k.lien) || LIENS[0]).nom, suj = element(c, k.sujet);
-    if (!suj) return '';
-    let t = lien + ' ' + suj.item.nom;
-    if (suj.item.instrument) t += ' sonne';
-    else if (verbe(k.verbe, c)) { const ph = phrase(c, { verbe: k.verbe, cible: k.cible }); t += ' ' + ph.charAt(0).toLowerCase() + ph.slice(1); }
-    else return '';
-    if (k.nombre) t += ' ' + (FOIS[k.nombre] || k.nombre) + ' fois';
-    return contracte(t).replace(/\bque (?=[aeiouhéèêàâîôûAEIOUH])/g, 'qu’');
+  // Le repère d'un signal se tire d'une action déjà encodée d'un autre rôle :
+  //   « quand le doshi fait gasshō vers son zafu », « quand l'inkin sonne deux fois ».
+  const FOIS = ['', 'une', 'deux', 'trois', 'quatre', 'cinq', 'six', 'sept', 'huit', 'neuf'];
+  const minuscule = t => (t ? t.charAt(0).toLowerCase() + t.slice(1) : '');
+  const article = nom => (/^[aeiouhéèêàâîôû]/i.test(nom) ? 'l’' : 'le ') + minuscule(nom);
+  function repereAction(c, role, a) {
+    if (!role || !a) return '';
+    const pers = liste(c, 'personnes').find(x => x.id === role.id);
+    const sujet = pers ? pers.nom : article(role.nom);
+    if (a.sons && a.sons.length) {
+      // Un son : c'est l'instrument qui « sonne », autant de fois qu'il y a de coups.
+      const id = a.sons[0].instrument, obj = liste(c, 'objets').find(x => x.id === id), ins = ((c && c.instruments) || []).find(x => x.id === id);
+      const nom = obj ? obj.nom : article(ins ? ins.nom : id);
+      const memes = a.sons.filter(s => s.instrument === id);
+      if (memes.every(s => s.frappe === 'cascade')) return 'pendant la cascade de ' + nom.replace(/^le /, 'du ').replace(/^(l’|la )/, 'de $1').replace(/^de du /, 'du ').replace(/^de de /, 'de ');
+      const n = memes.reduce((t, s) => t + (s.motif ? s.motif.length : s.coups || 0), 0);
+      return 'quand ' + nom + ' sonne' + (n ? ' ' + (FOIS[n] || n) + ' fois' : '');
+    }
+    const v = verbe(a.verbe, c);
+    const suite = v ? phrase(c, { verbe: a.verbe, cible: a.cible, lieu: a.lieu, nombre: a.nombre }) : (a.texte || '').replace(/[.\s]+$/, '');
+    if (!suite) return '';
+    // « zazen » et « kinhin » sont des noms : « quand la sangha fait zazen ».
+    return 'quand ' + sujet + ' ' + (v && (v.id === 'zazen' || v.id === 'kinhin') ? 'fait ' : '') + minuscule(suite);
   }
 
   // ---------- D'une case de tableur à des actions ----------
@@ -330,7 +332,7 @@
     return out;
   }
 
-  const api = { VERBES, verbes, utiliser, LIENS, repere, LIEUX, PERSONNES, OBJETS, MANIERES, CONDITIONS, REPERES, LISTES, NOMS_LISTES, liste, element, verbe, condition, phrase, texteSons, analyser, majuscule };
+  const api = { VERBES, verbes, utiliser, repereAction, LIEUX, PERSONNES, OBJETS, MANIERES, CONDITIONS, LISTES, NOMS_LISTES, liste, element, verbe, condition, phrase, texteSons, analyser, majuscule };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   racine.DG_CASES = api;
 })(typeof window !== 'undefined' ? window : globalThis);
