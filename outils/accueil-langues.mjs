@@ -33,6 +33,8 @@ for (const lang of ORDER.filter(l => l !== 'en')){
   // Textes de la page (data-t), libellés (data-t-label), accroche visible
   h = h.replace(/(<(\w+)\b[^>]*\sdata-t="(\w+)"[^>]*>)([^<]*)(<\/\2>)/g, (m, open, tag, key, txt, close) => key in L ? open + esc(L[key]) + close : m);
   h = h.replace(/(\sdata-t-label="(\w+)"[^>]*?\saria-label=")[^"]*(")/g, (m, a, key, b) => a + esc(L[key]) + b);
+  // Bloc « En savoir plus » : HTML déjà écrit dans la page de chaque langue
+  if (L.more) h = h.replace(/(<details class="more" data-t-html="more">\n      )[\s\S]*?(\n    <\/details>)/, (m, a, b) => a + L.more + b);
   h = attr(h, /(<span class="rot" id="tagline" aria-hidden="true">)[^<]*(<\/span>)/, L.tagline);
   h = h.replace('<option value="en" selected>', '<option value="en">').replace(`<option value="${lang}">`, `<option value="${lang}" selected>`);
   // La page est un dossier plus bas : les fichiers voisins sont dans ../ (le logo, lui, ramène à l'accueil de la langue)
