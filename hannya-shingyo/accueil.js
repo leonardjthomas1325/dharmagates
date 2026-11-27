@@ -4,7 +4,8 @@
 const T = {
   en: {
     desc: 'Learn to chant the Heart Sutra (Hannya Shingyō) in its Sōtō Zen Japanese reading: listen kanji by kanji, recite at the mic and with the bells, free and offline.',
-    title: 'Hannya Shingyō · Learn the Heart Sutra by heart',
+    title: 'Learn the Hannya Shingyō: Heart Sutra chanting',
+    h1: 'Learn to chant the Hannya Shingyō',
     tagline: 'The Heart Sutra, to learn by heart.',
     hero: '心無罣礙, shin mu ke ge: “a mind without hindrance”',
     verse: '“A mind without hindrance”',
@@ -22,7 +23,8 @@ const T = {
   },
   fr: {
     desc: 'Apprendre à chanter le Sutra du cœur (Hannya Shingyō) dans la lecture japonaise du zen Sōtō : écoute kanji par kanji, récitation au micro et avec les cloches, gratuit et hors ligne.',
-    title: 'Hannya Shingyō · Apprendre le Sutra du cœur par cœur',
+    title: 'Apprendre l\'Hannya Shingyō : chanter le Sutra du cœur',
+    h1: 'Apprendre à chanter l\'Hannya Shingyō',
     tagline: 'Le Sutra du cœur, à apprendre par cœur.',
     hero: '心無罣礙, shin mu ke ge : « l\'esprit sans obstacle »',
     verse: '« L\'esprit sans obstacle »',
@@ -41,6 +43,7 @@ const T = {
   it: {
     desc: 'Imparare a recitare il Sutra del Cuore (Hannya Shingyō) nella lettura giapponese dello zen Sōtō: ascolto kanji per kanji, recitazione al microfono e con le campane, gratuito.',
     title: 'Hannya Shingyō · Imparare a memoria il Sutra del Cuore',
+    h1: 'Imparare a recitare l\'Hannya Shingyō',
     tagline: 'Il Sutra del Cuore, da imparare a memoria.',
     hero: '心無罣礙, shin mu ke ge: «la mente senza ostacoli»',
     verse: '«La mente senza ostacoli»',
@@ -59,6 +62,7 @@ const T = {
   es: {
     desc: 'Aprender a recitar el Sutra del Corazón (Hannya Shingyō) en la lectura japonesa del zen Sōtō: escucha kanji a kanji, recitación con micrófono y con las campanas, gratis.',
     title: 'Hannya Shingyō · Aprender de memoria el Sutra del Corazón',
+    h1: 'Aprender a recitar el Hannya Shingyō',
     tagline: 'El Sutra del Corazón, para aprender de memoria.',
     hero: '心無罣礙, shin mu ke ge: «la mente sin obstáculos»',
     verse: '«La mente sin obstáculos»',
@@ -77,6 +81,7 @@ const T = {
   de: {
     desc: 'Das Herz-Sutra (Hannya Shingyō) in der japanischen Lesung des Sōtō-Zen rezitieren lernen: Kanji für Kanji anhören, mit Mikrofon und Glocken üben, kostenlos.',
     title: 'Hannya Shingyō · Das Herz-Sutra auswendig lernen',
+    h1: 'Das Hannya Shingyō rezitieren lernen',
     tagline: 'Das Herz-Sutra, zum Auswendiglernen.',
     hero: '心無罣礙, shin mu ke ge: „ein Geist ohne Hindernis“',
     verse: '„Ein Geist ohne Hindernis“',
