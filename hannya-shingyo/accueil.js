@@ -6,6 +6,23 @@ const T = {
     desc: 'Learn to chant the Heart Sutra (Hannya Shingyō) in its Sōtō Zen Japanese reading: listen kanji by kanji, recite at the mic and with the bells, free and offline.',
     title: 'Learn the Hannya Shingyō: Heart Sutra chanting',
     h1: 'Learn to chant the Hannya Shingyō',
+    // Bloc repliable « En savoir plus » (HTML, data-t-html) : lu par Google, fermé par défaut
+    more: `<summary>More about the Hannya Shingyō</summary>
+      <h2>What is the Hannya Shingyō?</h2>
+      <p>The Hannya Shingyō (<span lang="ja">摩訶般若波羅蜜多心経</span>, <i lang="ja-Latn">Maka Hannya Haramita Shingyō</i>, sometimes written Hannya Shingyo), or <b>Heart Sutra</b>, is one of the shortest and most widely recited texts of Mahāyāna Buddhism. Its Chinese version, attributed to the monk Xuanzang (7th century), runs to barely 260 characters<sup>1</sup>. It distils the teaching of the “perfection of wisdom” (<i>prajñāpāramitā</i>): nothing exists by itself, “form is emptiness, emptiness is form”.</p>
+      <h2>Why chant it?</h2>
+      <p>In the Sōtō school, the Heart Sutra is chanted every day: at morning service in temples, and often after zazen in dojos<sup>2</sup>. In many dojos, especially in Europe, it is chanted not in translation but in its Japanese reading of the Chinese characters. Knowing it by heart lets you chant with the others without keeping your eyes on the sutra book.</p>
+      <h2>How is it chanted?</h2>
+      <p>The chant follows the <b>mokugyo</b>, the fish-shaped wooden drum: one beat per syllable, in a low, steady voice, without melody. The kokyō (the ino in Japan) announces the title alone, then the whole assembly joins in. The bells, keisu and shokei, mark the beginning and the end. The tempo and some details vary from one dojo and lineage to another: follow what is done in yours.</p>
+      <h2>Learning to chant the Hannya Shingyō on this site</h2>
+      <ol>
+        <li><b>Listen</b>: the recording highlights each kanji as it is chanted, with the kana and the rōmaji.</li>
+        <li><b>Chant with the bells</b>: keisu, mokugyo and shokei sound where they belong, as in the dojo.</li>
+        <li><b>Chant with the mic</b>: speech recognition, which works offline, checks your recitation kanji by kanji.</li>
+        <li><b>Review</b>: each day, the lines to go over, until you can chant from memory in dojo mode, one line at a time.</li>
+      </ol>
+      <p>The tool is free and needs no sign-up. It does not replace a dojo or a teacher: it helps you memorise the text so that you can chant with the sangha.</p>
+      <p class="src"><sup>1</sup> Red Pine, <i>The Heart Sutra: The Womb of Buddhas</i>, Counterpoint, 2004; on the origin of the text, Jan Nattier, “The Heart Sūtra: A Chinese Apocryphal Text?”, <i>Journal of the International Association of Buddhist Studies</i>, 15/2, 1992, pp. 153–223.<br><sup>2</sup> Sōtōshū Shūmuchō, <i>Sōtō School Scriptures for Daily Services and Practice</i>, Tokyo, 2001.</p>`,
     tagline: 'The Heart Sutra, to learn by heart.',
     hero: '心無罣礙, shin mu ke ge: “a mind without hindrance”',
     verse: '“A mind without hindrance”',
@@ -25,6 +42,22 @@ const T = {
     desc: 'Apprendre à chanter le Sutra du cœur (Hannya Shingyō) dans la lecture japonaise du zen Sōtō : écoute kanji par kanji, récitation au micro et avec les cloches, gratuit et hors ligne.',
     title: 'Apprendre l\'Hannya Shingyō : chanter le Sutra du cœur',
     h1: 'Apprendre à chanter l\'Hannya Shingyō',
+    more: `<summary>En savoir plus sur l'Hannya Shingyō</summary>
+      <h2>Qu'est-ce que l'Hannya Shingyō ?</h2>
+      <p>L'Hannya Shingyō (<span lang="ja">摩訶般若波羅蜜多心経</span>, <i lang="ja-Latn">Maka Hannya Haramita Shingyō</i>, parfois écrit Hannya Shingyo), ou <b>Sutra du cœur</b>, est l'un des textes les plus courts et les plus récités du bouddhisme du Grand Véhicule. Sa version chinoise, attribuée au moine Xuanzang (VII<sup>e</sup> siècle), tient en à peine 260 caractères<sup>1</sup>. Elle condense l'enseignement de la « perfection de sagesse » (<i>prajñāpāramitā</i>) : rien n'existe par soi-même, « la forme est vide, le vide est forme ».</p>
+      <h2>Pourquoi le chanter ?</h2>
+      <p>Dans l'école Sōtō, le Sutra du cœur est chanté chaque jour : à l'office du matin dans les temples, et souvent après zazen dans les dojos<sup>2</sup>. Dans beaucoup de dojos, en Europe notamment, on ne le chante pas en traduction mais dans sa lecture japonaise des caractères chinois. Le connaître par cœur permet de chanter avec les autres sans garder les yeux sur le livret.</p>
+      <h2>Comment se chante-t-il ?</h2>
+      <p>Le chant suit le <b>mokugyo</b>, le tambour de bois en forme de poisson : un battement par syllabe, d'une voix grave et régulière, sans mélodie. Le kokyō (l'ino au Japon) annonce le titre seul, puis toute l'assemblée enchaîne. Les cloches, keisu et shokei, marquent le début et la fin. Le tempo et certains détails varient d'un dojo et d'une lignée à l'autre : suivez ce qui se fait dans le vôtre.</p>
+      <h2>Apprendre à chanter l'Hannya Shingyō avec ce site</h2>
+      <ol>
+        <li><b>Écouter</b> : l'enregistrement surligne chaque kanji au moment où il est chanté, avec les kana et le rōmaji.</li>
+        <li><b>Réciter avec les cloches</b> : keisu, mokugyo et shokei sonnent aux endroits prévus, comme au dojo.</li>
+        <li><b>Réciter au micro</b> : la reconnaissance vocale, qui fonctionne sans connexion, vérifie la récitation kanji par kanji.</li>
+        <li><b>Réviser</b> : chaque jour, les lignes à revoir, jusqu'à pouvoir chanter de mémoire en mode dojo, une ligne à la fois.</li>
+      </ol>
+      <p>L'outil est gratuit et sans inscription. Il ne remplace ni un dojo ni un enseignant : il aide à mémoriser le texte pour pouvoir chanter avec la sangha.</p>
+      <p class="src"><sup>1</sup> Red Pine, <i>The Heart Sutra: The Womb of Buddhas</i>, Counterpoint, 2004 ; sur l'origine du texte, Jan Nattier, « The Heart Sūtra: A Chinese Apocryphal Text? », <i>Journal of the International Association of Buddhist Studies</i>, 15/2, 1992, p. 153-223.<br><sup>2</sup> Sōtōshū Shūmuchō, <i>Sōtō School Scriptures for Daily Services and Practice</i>, Tokyo, 2001.</p>`,
     tagline: 'Le Sutra du cœur, à apprendre par cœur.',
     hero: '心無罣礙, shin mu ke ge : « l\'esprit sans obstacle »',
     verse: '« L\'esprit sans obstacle »',
@@ -111,6 +144,7 @@ function applyLang(lang){
   document.documentElement.lang = lang;
   document.title = L.title;
   document.querySelectorAll('[data-t]').forEach(e => { e.textContent = L[e.dataset.t]; });
+  document.querySelectorAll('[data-t-html]').forEach(e => { if (L[e.dataset.tHtml]) e.innerHTML = L[e.dataset.tHtml]; });
   document.querySelectorAll('[data-t-label]').forEach(e => e.setAttribute('aria-label', L[e.dataset.tLabel]));
   document.querySelectorAll('#langs a').forEach(a => { if (a.dataset.lang === lang) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current'); });
   document.getElementById('errata').href = `mailto:${ERRATA}?subject=${encodeURIComponent('Hannya Shingyō · erratum (' + lang + ')')}`;
