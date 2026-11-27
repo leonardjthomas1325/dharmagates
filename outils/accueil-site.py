@@ -37,7 +37,7 @@ FR = dict(
   cta='Apprendre à chanter le Sutra du cœur', tool='hannya-shingyo/fr/',
   g1='Pratiquer', g1d="Le corps, les gestes et la voix : ce qu'on fait au dojo.",
   g2='Comprendre le zen Sōtō', g2d="Le sens des textes que l'on chante, et d'où ils viennent.",
-  soon='Bientôt', ok='Disponible',
+  soon='Bientôt', ok='Disponible', roles_href='ceremonies/',
   i_dojo=('Le dojo', "Entrer et saluer, zazen, kinhin, gasshō : les gestes expliqués simplement."),
   i_roles=('Les rôles au dojo', "Dōshi, kokyō, jisha, tenzo… qui fait quoi pendant zazen et la cérémonie, et ce qui varie d'un dojo à l'autre."),
   i_instr=('Les instruments', "Mokugyo, keisu, inkin, han, taiko… leur nom, leur rôle et leur son."),
@@ -152,7 +152,7 @@ def page(t):
       <header>{embleme('行')}<div><h2 id="g1">{t['g1']}</h2><p>{t['g1d']}</p></div></header>
       <ul>
 {item(t,'i_dojo','dojo')}
-{item(t,'i_roles','roles')}
+{item(t,'i_roles','roles',t.get('roles_href'))}
 {item(t,'i_instr','instr')}
 {item(t,'i_chant','chant',t['tool'])}
       </ul>

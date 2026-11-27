@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cérémonies et rôles du dojo · DharmaGates</title>
+<meta name="description" content="Qui fait quoi pendant le zazen et la cérémonie : le déroulé étape par étape, les rôles (dōshi, kokyō, jisha, dōan…), les instruments et leurs sons, et un mode en direct sur téléphone.">
+<link rel="canonical" href="https://dharmagates.eu/ceremonies/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="DharmaGates">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:url" content="https://dharmagates.eu/ceremonies/">
+<meta property="og:title" content="Cérémonies et rôles du dojo · DharmaGates">
+<meta property="og:description" content="Le déroulé du zazen et de la cérémonie, rôle par rôle et instrument par instrument.">
+<meta property="og:image" content="https://dharmagates.eu/hannya-shingyo/partage.png">
+<meta name="theme-color" content="#141822">
+<link rel="icon" href="../hannya-shingyo/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="../hannya-shingyo/hannya.ico">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../site.css">
+<link rel="stylesheet" href="ceremonies.css">
+</head>
+<body>
+
+<div class="bande">
+  <header class="wrap top">
+    <a class="brand" href="../" aria-label="DharmaGates, accueil"><svg class="seal" viewBox="0 0 200 200" aria-hidden="true"><path d="M 16 12 L 40 8 L 46 14 L 70 7 L 104 12 L 132 6 L 150 10 L 176 8 L 192 16 L 190 40 L 195 64 L 188 98 L 194 128 L 190 150 L 196 172 L 186 193 L 160 188 L 138 194 L 110 189 L 84 195 L 58 188 L 34 194 L 10 190 L 13 164 L 6 138 L 12 110 L 7 82 L 14 56 L 8 32 Z"/><g class="wear"><circle cx="14" cy="40" r="5"/><circle cx="60" cy="196" r="6"/><circle cx="196" cy="88" r="5"/><circle cx="190" cy="180" r="4"/></g><text x="100" y="106" text-anchor="middle" dominant-baseline="central" font-weight="700" font-size="128">門</text></svg><span aria-hidden="true">DharmaGates</span></a>
+    <nav class="menu" aria-label="Menu principal">
+      <ul>
+        <li><a href="../#pratiquer">Pratiquer</a></li>
+        <li><a href="../#comprendre">Comprendre</a></li>
+        <li class="don" data-don hidden><a data-don href="#">Soutenir</a></li>
+      </ul>
+    </nav>
+  </header>
+  <div class="wrap titre">
+    <p class="eyebrow">Pratiquer · le dojo</p>
+    <h1>Cérémonies et rôles du dojo</h1>
+    <p class="lead">Qui fait quoi, à quel moment, et quel son l'annonce : le déroulé complet d'une pratique, rôle par rôle et instrument par instrument.</p>
+  </div>
+</div>
+
+<main class="wrap">
+  <div class="barre">
+    <label class="choix"><span>Cérémonie</span> <select id="choix-ceremonie"></select></label>
+    <div class="outils">
+      <button type="button" id="b-exporter" title="Enregistrer cette cérémonie dans un fichier sur votre appareil">Exporter</button>
+      <label class="bouton" title="Ouvrir un fichier de cérémonie exporté depuis ce module, ou un tableau Excel (.xlsx) : une étape par ligne, un rôle par colonne">Importer<input type="file" id="b-importer" accept=".json,application/json,.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden></label>
+      <button type="button" id="b-retirer" hidden>Retirer</button>
+      <button type="button" id="b-imprimer">Imprimer</button>
+    </div>
+  </div>
+  <p class="message" id="message" role="status" hidden></p>
+
+  <nav class="onglets" aria-label="Vues">
+    <a href="#bref" data-vue="bref">En bref</a>
+    <a href="#deroule" data-vue="deroule">Déroulé</a>
+    <a href="#role" data-vue="role">Rôles</a>
+    <a href="#instrument" data-vue="instrument">Instruments</a>
+    <a href="#direct" data-vue="direct">En direct</a>
+    <a href="#construire" data-vue="construire" class="onglet-construire">Construire</a>
+  </nav>
+
+  <div id="vue"></div>
+  <div id="impression" aria-hidden="true"></div>
+  <noscript><p>Ce module a besoin de JavaScript pour afficher la cérémonie.</p></noscript>
+</main>
+
+<footer class="wrap">
+  <ul>
+    <li><a href="../">Accueil</a></li>
+    <li><a href="mailto:dharmagates.contact@gmail.com">Écrire à l'éditeur</a></li>
+    <li data-don hidden><a data-don href="#">Soutenir DharmaGates (Ko-fi)</a></li>
+    <li><a href="../hannya-shingyo/mentions.html">Mentions légales, crédits des sons et vie privée</a></li>
+  </ul>
+  <p>© 2026 Thomas Léonard. Tous droits réservés. · Éditeur : DharmaGates</p>
+</footer>
+
+<script src="../hannya-shingyo/dons.js"></script>
+<script src="cases.js"></script>
+<script src="excel.js"></script>
+<script src="modeles/zazen-chaumont-gistoux.js"></script>
+<script src="modeles/zazen-reims.js"></script>
+<script src="construire.js"></script>
+<script src="ceremonies.js"></script>
+</body>
+</html>
